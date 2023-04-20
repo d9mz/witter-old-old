@@ -1,0 +1,17 @@
+{% extends "base.twig" %}
+{%- block Container -%}
+    <div class="padding">
+        <div class="full-width">
+            <div class="user-card wide">
+                <img class="profile-picture" src="/cdn/{{ User.nickname }}">
+                <b>{{ User.nickname }}</b>
+                <span class="caption inline-block">@{{ User.username }}</span>
+            </div>
+            <p class="no-margin">
+                {{ User.description }}
+            </p>
+        </div>
+    </div>
+    <hr>
+
+{% endblock %}

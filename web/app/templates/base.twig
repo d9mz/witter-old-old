@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        {% block Head %}
+            <title>Witter - {{ PageSettings.PageTitle|escape }}</title>
+            <meta property="og:title" content="{{ PageSettings.PageTitle|escape }}" />
+            <meta property="og:description" content="{{ PageSettings.PageDescription|escape }}" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <link href="/styles/base.css" rel="stylesheet">
+            <style>
+                /* Random header photo */
+                .header {
+                    background-image: url('{{HeaderPhoto}}');
+                }
+            </style>
+        {% endblock %}
+    </head>
+    <body>
+        <div class="container">
+            {% block Header %}
+                {% include 'includes/Header.twig' %}
+            {% endblock %}
+        </div>
+
+        {% if Session.Alert is defined %}
+            {% for Alert in Session.Alert %}
+                <div class="container alert-{{ Alert.Type }}" id="js_alert">
+                    <span class="padding inline-block">
+                        {{ Alert.Message|raw }}
+                    </span>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="container">
+            {% block Container %}{% endblock %}
+            <hr>
+            {% block Footer %}
+                {% include 'includes/Footer.twig' %}
+            {% endblock %}
+        </div>
+    </body>
+</html>
