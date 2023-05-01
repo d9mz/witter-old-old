@@ -30,7 +30,7 @@ class CDN extends ModelBase
     public function ContentTypeToString(ContentType $type) {
         // BEWARE: this corresponds to what the folder in /var/www/volumes/* should be!!!
         // ex: ContentType::ProfilePicture => /var/www/volumes/profile_picture/
-        
+
         return match ($type) {
             ContentType::ProfilePicture => "profile_picture",
             ContentType::Banner => "banner",

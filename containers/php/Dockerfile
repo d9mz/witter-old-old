@@ -4,7 +4,7 @@ RUN apk update
 #RUN apt-get install -y libmagickwand-dev imagemagick; \
 #    pecl install imagick; \
 #    docker-php-ext-enable imagick;
-RUN apk add --no-cache ${PHPIZE_DEPS} imagemagick imagemagick-dev
+RUN apk add --no-cache ${PHPIZE_DEPS} imagemagick imagemagick-dev libgomp
 RUN pecl install -o -f imagick \
     &&  docker-php-ext-enable imagick
 RUN apk del --no-cache ${PHPIZE_DEPS}
