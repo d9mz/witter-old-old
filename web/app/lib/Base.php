@@ -22,6 +22,8 @@ class Base extends Configurator {
                     \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION
                 ]
             );
+
+            $this->Connection->setAttribute(\PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, false);
         }
         catch(\PDOException $e)
         {

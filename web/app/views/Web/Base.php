@@ -4,9 +4,7 @@ namespace Witter\Views;
 class ViewBase extends \Witter\Configurator {
     public $Connection;
     public $Configuration;
-    public $Validator;
     public $Twig;
-    public $RCCServiceSOAP;
 
     function __construct() {
         parent::__construct();

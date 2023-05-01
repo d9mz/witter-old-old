@@ -1,17 +1,59 @@
 {% extends "base.twig" %}
 {%- block Container -%}
     <div class="padding">
-        <div class="full-width">
-            <div class="user-card wide">
-                <img class="profile-picture" src="/cdn/{{ User.nickname }}">
-                <b>{{ User.nickname }}</b>
-                <span class="caption inline-block">@{{ User.username }}</span>
-            </div>
-            <p class="no-margin">
-                {{ User.description }}
-            </p>
+        <div class="tab-group">
+            <a href="#"><div class="tab primary">all</div></a>
+            <a href="#"><div class="tab">following</div></a>
         </div>
     </div>
     <hr>
+    <div class="padding">
+        <h3>create a weet</h3>
+        <form class="form" method="post" action="/feed">
+            <div class="input-group">
+                <textarea type="text" id="js_comment" class="full" required placeholder="today i ..." name="comment" aria-label="Weet"></textarea>
+            </div>
+            <span class="caption"><span id="js_char_remaining">200</span> characters left</span>
+            <input type="submit" value="post" id="js_submit" aria-label="Post">
+        </form>
+    </div>
+    <hr>
+    <div class="padding">
+        {% for Weet in Feed %}
+            {% if Weet.id is defined %}
+                <div class="weet">
+                    <div class="inline-block padding top">
+                        <img src="/cdn/" class="profile-picture">
+                    </div>
+                    <div class="comment-body inline-block padding">
+                        <span class="comment-info inline-block">
+                            <a href="/user/{{ Weet.user.username }}">@{{ Weet.user.username }}</a>
+                            <span class="caption">{{ Weet.feed_created|timeago }}</span>
+                        </span>
+                        <span class="inline-block">{{ Weet.feed_text }}</span>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+    <script>
+        let characters = 200;
+        let characterCounter = $('span#js_char_remaining');
+        let submitButton = $('#js_submit')
 
+        $("#js_comment").on('input', function() {
+            let value = $('textarea#js_comment').val()
+            let charactersLeft = characters - value.length;
+
+            characterCounter.text(charactersLeft);
+
+            if(charactersLeft < 0) {
+                characterCounter.css("color", "darkred");
+                submitButton.prop("disabled", true);
+            } else {
+                characterCounter.css("color", "unset");
+                submitButton.prop("disabled", false);
+            }
+        });
+    </script>
 {% endblock %}

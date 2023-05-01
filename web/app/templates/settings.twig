@@ -1,0 +1,33 @@
+{% extends "base.twig" %}
+{%- block Container -%}
+    <div class="padding">
+        <h3>settings</h3>
+    </div>
+    <hr>
+    <div class="padding no-padding-top no-padding-bottom">
+        <div class="left padding-top padding-bottom">
+            <h3>description</h3>
+            <form class="form" method="post" action="/settings/description">
+                <div class="input-group">
+                    <textarea type="text" class="full" required placeholder="my name is ..." name="comment" aria-label="Weet"></textarea>
+                </div>
+                <span class="caption">make sure to describe yourself well</span>
+                <input type="submit" value="set" aria-label="Set">
+            </form>
+        </div>
+
+        <div class="right padding-top padding-bottom">
+            <h3>photo</h3>
+            <form class="form" method="post" action="/settings/picture/profile/" enctype="multipart/form-data">
+                <div class="input-group">
+                    <label for="profile_picture" style="width: 25%;">profile picture</label>
+                    <input type="file" class="input-text-prefix-form" id="profile_picture" required name="asset" aria-label="Handle">
+                </div>
+                <span class="caption">max: 500kb / accepts <span class="png/ jpg/ gif"></span></span>
+                <input type="submit" value="set" aria-label="Set">
+            </form>
+        </div>
+    </div>
+    <hr>
+
+{% endblock %}

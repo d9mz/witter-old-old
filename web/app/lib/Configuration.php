@@ -9,6 +9,8 @@ class Configurator {
     public $Configuration;
     public $Twig;
 
+    // TODO: this is abhorrent, refactor?
+
     function __construct() {
         $this->replicateConfig();
         $this->replicateTwig();

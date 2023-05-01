@@ -2,6 +2,8 @@
 
     "require": {
         "bramus/router": "^1.6",
-        "twig/twig": "^3.3"
+        "twig/twig": "^3.3",
+        "srwiez/thumbhash": "^1.1",
+        "intervention/image": "^2.7"
     }
 }

@@ -9,13 +9,9 @@ class Feed extends ViewBase {
         $feed = $feed->GetFeed("anybody", 20);
 
         // UGLY.... Why do ?
-        while($weet = $feed) {
-            $weets[] = $weet;
-        }
-
-        echo $this->Twig->render('user.twig', array(
+        echo $this->Twig->render('feed.twig', array(
             "PageSettings" => $this->PageSettings(),
-            "Feed" => $weets,
+            "Feed" => @$feed,
         ));
     }
 }

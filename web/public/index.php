@@ -22,6 +22,12 @@ $Router         = new \Bramus\Router\Router();
  * [OBSOLETE]: Obsolete. Remove soon.
  */
 
+// jacksden.com
+
+// witter.jacksden.com
+
+$Router->Get('/cdn/{md5}', "\Witter\Models\CDN@GetFile");
+
 if(!isset($_SESSION['Handle'])) {
     $Router->Get('/', "\Witter\Views\Homepage@View");
     $Router->Get('/user/{user}', "\Witter\Views\User@View");
@@ -29,6 +35,10 @@ if(!isset($_SESSION['Handle'])) {
     $Router->Post('/user/register', "\Witter\Models\User@Register");
 } else {
     $Router->Get('/', "\Witter\Views\Homepage@Redirect");
+    $Router->Get('/settings', "\Witter\Views\Settings@View");
+    $Router->Post('/settings/description', "\Witter\Models\Settings@Description");
+    $Router->Post('/settings/picture/profile', "\Witter\Models\Settings@ProfilePicture");
+    $Router->Post('/settings/picture/banner', "\Witter\Models\Settings@Banner");
     $Router->Get('/feed', "\Witter\Views\Feed@View"); // FINISH UP...
     $Router->Post('/feed', "\Witter\Models\Feed@NewPost"); // IMPLEMENT tomorrow
     $Router->Get('/user/{user}', "\Witter\Views\User@View"); // FINISH UP... (cdn)

@@ -1,26 +1,57 @@
 <?php
 namespace Witter\Models;
 
+enum Type: int {
+    case ID = 0;
+    case Username = 1;
+    case Nickname = 2;
+}
+
 class User extends ModelBase
 {
-    public function GetUser($user, $handle = true) {
-        if($handle) {
-            $stmt = $this->Connection->prepare("SELECT * FROM users WHERE username = :find");
-            $stmt->bindParam(":find", $user);
-            $stmt->execute();
-        } else {
-            $stmt = $this->Connection->prepare("SELECT * FROM users WHERE nickname = :find");
-            $stmt->bindParam(":find", $user);
-            $stmt->execute();
+    // vvv Type type = Type ??? Looks weird but whatever
+    public function GetUser($user, Type $type = Type::Username) {
+        $type = match ($type) {
+            Type::ID => "id",
+            Type::Username => "handle",
+            Type::Nickname => "nickname",
+        };
+
+        if($type == "id") {
+            $query = "SELECT * FROM users WHERE id = :find";
+        } elseif($type == "handle") {
+            $query = "SELECT * FROM users WHERE username = :find";
+        } elseif($type == "nickname") {
+            $query = "SELECT * FROM users WHERE nickname = :find";
         }
+
+        $stmt = $this->Connection->prepare($query);
+        $stmt->bindParam(":find", $user);
+        $stmt->execute();
 
         return ($stmt->rowCount() === 0 ? 0 : $stmt->fetch(\PDO::FETCH_ASSOC));
     }
 
-    public function UserExists($user) : bool {
-        $stmt = $this->Connection->prepare("SELECT username FROM users WHERE username = :username");
-        $stmt->bindParam(":username", $user);
-        $stmt->execute();
+    public function UserExists($user, Type $type = Type::Username) : bool {
+        $type = match ($type) {
+            Type::ID => "id",
+            Type::Username => "handle",
+            Type::Nickname => "nickname",
+        };
+
+        if($type == "handle") {
+            $stmt = $this->Connection->prepare("SELECT username FROM users WHERE username = :username");
+            $stmt->bindParam(":username", $user);
+            $stmt->execute();
+        } elseif($type == "id") {
+            $stmt = $this->Connection->prepare("SELECT username FROM users WHERE id = :username");
+            $stmt->bindParam(":username", $user);
+            $stmt->execute();
+        } elseif($type == "nickname") {
+            $stmt = $this->Connection->prepare("SELECT username FROM users WHERE nickname = :username");
+            $stmt->bindParam(":username", $user);
+            $stmt->execute();
+        }
 
         return $stmt->rowCount() === 1;
     }
@@ -68,7 +99,7 @@ class User extends ModelBase
         }
     }
 
-    public function CreateUser($user, $password_hash, $email): bool {
+    public function CreateUser(string $user, string $password_hash, string $email): bool {
         $stmt = $this->Connection->prepare("INSERT INTO users (username, password, nickname, email) VALUES (:username, :password, :handle, :email)");
         $password_hash = password_hash($password_hash, PASSWORD_DEFAULT);
 
@@ -87,6 +118,7 @@ class User extends ModelBase
         $alert = new Alert();
 
         // Pretty ugly -- TODO: use match() ? New PHP8 feature...
+        // TODO: Use new Validator class... :)
 
         // password validation
         if (!isset($_POST['password']) && !empty(trim($_POST['password']))) {

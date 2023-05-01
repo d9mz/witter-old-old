@@ -6,13 +6,9 @@
             <meta property="og:title" content="{{ PageSettings.PageTitle|escape }}" />
             <meta property="og:description" content="{{ PageSettings.PageDescription|escape }}" />
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
             <link href="/styles/base.css" rel="stylesheet">
-            <style>
-                /* Random header photo */
-                .header {
-                    background-image: url('{{HeaderPhoto}}');
-                }
-            </style>
+            <style>/* Random header photo */ .header { background-image: url('{{HeaderPhoto}}'); }</style>
         {% endblock %}
     </head>
     <body>

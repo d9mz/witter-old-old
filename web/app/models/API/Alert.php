@@ -10,13 +10,11 @@ enum Level: int {
 }
 
 class Alert extends ModelBase {
-    public function Log(Level $level, $message = "Message") {
+    public function InternalLog(Level $level, string $message = "Message") {
         echo "not implemented";
     }
 
-    public function CreateAlert(Level $level, $message = "Message", $redirect = true) {
-        // $this->Log($level, $message);
-
+    public function CreateAlert(Level $level, string $message = "Message", bool $redirect = true) {
         $level = match ($level) {
             Level::Info => "info",
             Level::Warning => "warning",
