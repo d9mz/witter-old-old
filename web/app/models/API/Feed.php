@@ -5,18 +5,36 @@ class Feed extends ModelBase
 {
     // returns pdo loopabble thingy, can use while
     public function GetFeed(string $type = "following", int $limit = 20) {
-        $Feed = $this->Connection->prepare("SELECT * FROM feed ORDER BY id DESC LIMIT " . $limit);
-        $Feed->execute();
+        if($type == "everyone") {
+            $Feed = $this->Connection->prepare("SELECT * FROM feed ORDER BY id DESC LIMIT " . $limit);
+            $Feed->execute();
 
-        // Relation: get user info while fetching forum
-        $user_fetch = new \Witter\Models\User();
-        while($weet = $Feed->fetch(\PDO::FETCH_ASSOC)) {
-            if($user_fetch->UserExists($weet['feed_owner'], Type::ID)) {
-                $user = $user_fetch->GetUser($weet['feed_owner'], Type::ID);
+            // Relation: get user info while fetching forum
+            $user_fetch = new \Witter\Models\User();
+            while ($weet = $Feed->fetch(\PDO::FETCH_ASSOC)) {
+                if ($user_fetch->UserExists($weet['feed_owner'], Type::ID)) {
+                    $user = $user_fetch->GetUser($weet['feed_owner'], Type::ID);
+                }
+
+                $weet["user"] = @$user;
+                $weets[] = $weet;
             }
+        } elseif($type == "following") {
+            return "";
+        } else {
+            $Feed = $this->Connection->prepare("SELECT * FROM feed ORDER BY id DESC LIMIT " . $limit);
+            $Feed->execute();
 
-            $weet["user"] = @$user;
-            $weets[] = $weet;
+            // Relation: get user info while fetching forum
+            $user_fetch = new \Witter\Models\User();
+            while ($weet = $Feed->fetch(\PDO::FETCH_ASSOC)) {
+                if ($user_fetch->UserExists($weet['feed_owner'], Type::ID)) {
+                    $user = $user_fetch->GetUser($weet['feed_owner'], Type::ID);
+                }
+
+                $weet["user"] = @$user;
+                $weets[] = $weet;
+            }
         }
 
         return $weets;

@@ -29,7 +29,25 @@ class User extends ModelBase
         $stmt->bindParam(":find", $user);
         $stmt->execute();
 
-        return ($stmt->rowCount() === 0 ? 0 : $stmt->fetch(\PDO::FETCH_ASSOC));
+        $user = $stmt->rowCount() === 0 ? 0 : $stmt->fetch(\PDO::FETCH_ASSOC);
+
+        // profile picture
+        $cdn = new \Witter\Models\CDN();
+        $cdn = $cdn->GetCacheByOwner($user['id'], ContentType::ProfilePicture);
+        $cdn = json_decode($cdn['data']);
+        $cdn = $cdn->file_name;
+
+        $user['profile_picture'] = $cdn;
+
+        // banner
+        $cdn = new \Witter\Models\CDN();
+        $cdn = $cdn->GetCacheByOwner($user['id'], ContentType::Banner);
+        $cdn = json_decode($cdn['data']);
+        $cdn = $cdn->file_name;
+
+        $user['banner'] = $cdn;
+
+        return $user;
     }
 
     public function UserExists($user, Type $type = Type::Username) : bool {

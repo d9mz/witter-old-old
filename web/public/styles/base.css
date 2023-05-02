@@ -121,6 +121,16 @@ h1, h2, h3, h4, h5 ,h6 {
 .header .right {
     border-left: 0px solid #000000;
     padding-left: unset;
+    width: 170px;
+}
+
+.user-header .header-items {
+    position: relative;
+    bottom: 65px;
+}
+
+.user-header {
+    overflow: hidden !important;
 }
 
 .footer {
@@ -279,7 +289,7 @@ input[type="password"] {
 }
 
 .header a {
-    color: #cce5ff;
+    color: #6db6ff;
     text-shadow: 0px 0px 4px rgba(40, 116, 197, 0.42);
     text-align: right;
 }
@@ -301,6 +311,45 @@ input[type="password"] {
 }
 
 .weet .profile-picture {
+    width: 50px;
+    height: 50px;
+    border: 1px solid var(--primary-border-color);
+}
+
+.user-card .inline-block {
+    width: 60%;
+}
+
+.weet .padding {
+    padding: 6px;
+}
+
+.user-card .user-metadata {
+    line-height: 10px;
+    padding-top: 2px;
+}
+
+.user-card button {
+    background-color: var(--primary-text-color);
+    border: 1px solid var(--secondary-text-color);
+    padding: 5px;
+    color: white;
+    min-width: 133px;
+    height: 17px;
+    font-size: 7px;
+}
+
+.user-card {
+    width: 190px;
+    padding: 4px;
+    height: 53px;
+    background-color: #ffffffd4;
+    box-shadow: inset 0px 0px 5px #7c7c7c;
+    position: relative;
+    bottom: 1px;
+}
+
+.user-card .profile-picture {
     width: 50px;
     height: 50px;
     border: 1px solid var(--primary-border-color);

@@ -7,11 +7,16 @@ class User extends ViewBase {
     public function View($user) {
         $handle = $user;
         $userclass = new \Witter\Models\User();
+        $user = $userclass->GetUser($user);
 
         if($userclass->UserExists($handle)) {
+            $feed = new \Witter\Models\Feed();
+            $feed = $feed->GetFeed($user['username'], 20);
+
             echo $this->Twig->render('user.twig', array(
                 "PageSettings" => $this->PageSettings(),
                 "User" => $userclass->GetUser($handle),
+                "Feed" => $feed,
             ));
         } else {
             $alert = new \Witter\Models\Alert();

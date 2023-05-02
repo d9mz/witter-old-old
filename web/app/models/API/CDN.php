@@ -54,14 +54,24 @@ class CDN extends ModelBase
         // TODO: Implement
     }
 
+    public function GetCacheByOwner(int $owner, ContentType $type = ContentType::ProfilePicture) {
+        $type = $this->ContentTypeToString($type);
+        $stmt = $this->Connection->prepare("SELECT * FROM cache WHERE data->>'$.owned_by' = :owner AND data->>'$.type' = :type ORDER BY id DESC");
+        $stmt->bindParam(":owner", $owner);
+        $stmt->bindParam(":type", $type);
+        $stmt->execute();
+
+        return ($stmt->rowCount() === 0 ? 0 : $stmt->fetch(\PDO::FETCH_ASSOC));
+    }
+
     public function GetCache(string $hash, $type = null) {
         if($type == null) {
-            $stmt = $this->Connection->prepare("SELECT * FROM cache WHERE data->>'$.file_name' = :hash");
+            $stmt = $this->Connection->prepare("SELECT * FROM cache WHERE data->>'$.file_name' = :hash ORDER BY id DESC");
             $stmt->bindParam(":hash", $hash);
             $stmt->execute();
         } else {
             $type = $this->ContentTypeToString($type);
-            $stmt = $this->Connection->prepare("SELECT * FROM cache WHERE data->>'$.file_name' = :hash AND data->>'$.type' = :type");
+            $stmt = $this->Connection->prepare("SELECT * FROM cache WHERE data->>'$.file_name' = :hash AND data->>'$.type' = :type ORDER BY id DESC");
             $stmt->bindParam(":hash", $hash);
             $stmt->bindParam(":type", $type);
             $stmt->execute();

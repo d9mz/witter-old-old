@@ -18,12 +18,12 @@
         </form>
     </div>
     <hr>
-    <div class="padding">
+    <div class="padding no-padding-top">
         {% for Weet in Feed %}
             {% if Weet.id is defined %}
                 <div class="weet">
                     <div class="inline-block padding top">
-                        <img src="/cdn/" class="profile-picture">
+                        <img src="/cdn/{{ Weet.user.profile_picture }}" class="profile-picture">
                     </div>
                     <div class="comment-body inline-block padding">
                         <span class="comment-info inline-block">

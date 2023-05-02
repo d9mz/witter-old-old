@@ -1,17 +1,72 @@
 {% extends "base.twig" %}
+{%- block Header -%}
+    <script>$(".header-container").css("display", "none");</script>
+{% endblock %}
 {%- block Container -%}
-    <div class="padding">
-        <div class="full-width">
-            <div class="user-card wide">
-                <img class="profile-picture" src="/cdn/{{ User.nickname }}">
+    <style>
+        /*  TODO: Don't inline style any of this stuff!
+                  Put all user CSS in a MD5 hashed thingymcbob,
+                  could just be a hash of their username then
+                  accessible by /css/.
+        */
+
+        #banner {
+            background-image: url("/cdn/{{ User.banner }}");
+            border-bottom: var(--primary-border-color);
+        }
+    </style>
+    <div class="padding header user-header" id="banner" style="padding-bottom: 4px;">
+        <div class="user-card wide">
+            <img class="profile-picture" src="/cdn/{{ User.profile_picture }}">
+            <div class="user-metadata inline-block top">
                 <b>{{ User.nickname }}</b>
-                <span class="caption inline-block">@{{ User.username }}</span>
+                <span class="caption inline-block">@{{ User.username }}</span><br>
+                <span class="caption">joined {{ User.created|timeago }}</span><br>
+                <span class="caption">last online {{ User.last_login|timeago }}</span>
+
+                <button class="button left" id="follow_button" follow_target="{{ User.id }}" aria-label="Follow">Follow</button>
+
             </div>
-            <p class="no-margin">
-                {{ User.description }}
-            </p>
+        </div>
+
+        <!-- This looks extremely ugly on the templating side. Don't do this! -->
+        <div class="header-items right">
+            <a href="/"><h1>[witter]</h1></a>
+            <div class="right align-right">
+                {% if Session.Handle is not defined %}
+                    <a href="/users">users</a>
+                    <a href="/feed">feed</a>
+                    <a href="/">login</a>
+                {% else %}
+                    <a href="/user/{{ Session.Handle }}">@{{ Session.Handle }}</a>
+                    <a href="/feed">feed</a>
+                    <a href="/settings">settings</a>
+                {% endif %}
+            </div>
         </div>
     </div>
+    <div class="padding">
+        <p class="no-margin caption">
+            {{ User.description }}
+        </p>
+    </div>
     <hr>
-
+    <div class="padding">
+        {% for Weet in Feed %}
+            {% if Weet.id is defined %}
+                <div class="weet">
+                    <div class="inline-block padding top">
+                        <img src="/cdn/{{ Weet.user.profile_picture }}" class="profile-picture">
+                    </div>
+                    <div class="comment-body inline-block padding">
+                            <span class="comment-info inline-block">
+                                <a href="/user/{{ Weet.user.username }}">@{{ Weet.user.username }}</a>
+                                <span class="caption">{{ Weet.feed_created|timeago }}</span>
+                            </span>
+                        <span class="inline-block">{{ Weet.feed_text }}</span>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
 {% endblock %}
