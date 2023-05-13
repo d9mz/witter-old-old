@@ -11,7 +11,7 @@ class User extends ViewBase {
 
         if($userclass->UserExists($handle)) {
             $feed = new \Witter\Models\Feed();
-            $feed = $feed->GetFeed($user['username'], 20);
+            $feed = $feed->GetFeed($handle, 20);
 
             echo $this->Twig->render('user.twig', array(
                 "PageSettings" => $this->PageSettings(),

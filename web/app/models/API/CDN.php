@@ -15,14 +15,21 @@ class CDN extends ModelBase
 
         // get cache from database
         $cache = $this->GetCache($md5);
-        $cache = json_decode($cache['data']);
+        if(isset($cache['data'])) {
+            $cache = json_decode($cache['data']);
 
-        // get mime type from file type stored in cache & set as content-type
-        $mime   = $util->ext2mime($cache->file_type);
-        header("Content-type: " . $mime);
+            // get mime type from file type stored in cache & set as content-type
+            $mime = $util->ext2mime($cache->file_type);
+            header("Content-type: " . $mime);
 
-        // get actual file itself
-        $file = file_get_contents("/var/www/volumes/" . $cache->type . "/" . $cache->file_name);
+            // get actual file itself
+            $file = file_get_contents("/var/www/volumes/" . $cache->type . "/" . $cache->file_name);
+        } elseif($md5 == "default") {
+            header("Content-type: image/png");
+            $file = file_get_contents("/var/www/volumes/profile_picture/default");
+        } else {
+            $file = "Invalid hash";
+        }
 
         die($file);
     }

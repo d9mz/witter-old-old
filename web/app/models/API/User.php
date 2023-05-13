@@ -31,23 +31,38 @@ class User extends ModelBase
 
         $user = $stmt->rowCount() === 0 ? 0 : $stmt->fetch(\PDO::FETCH_ASSOC);
 
-        // profile picture
-        $cdn = new \Witter\Models\CDN();
-        $cdn = $cdn->GetCacheByOwner($user['id'], ContentType::ProfilePicture);
-        $cdn = json_decode($cdn['data']);
-        $cdn = $cdn->file_name;
+        if(isset($user['id'])) {
+            // profile picture
+            $cdn = new \Witter\Models\CDN();
+            $cdn = $cdn->GetCacheByOwner($user['id'], ContentType::ProfilePicture);
+            if (isset($cdn['data'])) {
+                $cdn = json_decode($cdn['data']);
+                $cdn = $cdn->file_name;
+            } else {
+                $cdn = "default";
+            }
 
-        $user['profile_picture'] = $cdn;
+            $user['profile_picture'] = $cdn;
 
-        // banner
-        $cdn = new \Witter\Models\CDN();
-        $cdn = $cdn->GetCacheByOwner($user['id'], ContentType::Banner);
-        $cdn = json_decode($cdn['data']);
-        $cdn = $cdn->file_name;
+            // empty description?
+            if(empty(trim($user['description']))) $user['description'] = "Hello!";
 
-        $user['banner'] = $cdn;
+            // banner
+            $cdn = new \Witter\Models\CDN();
+            $cdn = $cdn->GetCacheByOwner($user['id'], ContentType::Banner);
+            if (isset($cdn['data'])) {
+                $cdn = json_decode($cdn['data']);
+                $cdn = $cdn->file_name;
+            } else {
+                $cdn = "";
+            }
 
-        return $user;
+            $user['banner'] = $cdn;
+
+            return $user;
+        } else {
+            return [];
+        }
     }
 
     public function UserExists($user, Type $type = Type::Username) : bool {

@@ -30,6 +30,13 @@ class Base extends Configurator {
             die("An error occured connecting to the database: " . $e->getMessage());
         }
 
+        if(isset($_SESSION['Handle'])) {
+            $stmt = $this->Connection->prepare("UPDATE users SET last_login = NOW() WHERE username = ?");
+            $stmt->execute([
+                $_SESSION['Handle'],
+            ]);
+        }
+
         // Non-CF IP header
         if(isset($_SERVER['REMOTE_ADDR'])) {
             $SessionIP = $_SERVER['REMOTE_ADDR'];

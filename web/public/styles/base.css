@@ -56,10 +56,13 @@ h1, h2, h3, h4, h5 ,h6 {
     border: 1px solid var(--primary-border-color);
     border-bottom: 0px solid black;
     padding: 5px;
+    background-color: whitesmoke;
 }
 
 .tab-group .primary {
     background-color: var(--secondary-text-color);
+    border: 1px solid #0b4b9b;
+    border-bottom: 0px solid black;
     color: white;
 }
 
@@ -100,6 +103,23 @@ h1, h2, h3, h4, h5 ,h6 {
     border: 1px solid rgb(0 126 125 / 15%);
 }
 
+.alternative-header {
+    padding: 5px;
+}
+
+.alternative-header a {
+    font-size: 11px;
+}
+
+.alternative-header h3 a {
+    font-size: initial;
+}
+
+.alternative-header .links a {
+    margin-right: 5px;
+    display: inline-block;
+}
+
 .alert-error {
     height: 40px;
     overflow-y: hidden;
@@ -107,11 +127,27 @@ h1, h2, h3, h4, h5 ,h6 {
     border: 1px solid rgb(255 0 0 / 15%);
 }
 
+.no-border-left {
+    border-left: 0px solid black !important;
+}
+
+.user-album button {
+    background-color: #437c26;
+    border: 1px solid #55781d;
+    box-shadow: 0px 0px 5px #707070;
+}
+
 .right {
     border-left: 1px solid var(--primary-border-color);
     float: right;
     padding-left: 20px;
     width: calc(50% - 20px);
+}
+
+.user-card-right {
+    float: right;
+    padding-left: 20px;
+    width: calc(70% - 20px);
 }
 
 .inline-block {
@@ -126,10 +162,12 @@ h1, h2, h3, h4, h5 ,h6 {
 
 .user-header .header-items {
     position: relative;
-    bottom: 65px;
+    bottom: 80px;
 }
 
 .user-header {
+    padding-bottom: 4px !important;
+    height: 85px !important;
     overflow: hidden !important;
 }
 
@@ -142,6 +180,11 @@ h1, h2, h3, h4, h5 ,h6 {
 .padding {
     overflow: auto;
     padding: 10px;
+}
+
+.user-panel {
+    height: 25px;
+    overflow: hidden;
 }
 
 .padding-top {
@@ -242,9 +285,20 @@ button,
     min-width: 60px;
 }
 
+.user-album-container .album-title,
+.user-album-container .artist-title,
+.user-album-container .scrobbled-ago,
 .caption {
     font-size: 9px;
     color: var(--caption-text-color);
+    font-weight: initial;
+}
+
+.user-album-container .album-title,
+.user-album-container .artist-title,
+.user-album-container .scrobbled-ago,
+.user-album-container .caption {
+    color: #ffffffba;;
 }
 
 .form .caption {
@@ -284,6 +338,26 @@ input[type="password"] {
     text-align: right;
 }
 
+.float-right {
+    float: right;
+}
+
+.padding .weet:first-child {
+    margin-top: 0px;
+}
+
+.user-panel .tab-group {
+    position: relative;
+    bottom: 51px;
+    left: 240px;
+    --mask: linear-gradient(to bottom,
+    rgba(0,0,0, 1) 0,   rgba(0,0,0, 1) 40%,
+    rgba(0,0,0, 0) 95%, rgba(0,0,0, 0) 0
+    ) 100% 50% / 100% 100% repeat-x;
+
+    mask: var(--mask);
+}
+
 .header-items .align-right {
     margin-right: 4px;
 }
@@ -297,10 +371,53 @@ input[type="password"] {
 .header {
     background-image: url('/images/header/1.webp');
     background-repeat: no-repeat;
-    background-color: #000;
+    background-color: #d9d9d9;
     background-size: cover;
     background-position: center;
     height: 60px;
+}
+
+.user-album-container {
+    background: rgb(138,128,64);
+    background: linear-gradient(0deg, rgba(138,128,64,1) 0%, rgba(162,153,81,1) 100%);
+    height: 45px;
+    overflow: hidden;
+    color: #ffffffeb;
+}
+
+.user-album-container .caption {
+
+}
+
+.user-album {
+    position: relative;
+}
+
+.user-album-container .album-cover img {
+    width: 45px;
+    height: 45px;
+}
+
+.user-album-container .album-cover {
+    display: inline-block;
+    position: relative;
+}
+
+.user-album-container .album-cover:after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    bottom: 0; left: 0;
+    background: url("/images/gloss.png");
+    background-size: contain;
+    opacity: 0.5;
+    height: 45px;
+    width: 45px;
+    box-shadow: 0px 0px 5px #ffffff;
+}
+
+.user-album-container .album-metadata {
+    padding-left: 10px;
 }
 
 .weet {
@@ -320,38 +437,69 @@ input[type="password"] {
     width: 60%;
 }
 
+.bold {
+    font-weight: bold;
+}
+
 .weet .padding {
     padding: 6px;
 }
 
+.user-description {
+    padding-left: 10px;
+}
+
+.negative-margin {
+    /* TODO: Stop doing this */
+    /* Shitty fix & hack to get hr(s) to not look like ass on .left & .right */
+    margin: -10px;
+    height: 20px;
+    width: 108%;
+}
+
 .user-card .user-metadata {
-    line-height: 10px;
+    line-height: 13px;
     padding-top: 2px;
+    width: 133px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .user-card button {
     background-color: var(--primary-text-color);
     border: 1px solid var(--secondary-text-color);
-    padding: 5px;
+    padding: 4px;
     color: white;
     min-width: 133px;
-    height: 17px;
-    font-size: 7px;
+    height: 20px;
+    font-size: 10px;
+    margin-top: 5px;
+}
+
+.user-panel {
+    display: inline-block;
+    width: 96%;
+    height: 75px;
+    position: relative;
+    bottom: 70px;
+    left: 10px;
+    z-index: 5;
+    margin-bottom: -73px;
 }
 
 .user-card {
-    width: 190px;
-    padding: 4px;
-    height: 53px;
+    width: 208px;
+    display: inline-block;
     background-color: #ffffffd4;
-    box-shadow: inset 0px 0px 5px #7c7c7c;
-    position: relative;
-    bottom: 1px;
+    box-shadow: 0px 0px 5px #7c7c7c;
+    padding: 4px;
+    height: 70px;
 }
 
 .user-card .profile-picture {
-    width: 50px;
-    height: 50px;
+    width: 68px;
+    height: 68px;
     border: 1px solid var(--primary-border-color);
 }
 

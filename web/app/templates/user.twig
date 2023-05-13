@@ -14,21 +14,20 @@
             background-image: url("/cdn/{{ User.banner }}");
             border-bottom: var(--primary-border-color);
         }
+
+        .user-album-container {
+
+        }
     </style>
-    <div class="padding header user-header" id="banner" style="padding-bottom: 4px;">
-        <div class="user-card wide">
-            <img class="profile-picture" src="/cdn/{{ User.profile_picture }}">
-            <div class="user-metadata inline-block top">
-                <b>{{ User.nickname }}</b>
-                <span class="caption inline-block">@{{ User.username }}</span><br>
-                <span class="caption">joined {{ User.created|timeago }}</span><br>
-                <span class="caption">last online {{ User.last_login|timeago }}</span>
-
-                <button class="button left" id="follow_button" follow_target="{{ User.id }}" aria-label="Follow">Follow</button>
-
-            </div>
+    <div class="alternative-header">
+        <h3 class="inline-block"><a href="/">witter</a></h3>
+        <div class="links inline-block float-right no-border-left">
+            <a href="/user/{{ Session.Handle }}">@{{ Session.Handle }}</a>
+            <a href="/feed">feed</a>
+            <a href="/settings">settings</a>
         </div>
-
+    </div>
+    <div class="padding header user-header" id="banner">
         <!-- This looks extremely ugly on the templating side. Don't do this! -->
         <div class="header-items right">
             <a href="/"><h1>[witter]</h1></a>
@@ -45,10 +44,44 @@
             </div>
         </div>
     </div>
-    <div class="padding">
-        <p class="no-margin caption">
-            {{ User.description }}
-        </p>
+    <div class="padding user-panel">
+        <div class="user-card wide">
+            <img class="profile-picture" src="/cdn/{{ User.profile_picture }}">
+            <div class="user-metadata inline-block top">
+                <b>{{ User.nickname }}</b>
+                <span class="caption inline-block">@{{ User.username }}</span><br>
+                <span class="caption">joined {{ User.created|timeago }}</span><br>
+                <span class="caption">last online {{ User.last_login|timeago }}</span>
+                <button class="button left" id="follow_button" follow_target="{{ User.id }}" aria-label="Follow">follow</button>
+            </div>
+        </div>
+
+        <div class="tab-group">
+            <a href="#"><div class="tab primary">posts</div></a>
+            <a href="#"><div class="tab">media</div></a>
+            <a href="#"><div class="tab">liked posts</div></a>
+        </div>
+    </div>
+    <hr>
+    <div class="padding user-album-container">
+        <div class="user-album">
+            <div class="album-cover">
+                <img src="https://media.discordapp.net/attachments/1081103238838882378/1106451459878436975/8ef6da34afff11bbe4bf08c58070cd6a.png">
+            </div>
+            <div class="album-metadata top inline-block">
+                <div class="song-title bold">Didn't Cha Know <span class="caption">(scrobbled 3 minutes ago)</span></div>
+                <div class="album-title">Mama's Gun</div>
+                <div class="artist-title">Erykah Badu</div>
+            </div>
+            <div class="right no-border-left">
+                <button>play on spotify</button>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div class="padding user-description">
+        <div class="bold">{{ User.nickname }}'s description</div>
+        <span class="caption">{{ User.description }}</span>
     </div>
     <hr>
     <div class="padding">

@@ -5,7 +5,15 @@
     </div>
     <hr>
     <div class="padding no-padding-top no-padding-bottom">
-        <div class="left padding-top padding-bottom">
+        <div class="left  padding-bottom">
+            <form class="form" method="post" action="/settings/handle/">
+                <div class="input-group">
+                    <label for="username">username</label>
+                    <div class="input-text-prefix">@</div>
+                    <input type="text" class="input-text-prefix-form" id="username" required placeholder="yourhandle" name="username" aria-label="Handle">
+                </div>
+            </form><br>
+            <div class="negative-margin"><hr></div>
             <h3>description</h3>
             <form class="form" method="post" action="/settings/description">
                 <div class="input-group">
@@ -27,7 +35,7 @@
                 <input type="submit" value="set" aria-label="Set">
             </form>
         </div>
-        <div  class="right padding-bottom">
+        <div class="right padding-bottom">
             <form class="form" method="post" action="/settings/picture/banner/" enctype="multipart/form-data">
                 <div class="input-group">
                     <label for="banner" style="width: 25%;">banner</label>
