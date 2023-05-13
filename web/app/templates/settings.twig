@@ -5,15 +5,14 @@
     </div>
     <hr>
     <div class="padding no-padding-top no-padding-bottom">
-        <div class="left  padding-bottom">
-            <form class="form" method="post" action="/settings/handle/">
+        <div class="left padding-top padding-bottom">
+            <form class="form" method="post" action="/settings/nickname/">
                 <div class="input-group">
-                    <label for="username">username</label>
-                    <div class="input-text-prefix">@</div>
-                    <input type="text" class="input-text-prefix-form" id="username" required placeholder="yourhandle" name="username" aria-label="Handle">
+                    <label for="username">display name</label>
+                    <input type="text" id="username" required placeholder="yournickname" value="{{ User.nickname }}" name="nickname" aria-label="Nickname">
+                    <input type="submit" class="inline-submit" value="change" aria-label="Change">
                 </div>
             </form><br>
-            <div class="negative-margin"><hr></div>
             <h3>description</h3>
             <form class="form" method="post" action="/settings/description">
                 <div class="input-group">

@@ -30,6 +30,31 @@ class Settings extends ModelBase
         $alert->CreateAlert(Level::Success, "Successfully set the description.");
     }
 
+    public function Nickname() {
+        $cdn    = new \Witter\Models\CDN();
+        $alert  = new \Witter\Models\Alert();
+        $util   = new \Witter\Models\Utility();
+        $user   = new \Witter\Models\User();
+        $user   = $user->GetUser($_SESSION['Handle']);
+
+        if (!isset($_POST['nickname']) && !empty(trim($_POST['nickname']))) {
+            $alert->CreateAlert(Level::Error, "You did not enter a display name.");
+        }
+
+        if (strlen($_POST['nickname']) < 4 || strlen($_POST['nickname']) > 20) {
+            $alert->CreateAlert(Level::Error, "Your display name must be longer than 3 characters and not longer than 20.");
+        }
+
+        $stmt = $this->Connection->prepare("UPDATE users SET nickname = ? WHERE id = ?");
+        $stmt->execute([
+            $_POST['nickname'],
+            $user['id'],
+        ]);
+        $stmt = null;
+
+        $alert->CreateAlert(Level::Success, "Successfully set your display name to " . $_POST['nickname'] . ".");
+    }
+
     public function Banner() {
         // TODO: This is okay, but it could be better.
 

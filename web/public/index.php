@@ -37,6 +37,7 @@ if(!isset($_SESSION['Handle'])) {
     $Router->Get('/', "\Witter\Views\Homepage@Redirect");
     $Router->Get('/settings', "\Witter\Views\Settings@View");
     $Router->Post('/settings/description', "\Witter\Models\Settings@Description");
+    $Router->Post('/settings/nickname', "\Witter\Models\Settings@nickname");
     $Router->Post('/settings/picture/profile', "\Witter\Models\Settings@ProfilePicture");
     $Router->Post('/settings/picture/banner', "\Witter\Models\Settings@Banner");
     $Router->Get('/feed', "\Witter\Views\Feed@View"); // FINISH UP...

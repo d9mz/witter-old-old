@@ -441,6 +441,18 @@ input[type="password"] {
     font-weight: bold;
 }
 
+.inline-submit {
+    display: inline-block;
+    position: relative;
+    bottom: 33px;
+    height: 23px;
+    padding: 3px !important;
+
+    /* Lord forgive me for I have sinned once again */
+    /* This will only work in edge cases where the button is originally aligned to the right
+       TODO: THIS IS HORRIBLE!!!! */
+}
+
 .weet .padding {
     padding: 6px;
 }
