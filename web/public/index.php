@@ -30,7 +30,6 @@ $Router->Get('/cdn/{md5}', "\Witter\Models\CDN@GetFile");
 
 if(!isset($_SESSION['Handle'])) {
     $Router->Get('/', "\Witter\Views\Homepage@View");
-    $Router->Get('/user/{user}', "\Witter\Views\User@View");
     $Router->Post('/user/login', "\Witter\Models\User@SignIn");
     $Router->Post('/user/register', "\Witter\Models\User@Register");
 } else {

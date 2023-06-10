@@ -2,6 +2,11 @@
     base.css
 */
 
+@font-face {
+    font-family: "ヒラギノ角ゴ Pro W3";
+    src: url("/styles/font.otf") format("opentype");
+}
+
 :root {
     --primary-text-color: #2874c5;
     --secondary-text-color: #2262a6;

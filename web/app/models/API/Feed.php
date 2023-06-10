@@ -36,7 +36,7 @@ class Feed extends ModelBase
             }
         }
 
-        return $weets;
+        return @$weets;
     }
 
     public function NewPost() {
