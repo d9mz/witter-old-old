@@ -3,7 +3,7 @@ namespace Witter\Views;
 
 use Witter\Models\Level;
 
-class Settings extends ViewBase {
+class Settings extends View {
     public function View() {
         $user = new \Witter\Models\User();
         $user = $user->GetUser($_SESSION['Handle']);

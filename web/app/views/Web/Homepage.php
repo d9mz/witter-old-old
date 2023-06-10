@@ -1,7 +1,7 @@
 <?php
 namespace Witter\Views;
 
-class Homepage extends ViewBase {
+class Homepage extends View {
     public function View() {
         echo $this->Twig->render('homepage.twig', array(
             "PageSettings" => $this->PageSettings(),

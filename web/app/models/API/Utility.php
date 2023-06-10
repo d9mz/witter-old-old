@@ -1,7 +1,7 @@
 <?php
 namespace Witter\Models;
 
-class Utility extends ModelBase {
+class Utility extends Model {
     // https://stackoverflow.com/questions/2510434/format-bytes-to-kilobytes-megabytes-gigabytes
     // useful for expressing max file upload sizes
     public function formatBytes($bytes, $precision = 2) {

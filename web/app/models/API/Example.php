@@ -1,7 +1,7 @@
 <?php
 namespace Witter\Models;
 
-class Example extends ModelBase {
+class Example extends Model {
     public function DoSomething() {
 
     }

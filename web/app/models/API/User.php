@@ -7,7 +7,7 @@ enum Type: int {
     case Nickname = 2;
 }
 
-class User extends ModelBase
+class User extends Model
 {
     // vvv Type type = Type ??? Looks weird but whatever
     public function GetUser($user, Type $type = Type::Username) {

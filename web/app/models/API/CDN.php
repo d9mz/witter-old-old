@@ -6,7 +6,7 @@ enum ContentType: int {
     case Banner = 1;
 }
 
-class CDN extends ModelBase
+class CDN extends Model
 {
     // Return filename of PFP -- :D
     // most likely returns md5 hash of file

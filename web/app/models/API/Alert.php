@@ -9,7 +9,7 @@ enum Level: int {
     case Success = 4;
 }
 
-class Alert extends ModelBase {
+class Alert extends Model {
     public function InternalLog(Level $level, string $message = "Message") {
         echo "not implemented";
     }

@@ -2,10 +2,14 @@
     base.css
 */
 
+/*
+What the hell?
+*/
 @font-face {
-    font-family: "ヒラギノ角ゴ Pro W3";
-    src: url("/styles/font.otf") format("opentype");
+    font-family: "MS PGothic";
+    src: url("/styles/pgothic.ttf") format("opentype");
 }
+
 
 :root {
     --primary-text-color: #2874c5;
@@ -22,8 +26,8 @@
 
 body {
     background-color: var(--background-color);
-    font-size: 13px;
-    font-family:"ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro",Osaka, "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif;
+    font-size: 15px;
+    font-family:  "MS PGothic", sans-serif;
     color: black;
 }
 
@@ -50,6 +54,10 @@ h1, h2, h3, h4, h5 ,h6 {
     margin: 0px;
 }
 
+.comment-body {
+    font-size: 13px;
+}
+
 .padding .tab-group {
     margin-bottom: -10px;
 }
@@ -60,8 +68,9 @@ h1, h2, h3, h4, h5 ,h6 {
     margin-right: 10px;
     border: 1px solid var(--primary-border-color);
     border-bottom: 0px solid black;
-    padding: 5px;
+    padding: 7px;
     background-color: whitesmoke;
+    height: 18px;
 }
 
 .tab-group .primary {
@@ -69,6 +78,7 @@ h1, h2, h3, h4, h5 ,h6 {
     border: 1px solid #0b4b9b;
     border-bottom: 0px solid black;
     color: white;
+    font-weight: bold;
 }
 
 .container {
@@ -78,6 +88,10 @@ h1, h2, h3, h4, h5 ,h6 {
     margin-bottom: 10px;
     border: 1px solid var(--primary-border-color);
     overflow: auto;
+}
+
+.center {
+    text-align: center;
 }
 
 .full-width {
@@ -99,6 +113,7 @@ h1, h2, h3, h4, h5 ,h6 {
     height: 21px;
     width: 17px;
     padding-left: 5px;
+    font-size: 20px;
 }
 
 .alert-success {
@@ -113,7 +128,7 @@ h1, h2, h3, h4, h5 ,h6 {
 }
 
 .alternative-header a {
-    font-size: 11px;
+    font-size: 13px;
 }
 
 .alternative-header h3 a {
@@ -178,7 +193,7 @@ h1, h2, h3, h4, h5 ,h6 {
 
 .footer {
     background-color: #f1f1f1;
-    font-size: 10px;
+    font-size: 12px;
     color: var(--caption-text-color);
 }
 
@@ -294,7 +309,7 @@ button,
 .user-album-container .artist-title,
 .user-album-container .scrobbled-ago,
 .caption {
-    font-size: 9px;
+    font-size: 11px;
     color: var(--caption-text-color);
     font-weight: initial;
 }
@@ -423,6 +438,7 @@ input[type="password"] {
 
 .user-album-container .album-metadata {
     padding-left: 10px;
+    line-height: 15px;
 }
 
 .weet {
@@ -475,7 +491,7 @@ input[type="password"] {
 }
 
 .user-card .user-metadata {
-    line-height: 13px;
+    line-height: 12px;
     padding-top: 2px;
     width: 133px;
     white-space: nowrap;
@@ -490,7 +506,7 @@ input[type="password"] {
     color: white;
     min-width: 133px;
     height: 20px;
-    font-size: 10px;
+    font-size: 11px;
     margin-top: 5px;
 }
 

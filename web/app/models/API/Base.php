@@ -1,7 +1,7 @@
 <?php
 namespace Witter\Models;
 
-class ModelBase extends \Witter\Configurator {
+class Model extends \Witter\Configurator {
     public $Connection;
     public $Configuration;
     public $Validator;

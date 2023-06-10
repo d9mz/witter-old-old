@@ -1,7 +1,7 @@
 <?php
 namespace Witter\Models;
 
-class Feed extends ModelBase
+class Feed extends Model
 {
     // returns pdo loopabble thingy, can use while
     public function GetFeed(string $type = "following", int $limit = 20) {

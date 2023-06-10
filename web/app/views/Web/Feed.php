@@ -3,7 +3,7 @@ namespace Witter\Views;
 
 use Witter\Models\Level;
 
-class Feed extends ViewBase {
+class Feed extends View {
     public function View() {
         $feed = new \Witter\Models\Feed();
         $feed = $feed->GetFeed("everyone", 20);

@@ -1,7 +1,7 @@
 <?php
 namespace Witter\Models;
 
-class Validator extends ModelBase {
+class Validator extends Model {
     public function validate($request, array $fields)
     {
         if(!isset($request)) {

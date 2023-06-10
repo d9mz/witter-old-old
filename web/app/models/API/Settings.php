@@ -3,7 +3,7 @@ namespace Witter\Models;
 
 use Intervention\Image\ImageManager;
 
-class Settings extends ModelBase
+class Settings extends Model
 {
     public function Description() {
         $cdn    = new \Witter\Models\CDN();

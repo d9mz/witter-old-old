@@ -1,7 +1,7 @@
 <?php
 namespace Witter\Views;
 
-class ViewBase extends \Witter\Configurator {
+class View extends \Witter\Configurator {
     public $Connection;
     public $Configuration;
     public $Twig;
