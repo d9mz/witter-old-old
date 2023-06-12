@@ -32,8 +32,16 @@
                         </span>
                         <span class="comment-text inline-block">{{ Weet.feed_text|nl2br }}</span>
                         <div class="comment-actions">
-                            <span class="comment-action inline-block" id="comment_like" data-comment-id="{{ Weet.id }}">0 <i class="far fa-comment"></i></span>
-                            <span class="comment-action inline-block">0 <i class="far fa-thumbs-up"></i></span>
+                            <a href="/{{ Weet.user.username }}/weet/{{ Weet.id }}">
+                                <span class="comment-action inline-block">
+                                    <span class="comment-action-text">0</span> 
+                                    <i class="far fa-comment"></i>
+                                </span>
+                            </a>
+                            <span class="comment-action comment_like inline-block" data-comment-id="{{ Weet.id }}">
+                                <span class="comment-action-text">0</span> 
+                                <i class="far fa-thumbs-up"></i>
+                            </span>
                         </div>
                     </div>
                 </div>
