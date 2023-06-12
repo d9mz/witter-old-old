@@ -163,6 +163,11 @@ h1, h2, h3, h4, h5 ,h6 {
     color: white;
 }
 
+.comment-text {
+    width: 100%;
+    margin-top: 2px;
+}
+
 .comment-actions {
     margin-top: 5px;
     font-size: 12px;
