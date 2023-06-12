@@ -1,5 +1,6 @@
 {% extends "base.twig" %}
 {%- block Header -%}
+    {#- This is fucking TERRIBLE! -#}
     <script>$(".header-container").css("display", "none");</script>
 {% endblock %}
 {%- block Container -%}
@@ -66,12 +67,12 @@
     <div class="padding user-album-container">
         <div class="user-album">
             <div class="album-cover">
-                <img src="https://media.discordapp.net/attachments/1081103238838882378/1106451459878436975/8ef6da34afff11bbe4bf08c58070cd6a.png">
+                <img src="https://lastfm.freetls.fastly.net/i/u/770x0/ad411c7812cf657816d5d60e0e099023.jpg#ad411c7812cf657816d5d60e0e099023">
             </div>
             <div class="album-metadata top inline-block">
-                <div class="song-title bold">Didn't Cha Know <span class="caption">(scrobbled 3 minutes ago)</span></div>
-                <div class="album-title">Mama's Gun</div>
-                <div class="artist-title">Erykah Badu</div>
+                <div class="song-title bold">Icky <span class="caption">(scrobbled 1 minute ago)</span></div>
+                <div class="album-title">#2EVIL</div>
+                <div class="artist-title">Octi</div>
             </div>
             <div class="right no-border-left">
                 <button>play on spotify</button>
@@ -80,7 +81,6 @@
     </div>
     <hr>
     <div class="padding user-description">
-        <div class="bold">{{ User.nickname }}'s description</div>
         <span class="caption">{{ User.description }}</span>
     </div>
     <hr>

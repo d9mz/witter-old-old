@@ -30,7 +30,11 @@
                             <a href="/user/{{ Weet.user.username }}"><b>{{ Weet.user.nickname }}</b> @{{ Weet.user.username }}</a>
                             <span class="caption">{{ Weet.feed_created|timeago }}</span>
                         </span>
-                        <span class="comment-text inline-block">{{ Weet.feed_text }}</span>
+                        <span class="comment-text inline-block">{{ Weet.feed_text|nl2br }}</span>
+                        <div class="comment-actions">
+                            <span class="comment-action inline-block">0 <i class="far fa-comment"></i></span>
+                            <span class="comment-action inline-block">0 <i class="far fa-thumbs-up"></i></span>
+                        </div>
                     </div>
                 </div>
             {% endif %}

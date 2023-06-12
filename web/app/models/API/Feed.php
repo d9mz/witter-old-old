@@ -40,8 +40,9 @@ class Feed extends Model
     }
 
     public function NewPost() {
-        $alert = new Alert();
-        $user  = new \Witter\Models\User();
+        $alert    = new Alert();
+        $user     = new \Witter\Models\User();
+        $cooldown = new \Witter\Models\Cooldown();
 
         // comment validation
         if (!isset($_POST['comment']) && !empty(trim($_POST['comment']))) {
@@ -50,6 +51,12 @@ class Feed extends Model
 
         if (strlen($_POST['comment']) < 4 || strlen($_POST['comment']) > 200) {
             $alert->CreateAlert(Level::Error, "Your post must be longer than 3 characters and not longer than 20.");
+        }
+
+        if(!$cooldown->GetCooldown("weet_cooldown", $_SESSION['Handle'], 10)) {
+            $alert->CreateAlert(Level::Error, "Please wait 10 seconds before posting a Weet.");
+        } else {
+            $cooldown->SetCooldown("weet_cooldown", $_SESSION['Handle']);
         }
 
         $user = $user->GetUser($_SESSION['Handle']);
