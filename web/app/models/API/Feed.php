@@ -77,12 +77,12 @@ class Feed extends Model
                     $user = $user_fetch->GetUser($weet['feed_owner'], Type::ID);
                 }
 
-                // like logic
+                // Relation: For getting # of likes on a specific weet
                 $LikesSearch = $this->Connection->prepare("SELECT * FROM likes WHERE target = :target");
                 $LikesSearch->bindParam(":target", $weet['id']);
                 $LikesSearch->execute();
 
-                // did you like this post?
+                // Relation: Did you like this post?
                 if(isset($_SESSION['Handle'])) {
                     $weet["liked"] = $this->PostLiked($weet['id'], $_SESSION['Handle']);
                 } else {
@@ -99,6 +99,11 @@ class Feed extends Model
             return "";
         } else {
             $user_fetch = new \Witter\Models\User();
+
+            // Just get the user here, no need to requery the 
+            // database to get the user again when the same 
+            // person will always appear.
+
             $user = $user_fetch->GetUser($type, Type::Username);
 
             $Feed = $this->Connection->prepare("SELECT * FROM feed WHERE feed_owner = :id ORDER BY id DESC LIMIT " . $limit);
@@ -107,6 +112,21 @@ class Feed extends Model
 
             // Relation: get user info while fetching forum
             while ($weet = $Feed->fetch(\PDO::FETCH_ASSOC)) {
+                // Relation: For getting # of likes on a specific weet
+                $LikesSearch = $this->Connection->prepare("SELECT * FROM likes WHERE target = :target");
+                $LikesSearch->bindParam(":target", $weet['id']);
+                $LikesSearch->execute();
+
+                // Relation: Did you like this post?
+                if(isset($_SESSION['Handle'])) {
+                    $weet["liked"] = $this->PostLiked($weet['id'], $_SESSION['Handle']);
+                } else {
+                    $weet["liked"] = false;
+                }
+    
+                // assign user (accessible by weet.user.property in twig)
+                // assign likes property (weet.likes)
+                $weet["likes"] = $LikesSearch->rowCount();
                 $weet["user"] = @$user;
                 $weets[] = $weet;
             }
@@ -114,6 +134,51 @@ class Feed extends Model
 
         return @$weets;
     }
+
+    public function GetLikedPostsByUser(string|int $user, int $limit = 20) {
+        $userModel = new \Witter\Models\User();
+    
+        if(is_int($user)) $userData = $userModel->GetUser($user, Type::ID);
+        if(!is_int($user)) $userData = $userModel->GetUser($user, Type::Username);
+        if(!isset($userData['id'])) return []; // No such user
+        
+        $query = $this->Connection->prepare("SELECT * FROM likes WHERE user = :user LIMIT " . $limit);
+        $query->bindParam(":user", $userData['id']);
+        $query->execute();
+    
+        $user_fetch = new \Witter\Models\User();
+    
+        $weets = [];
+        while ($like = $query->fetch(\PDO::FETCH_ASSOC)) {
+            // Get the feed info for each liked weet
+            $Feed = $this->Connection->prepare("SELECT * FROM feed WHERE id = :id");
+            $Feed->bindParam(":id", $like['target']);
+            $Feed->execute();
+    
+            while ($weet = $Feed->fetch(\PDO::FETCH_ASSOC)) {
+                // Get user info
+                if ($user_fetch->UserExists($weet['feed_owner'], Type::ID)) {
+                    $user = $user_fetch->GetUser($weet['feed_owner'], Type::ID);
+                }
+    
+                // Get likes info for this weet
+                $LikesSearch = $this->Connection->prepare("SELECT * FROM likes WHERE target = :target");
+                $LikesSearch->bindParam(":target", $weet['id']);
+                $LikesSearch->execute();
+    
+                // Check if the specified user liked this post
+                $weet["liked"] = $this->PostLiked($weet['id'], $userData['id']);
+                
+                // Assign user (accessible by weet.user.property in twig)
+                // Assign likes property (weet.likes)
+                $weet["likes"] = $LikesSearch->rowCount();
+                $weet["user"] = @$user;
+                $weets[] = $weet;
+            }
+        }
+    
+        return $weets;
+    }    
 
     public function NewPost() {
         $alert    = new Alert();

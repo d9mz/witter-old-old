@@ -37,4 +37,30 @@ $(function() {
             }
         });        
     });
+
+    $('.follow_button').on('click', function() {
+        let followTarget = $(this).data('follow-target'); // Get the data attribute value
+        let following = $(this).data('following'); // Get the data attribute value
+        console.info("[follow action] follow uid " + followTarget);
+        console.info("[follow action] following? " + following);
+
+        // Regardless, send POST request
+        /*
+        $.ajax({
+            url: '/actions/post/' + commentID + '/like',
+            type: 'POST',
+            data: JSON.stringify({weet_id: commentID}),
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function(result){
+                // Do something with the result
+                console.log("[comment action]", result);
+            },
+            error: function(request, status, error){
+                // Handle errors
+                console.error('[comment action] failed to like/dislike! ' + error);
+            }
+        });        
+        */
+    });
 });

@@ -34,18 +34,29 @@ if(!isset($_SESSION['Handle'])) {
     $Router->Post('/user/register', "\Witter\Models\User@Register");
 } else {
     $Router->Get('/', "\Witter\Views\Homepage@Redirect");
+
+    // [WEB] [API] Settings
     $Router->Get('/settings', "\Witter\Views\Settings@View");
     $Router->Post('/settings/description', "\Witter\Models\Settings@Description");
     $Router->Post('/settings/nickname', "\Witter\Models\Settings@nickname");
     $Router->Post('/settings/picture/profile', "\Witter\Models\Settings@ProfilePicture");
     $Router->Post('/settings/picture/banner', "\Witter\Models\Settings@Banner");
+
+    // [WEB] Profiles
+    $Router->Get('/user/{user}/likes', "\Witter\Views\User@Likes");
+    $Router->Get('/user/{user}', "\Witter\Views\User@View");
+
+    // [WEB] Feed
     $Router->Get('/feed', "\Witter\Views\Feed@View");
     $Router->Post('/feed', "\Witter\Models\Feed@NewPost"); 
-    $Router->Get('/user/{user}', "\Witter\Views\User@View");
 
     // [API] Actions for posts
     $Router->Post('/actions/post/{id}/like', "\Witter\Models\Feed@LikePost");
-    $Router->Post('/actions/post/{id}/delete', "\Witter\Models\Feed@LikePost"); // delete
+    $Router->Post('/actions/post/{id}/delete', "\Witter\Models\Feed@LikePost");
+
+    // [API] Actions for user
+    $Router->Post('/actions/user/{id}/follow', "\Witter\Models\User@Follow");
+    $Router->Post('/actions/user/{id}/block', "\Witter\Models\User@Block");
 }
 
 $Router->Set404(function() {

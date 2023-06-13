@@ -53,14 +53,14 @@
                 <span class="caption inline-block" style="width: unset;">@{{ User.username }}</span><br>
                 <span class="caption">joined {{ User.created|timeago }}</span><br>
                 <span class="caption">last online {{ User.last_login|timeago }}</span>
-                <button class="button left" id="follow_button" follow_target="{{ User.id }}" aria-label="Follow">follow</button>
+                <button class="button left follow_button" data-following="false" data-follow-target="{{ User.id }}" aria-label="Follow">follow</button>
             </div>
         </div>
 
         <div class="tab-group">
-            <a href="#"><div class="tab primary">weets</div></a>
-            <a href="#"><div class="tab">media</div></a>
-            <a href="#"><div class="tab">liked weets</div></a>
+            <a href="/user/{{ User.username }}"><div class="tab {% if ActiveTab == 'all' %}primary{% endif %}">weets</div></a>
+            <a href="/user/{{ User.username }}/media"><div class="tab {% if ActiveTab == 'media' %}primary{% endif %}">media</div></a>
+            <a href="/user/{{ User.username }}/likes"><div class="tab {% if ActiveTab == 'likes' %}primary{% endif %}">liked weets</div></a>
         </div>
     </div>
     <hr>
@@ -93,10 +93,22 @@
                     </div>
                     <div class="comment-body inline-block padding">
                         <span class="comment-info inline-block">
-                            <a href="/user/{{ Weet.user.username }}"><b>{{ Weet.user.nickname }}</b> @{{ Weet.user.username }}</a>
+                            <a href="/user/{{ Weet.user.username }}"><b class="comment-author">{{ Weet.user.nickname }}</b> @{{ Weet.user.username }}</a>
                             <span class="caption">{{ Weet.feed_created|timeago }}</span>
                         </span>
-                        <span class="comment-text inline-block">{{ Weet.feed_text }}</span>
+                        <span class="comment-text inline-block">{{ Weet.feed_text|nl2br }}</span>
+                        <div class="comment-actions">
+                            <a href="/{{ Weet.user.username }}/weet/{{ Weet.id }}">
+                                <span class="comment-action inline-block">
+                                    <span class="comment-action-text">0</span> 
+                                    <i class="far fa-comment"></i>
+                                </span>
+                            </a>
+                            <span class="comment-action comment_like inline-block {% if Weet.liked %}active{% endif %}" data-comment-id="{{ Weet.id }}">
+                                <span class="comment-action-text">{{ Weet.likes }}</span> 
+                                <i class="far fa-thumbs-up"></i>
+                            </span>
+                        </div>
                     </div>
                 </div>
             {% endif %}
