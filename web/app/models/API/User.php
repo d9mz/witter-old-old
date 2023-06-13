@@ -55,7 +55,7 @@ class User extends Model
                 ]
             );
 
-            $response = array('status' => 'success', 'action' => 'unfollowed');
+            $response = array('status' => 'success', 'action' => 'follow');
         } else {
             $stmt = $this->Connection->prepare(
                 "INSERT INTO followers
@@ -68,7 +68,7 @@ class User extends Model
                 $user['id'],
             ]);
 
-            $response = array('status' => 'success', 'action' => 'followed');
+            $response = array('status' => 'success', 'action' => 'unfollow');
         }
 
         echo json_encode($response);

@@ -45,7 +45,7 @@ $(function() {
         console.info("[follow action] follow uid " + followTarget);
         console.info("[follow action] following? " + following);
 
-        if($(this).text() == "follow") {
+        if($(this).text().trim() == "follow") {
             $(this).text("unfollow");
         } else {
             $(this).text("follow");
