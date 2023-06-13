@@ -39,9 +39,13 @@ if(!isset($_SESSION['Handle'])) {
     $Router->Post('/settings/nickname', "\Witter\Models\Settings@nickname");
     $Router->Post('/settings/picture/profile', "\Witter\Models\Settings@ProfilePicture");
     $Router->Post('/settings/picture/banner', "\Witter\Models\Settings@Banner");
-    $Router->Get('/feed', "\Witter\Views\Feed@View"); // FINISH UP...
-    $Router->Post('/feed', "\Witter\Models\Feed@NewPost"); // IMPLEMENT tomorrow
-    $Router->Get('/user/{user}', "\Witter\Views\User@View"); // FINISH UP... (cdn)
+    $Router->Get('/feed', "\Witter\Views\Feed@View");
+    $Router->Post('/feed', "\Witter\Models\Feed@NewPost"); 
+    $Router->Get('/user/{user}', "\Witter\Views\User@View");
+
+    // [API] Actions for posts
+    $Router->Post('/actions/post/{id}/like', "\Witter\Models\Feed@LikePost");
+    $Router->Post('/actions/post/{id}/delete', "\Witter\Models\Feed@LikePost"); // delete
 }
 
 $Router->Set404(function() {

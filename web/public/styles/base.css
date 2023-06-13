@@ -151,6 +151,14 @@ h1, h2, h3, h4, h5 ,h6 {
     border-left: 0px solid black !important;
 }
 
+.comment-author {
+    max-width: 185px;
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
 .comment-action {
     padding: 3px;
     min-width: 25px;

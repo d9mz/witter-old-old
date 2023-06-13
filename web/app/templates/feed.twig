@@ -27,7 +27,7 @@
                     </div>
                     <div class="comment-body inline-block padding">
                         <span class="comment-info inline-block">
-                            <a href="/user/{{ Weet.user.username }}"><b>{{ Weet.user.nickname }}</b> @{{ Weet.user.username }}</a>
+                            <a href="/user/{{ Weet.user.username }}"><b class="comment-author">{{ Weet.user.nickname }}</b> @{{ Weet.user.username }}</a>
                             <span class="caption">{{ Weet.feed_created|timeago }}</span>
                         </span>
                         <span class="comment-text inline-block">{{ Weet.feed_text|nl2br }}</span>
@@ -38,8 +38,8 @@
                                     <i class="far fa-comment"></i>
                                 </span>
                             </a>
-                            <span class="comment-action comment_like inline-block" data-comment-id="{{ Weet.id }}">
-                                <span class="comment-action-text">0</span> 
+                            <span class="comment-action comment_like inline-block {% if Weet.liked %}active{% endif %}" data-comment-id="{{ Weet.id }}">
+                                <span class="comment-action-text">{{ Weet.likes }}</span> 
                                 <i class="far fa-thumbs-up"></i>
                             </span>
                         </div>

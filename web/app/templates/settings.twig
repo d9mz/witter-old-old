@@ -1,11 +1,12 @@
 {% extends "base.twig" %}
 {%- block Container -%}
     <div class="padding">
-        <h3>settings</h3>
+        <h3><i class="far fa-wrench"></i> user settings</h3>
     </div>
     <hr>
     <div class="padding no-padding-top no-padding-bottom">
         <div class="left padding-top padding-bottom">
+            <div class="bold">display</div>
             <form class="form" method="post" action="/settings/nickname/">
                 <div class="input-group">
                     <label for="username">display name</label>
@@ -13,7 +14,7 @@
                     <input type="submit" class="inline-submit" value="change" aria-label="Change">
                 </div>
             </form><br>
-            <h3>description</h3>
+            <div class="bold">description</div>
             <form class="form" method="post" action="/settings/description">
                 <div class="input-group">
                     <textarea type="text" class="full" required placeholder="my name is ..." name="description" aria-label="Weet">{{ User.description }}</textarea>
@@ -24,7 +25,7 @@
         </div>
 
         <div class="right padding-top padding-bottom">
-            <h3>photos</h3>
+            <div class="bold">photos</div>
             <form class="form" method="post" action="/settings/picture/profile/" enctype="multipart/form-data">
                 <div class="input-group">
                     <label for="profile_picture" style="width: 25%;">profile picture</label>

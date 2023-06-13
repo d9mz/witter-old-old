@@ -9,7 +9,7 @@ class Settings extends View {
         $user = $user->GetUser($_SESSION['Handle']);
 
         echo $this->Twig->render('settings.twig', array(
-            "PageSettings" => $this->PageSettings(),
+            "PageSettings" => $this->PageSettings("Settings", "Settings page"),
             "User" => $user,
         ));
     }

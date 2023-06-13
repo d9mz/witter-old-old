@@ -3,6 +3,67 @@ namespace Witter\Models;
 
 class Feed extends Model
 {
+    public function PostLiked(int $id, string|int $user) : bool {
+        $userModel = new \Witter\Models\User();
+
+        if(is_int($user)) $userData = $userModel->GetUser($user, Type::ID);
+        if(!is_int($user)) $userData = $userModel->GetUser($user, Type::Username);
+        if(!isset($userData['id'])) return true; // THIS should not happen. Do not proceed at all
+        
+        $LikeSearch = $this->Connection->prepare("SELECT * FROM likes WHERE target = :target AND user = :user LIMIT 1");
+        $LikeSearch->bindParam(":target", $id);
+        $LikeSearch->bindParam(":user", $userData['id']);
+        $LikeSearch->execute();
+        $Like = $LikeSearch->fetch();
+
+        if (isset($Like['id'])) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function LikePost(string $id) { 
+        $id = (int)$id; // cast $id to integer
+
+        $userModel = new \Witter\Models\User();
+        $user = $userModel->GetUser($_SESSION['Handle'], Type::Username);
+
+        // Get the JSON payload from the POST request
+        $json = file_get_contents('php://input');
+
+        // Decode the JSON into a PHP object
+        $data = json_decode($json);
+        $comment_id = $data->weet_id;
+
+        if($this->PostLiked($comment_id, $_SESSION['Handle'])) {
+            $stmt = $this->Connection->prepare("DELETE FROM likes WHERE target = ? AND user = ?");
+            $stmt->execute(
+                [
+                    $id,
+                    $user['id'],
+                ]
+            );
+
+            $response = array('status' => 'success', 'action' => 'unliked');
+        } else {
+            $stmt = $this->Connection->prepare(
+                "INSERT INTO likes
+                    (target, user) 
+                VALUES 
+                    (?, ?)"
+            );
+            $stmt->execute([
+                $id,
+                $user['id'],
+            ]);
+
+            $response = array('status' => 'success', 'action' => 'liked');
+        }
+
+        echo json_encode($response);
+    }
+
     // returns pdo loopabble thingy, can use while
     public function GetFeed(string $type = "following", int $limit = 20) {
         if($type == "everyone") {
@@ -16,6 +77,21 @@ class Feed extends Model
                     $user = $user_fetch->GetUser($weet['feed_owner'], Type::ID);
                 }
 
+                // like logic
+                $LikesSearch = $this->Connection->prepare("SELECT * FROM likes WHERE target = :target");
+                $LikesSearch->bindParam(":target", $weet['id']);
+                $LikesSearch->execute();
+
+                // did you like this post?
+                if(isset($_SESSION['Handle'])) {
+                    $weet["liked"] = $this->PostLiked($weet['id'], $_SESSION['Handle']);
+                } else {
+                    $weet["liked"] = false;
+                }
+    
+                // assign user (accessible by weet.user.property in twig)
+                // assign likes property (weet.likes)
+                $weet["likes"] = $LikesSearch->rowCount();
                 $weet["user"] = @$user;
                 $weets[] = $weet;
             }

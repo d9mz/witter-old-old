@@ -10,7 +10,7 @@ class Feed extends View {
 
         // UGLY.... Why do ?
         echo $this->Twig->render('feed.twig', array(
-            "PageSettings" => $this->PageSettings(),
+            "PageSettings" => $this->PageSettings("Feed", "This is your feed."),
             "Feed" => @$feed,
         ));
     }
