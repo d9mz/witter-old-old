@@ -9,6 +9,71 @@ enum Type: int {
 
 class User extends Model
 {
+    public function FollowingUser(string|int $target, string|int $user) : bool {
+        $userModel = new \Witter\Models\User();
+
+        // TODO: UGLY!! Ugly as shit
+        if(is_int($target)) $userTarget = $userModel->GetUser($target, Type::ID);
+        if(!is_int($target)) $userTarget = $userModel->GetUser($target, Type::Username);
+        if(!isset($userTarget['id'])) return true; // THIS should not happen. Do not proceed at all
+        
+        if(is_int($user)) $userData = $userModel->GetUser($user, Type::ID);
+        if(!is_int($user)) $userData = $userModel->GetUser($user, Type::Username);
+        if(!isset($userData['id'])) return true; // THIS should not happen. Do not proceed at all
+
+        if($userData['id'] == $userTarget['id']) return true; // No following yourself...
+
+        $query = $this->Connection->prepare("SELECT * FROM followers WHERE user = :user AND target = :target LIMIT 1");
+        $query->bindParam(":target", $userTarget['id']);
+        $query->bindParam(":user", $userData['id']);
+        $query->execute();
+        $follow = $query->fetch();
+
+        if (isset($follow['id'])) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function Follow(string $uid) {
+        $userModel = new \Witter\Models\User();
+        $user = $userModel->GetUser($_SESSION['Handle'], Type::Username);
+
+        // Get the JSON payload from the POST request
+        $json = file_get_contents('php://input');
+
+        // Decode the JSON into a PHP object
+        $data = json_decode($json);
+
+        if($this->FollowingUser((int)$uid, $_SESSION['Handle'])) {
+            $stmt = $this->Connection->prepare("DELETE FROM followers WHERE target = ? AND user = ?");
+            $stmt->execute(
+                [
+                    $uid,
+                    $user['id'],
+                ]
+            );
+
+            $response = array('status' => 'success', 'action' => 'unfollowed');
+        } else {
+            $stmt = $this->Connection->prepare(
+                "INSERT INTO followers
+                    (target, user) 
+                VALUES 
+                    (?, ?)"
+            );
+            $stmt->execute([
+                $uid,
+                $user['id'],
+            ]);
+
+            $response = array('status' => 'success', 'action' => 'followed');
+        }
+
+        echo json_encode($response);
+    }
+
     // vvv Type type = Type ??? Looks weird but whatever
     public function GetUser($user, Type $type = Type::Username) {
         $type = match ($type) {
@@ -58,6 +123,9 @@ class User extends Model
             }
 
             $user['banner'] = $cdn;
+
+            // is the logged in user following this user?
+            // can't do this here because it causes a memory leak ????
 
             return $user;
         } else {

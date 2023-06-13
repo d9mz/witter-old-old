@@ -14,6 +14,14 @@ class User extends View {
             $feed = $feed->GetFeed($handle, 20);
             $user = $userclass->GetUser($handle);
 
+            // is the logged in user following the current user?
+            if(isset($_SESSION['Handle'])) {
+                $following = new \Witter\Models\User();
+                $user['following'] = $following->FollowingUser($user['id'], $_SESSION['Handle']);
+            } else {
+                $user['following'] = false;
+            }
+
             echo $this->Twig->render('user.twig', array(
                 "PageSettings" => $this->PageSettings($user['nickname'] . " (@" . $user['username'] . ")", $user['description']),
                 "User" => $user,
@@ -35,6 +43,14 @@ class User extends View {
             $feed = new \Witter\Models\Feed();
             $feed = $feed->GetLikedPostsByUser($handle, 20);
             $user = $userclass->GetUser($handle);
+            
+            // is the logged in user following the current user?
+            if(isset($_SESSION['Handle'])) {
+                $following = new \Witter\Models\User();
+                $user['following'] = $following->FollowingUser($user['id'], $_SESSION['Handle']);
+            } else {
+                $user['following'] = false;
+            }
 
             echo $this->Twig->render('user.twig', array(
                 "PageSettings" => $this->PageSettings($user['nickname'] . " (@" . $user['username'] . ")", $user['description']),

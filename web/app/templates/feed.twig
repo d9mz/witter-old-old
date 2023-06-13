@@ -2,8 +2,8 @@
 {%- block Container -%}
     <div class="padding">
         <div class="tab-group">
-            <a href="#"><div class="tab primary">all</div></a>
-            <a href="#"><div class="tab">following</div></a>
+            <a href="/feed"><div class="tab {% if ActiveTab == 'all' %}primary{% endif %}">all</div></a>
+            <a href="/feed/following"><div class="tab {% if ActiveTab == 'following' %}primary{% endif %}">following</div></a>
         </div>
     </div>
     <hr>
@@ -47,6 +47,16 @@
                 </div>
             {% endif %}
         {% endfor %}
+        {% if Feed|length == 0 %}
+            <br>
+            <div class="center caption padding-top padding-bottom">
+                {% if ActiveTab == 'all' %}
+                    There appears to be no Weets in your feed.
+                {% elseif ActiveTab == 'following' %}
+                    There appears to be no Weets in your following feed. Follow some people!
+                {% endif %}
+            </div>
+        {% endif %}
     </div>
     <script>
         let characters = 200;

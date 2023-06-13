@@ -12,6 +12,19 @@ class Feed extends View {
         echo $this->Twig->render('feed.twig', array(
             "PageSettings" => $this->PageSettings("Feed", "This is your feed."),
             "Feed" => @$feed,
+            "ActiveTab" => "all",
+        ));
+    }
+
+    public function Following() {
+        $feed = new \Witter\Models\Feed();
+        $feed = $feed->GetFollowingFeed($_SESSION['Handle']);
+
+        // UGLY.... Why do ?
+        echo $this->Twig->render('feed.twig', array(
+            "PageSettings" => $this->PageSettings("Feed", "This is your feed."),
+            "Feed" => @$feed,
+            "ActiveTab" => "following",
         ));
     }
 }

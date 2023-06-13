@@ -53,7 +53,14 @@
                 <span class="caption inline-block" style="width: unset;">@{{ User.username }}</span><br>
                 <span class="caption">joined {{ User.created|timeago }}</span><br>
                 <span class="caption">last online {{ User.last_login|timeago }}</span>
-                <button class="button left follow_button" data-following="false" data-follow-target="{{ User.id }}" aria-label="Follow">follow</button>
+                <button 
+                    class="button left follow_button" 
+                    {% if Session.Handle == User.username %}disabled{% endif %}
+                    data-following="{% if User.following and Session.Handle != User.username %}true{% else %}false{% endif %}" 
+                    data-follow-target="{{ User.id }}" 
+                    aria-label="Follow">
+                    {% if User.following and Session.Handle != User.username %}unfollow{% else %}follow{% endif %}
+                </button>
             </div>
         </div>
 
@@ -115,7 +122,11 @@
         {% endfor %}
         {% if Feed|length == 0 %}
             <div class="center caption padding-top padding-bottom">
-                This user has no Weets.
+                {% if ActiveTab == 'all' %}
+                    This user has no Weets.
+                {% elseif ActiveTab == 'likes' %}
+                    This user has no liked Weets.
+                {% endif %}
             </div>
         {% endif %}
     </div>

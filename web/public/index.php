@@ -48,6 +48,7 @@ if(!isset($_SESSION['Handle'])) {
 
     // [WEB] Feed
     $Router->Get('/feed', "\Witter\Views\Feed@View");
+    $Router->Get('/feed/following', "\Witter\Views\Feed@Following");
     $Router->Post('/feed', "\Witter\Models\Feed@NewPost"); 
 
     // [API] Actions for posts

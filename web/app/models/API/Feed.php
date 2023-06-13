@@ -23,6 +23,63 @@ class Feed extends Model
         }
     }
 
+    public function GetFollowingFeed(string|int $user) : array {
+        $userModel = new \Witter\Models\User();
+    
+        // Get user data
+        if(is_int($user)) $userData = $userModel->GetUser($user, Type::ID);
+        if(!is_int($user)) $userData = $userModel->GetUser($user, Type::Username);
+        if(!isset($userData['id'])) return []; // If user not found, return empty array
+    
+        // Prepare the query
+        $query = $this->Connection->prepare(
+            "SELECT f.id, f.feed_owner, f.feed_text, f.feed_created 
+            FROM followers AS flw
+            INNER JOIN feed AS f ON flw.target = f.feed_owner
+            WHERE flw.user = :user
+            ORDER BY f.feed_created DESC" 
+        );
+    
+        // Bind parameters
+        $query->bindParam(":user", $userData['id']);
+    
+        // Execute the query
+        $query->execute();
+    
+        // Fetch the results
+        $feed = $query->fetchAll(\PDO::FETCH_ASSOC);
+    
+        // Check if feed is empty
+        if(empty($feed)) {
+            return []; // No posts from followed users found, return empty array
+        }
+    
+        foreach($feed as &$post) {
+            // Get post owner data
+            if($userModel->UserExists($post['feed_owner'], Type::ID)) {
+                $postOwner = $userModel->GetUser($post['feed_owner'], Type::ID);
+            }
+            
+            // Get likes count for the post
+            $likesQuery = $this->Connection->prepare("SELECT * FROM likes WHERE target = :target");
+            $likesQuery->bindParam(":target", $post['id']);
+            $likesQuery->execute();
+            
+            // Check if current user liked the post
+            if(isset($_SESSION['Handle'])) {
+                $post["liked"] = $this->PostLiked($post['id'], $_SESSION['Handle']);
+            } else {
+                $post["liked"] = false;
+            }
+    
+            // Assign likes count and post owner data to the post
+            $post["likes"] = $likesQuery->rowCount();
+            $post["user"] = @$postOwner;
+        }
+    
+        return $feed;
+    }
+       
     public function LikePost(string $id) { 
         $id = (int)$id; // cast $id to integer
 
@@ -65,7 +122,7 @@ class Feed extends Model
     }
 
     // returns pdo loopabble thingy, can use while
-    public function GetFeed(string $type = "following", int $limit = 20) {
+    public function GetFeed(string $type = "following", int $limit = 20) : array {
         if($type == "everyone") {
             $Feed = $this->Connection->prepare("SELECT * FROM feed ORDER BY id DESC LIMIT " . $limit);
             $Feed->execute();
@@ -96,7 +153,7 @@ class Feed extends Model
                 $weets[] = $weet;
             }
         } elseif($type == "following") {
-            return "";
+            return [];
         } else {
             $user_fetch = new \Witter\Models\User();
 
@@ -142,7 +199,7 @@ class Feed extends Model
         if(!is_int($user)) $userData = $userModel->GetUser($user, Type::Username);
         if(!isset($userData['id'])) return []; // No such user
         
-        $query = $this->Connection->prepare("SELECT * FROM likes WHERE user = :user LIMIT " . $limit);
+        $query = $this->Connection->prepare("SELECT * FROM likes WHERE user = :user ORDER BY id DESC LIMIT " . $limit);
         $query->bindParam(":user", $userData['id']);
         $query->execute();
     

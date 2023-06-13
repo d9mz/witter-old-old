@@ -19,6 +19,12 @@ What the hell?
     --background-color: #fbfdff;
 }
 
+.follow_button:disabled {
+    background-image: linear-gradient(45deg, #676869 25%, #575b5c 25%, #575b5c 50%, #676869 50%, #676869 75%, #575b5c 75%, #575b5c 100%);
+background-size: 5.66px 5.66px;
+    border: 1px solid #676869;
+}
+
 .no-margin {
     margin: 0px;
     padding: 0px;
