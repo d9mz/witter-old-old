@@ -9,8 +9,8 @@ class Cooldown extends Model {
     // TODO: Clean up this function... Looks pretty ugly
     public function GetCooldown(string $column, int|string $user, int $cooldown) : bool {
         $userModel = new \Witter\Models\User();
-
-        if(is_int($user)) {
+        
+        if(filter_var($user, FILTER_VALIDATE_INT)) {
             if($userModel->UserExists($user, Type::ID)) {
                 // the $column parameter should ALWAYS be hardcoded!!!
                 $stmt = $this->Connection->prepare("SELECT * FROM users WHERE id = :id AND " . $column . " >= NOW() - INTERVAL " . $cooldown . " SECOND");
@@ -51,7 +51,7 @@ class Cooldown extends Model {
     public function SetCooldown(string $column, int|string $user) : void {
         $userModel = new \Witter\Models\User();
 
-        if(is_int($user)) {
+        if(filter_var($user, FILTER_VALIDATE_INT)) {
             if($userModel->UserExists($user, Type::ID)) {
                 // the $column parameter should ALWAYS be hardcoded!!!
                 $stmt = $this->Connection->prepare("UPDATE users SET " . $column . " = NOW() WHERE id = ?");

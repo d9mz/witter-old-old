@@ -105,9 +105,9 @@
                         </span>
                         <span class="comment-text inline-block">{{ Weet.feed_text|nl2br }}</span>
                         <div class="comment-actions">
-                            <a href="/{{ Weet.user.username }}/weet/{{ Weet.id }}">
+                            <a href="/user/{{ Weet.user.username }}/weet/{{ Weet.id }}">
                                 <span class="comment-action inline-block">
-                                    <span class="comment-action-text">0</span> 
+                                    <span class="comment-action-text">{{ Weet.replies }}</span> 
                                     <i class="far fa-comment"></i>
                                 </span>
                             </a>

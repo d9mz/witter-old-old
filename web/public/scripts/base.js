@@ -38,6 +38,43 @@ $(function() {
         });        
     });
 
+    $('.comment_like_reply').on('click', function() {
+        let commentID = $(this).data('comment-id'); // Get the data attribute value
+        let commentLabel = $(this).find('.comment-action-text');
+
+        console.info("[reply action] like #" + commentID);
+
+        $(this).toggleClass("active");
+        if($(this).hasClass("active")) {
+            // LIKE!!!
+
+            let commentLikes = parseInt(commentLabel.text()) + 1;
+            commentLabel.text(commentLikes);
+        } else {
+            // REMOVE LIKE!!!
+
+            let commentLikes = parseInt(commentLabel.text()) - 1;
+            commentLabel.text(commentLikes);
+        }
+
+        // Regardless, send POST request
+        $.ajax({
+            url: '/actions/reply/' + commentID + '/like',
+            type: 'POST',
+            data: JSON.stringify({weet_id: commentID}),
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function(result){
+                // Do something with the result
+                console.log("[reply action] ", result);
+            },
+            error: function(request, status, error){
+                // Handle errors
+                console.error('[reply action] failed to like/dislike! ' + error);
+            }
+        });        
+    });
+
     $('.follow_button').on('click', function() {
         let followTarget = $(this).data('follow-target');
         let following = $(this).data('following'); 

@@ -43,17 +43,26 @@ if(!isset($_SESSION['Handle'])) {
     $Router->Post('/settings/picture/banner', "\Witter\Models\Settings@Banner");
 
     // [WEB] Profiles
+    $Router->Get('/user/{user}/weet/{id}', "\Witter\Views\Feed@ViewWeet");
+    $Router->Get('/user/{user}/reply/{id}', "\Witter\Views\Feed@ViewReply");
     $Router->Get('/user/{user}/likes', "\Witter\Views\User@Likes");
     $Router->Get('/user/{user}', "\Witter\Views\User@View");
 
     // [WEB] Feed
     $Router->Get('/feed', "\Witter\Views\Feed@View");
     $Router->Get('/feed/following', "\Witter\Views\Feed@Following");
+    $Router->Get('/feed/trending', "\Witter\Views\Feed@Trending");
     $Router->Post('/feed', "\Witter\Models\Feed@NewPost"); 
+
+    // [API] Actions for replies
+    $Router->Post('/actions/reply/{id}/reply', "\Witter\Models\Feed@ReplyToReply");
+    $Router->Post('/actions/reply/{id}/like', "\Witter\Models\Feed@LikeReply");
 
     // [API] Actions for posts
     $Router->Post('/actions/post/{id}/like', "\Witter\Models\Feed@LikePost");
+    $Router->Post('/actions/post/{id}/reply', "\Witter\Models\Feed@Reply");
     $Router->Post('/actions/post/{id}/delete', "\Witter\Models\Feed@LikePost");
+
 
     // [API] Actions for user
     $Router->Post('/actions/user/{id}/follow', "\Witter\Models\User@Follow");
