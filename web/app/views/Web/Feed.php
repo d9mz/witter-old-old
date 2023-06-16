@@ -95,15 +95,56 @@ class Feed extends View {
             $weet['liked'] = false;
         }
 
-        // does the owner of that weet actually exist?
+        // FROM THIS POINT ON BELOW VVVV
+        $thread = []; // initialize thread variable
+        $weetTemp = $weet;
+        $weet_id_original = $weet_id;
+        echo "(a";
+        //echo $weetTemp['reply_target'];
+        $stillMoreReplies = $weetModel->WeetExists((int)$weet_id, true);
+        $repliesSeen = [];
+        while($stillMoreReplies) {
+            $weetTemp = $weetModel->GetReply($weet_id);
+            $weetTemp['reply'] = true;
+            print_r($weetTemp);
+            if(isset($weetTemp['reply_target']) && !in_array($weetTemp['id'], $repliesSeen)) {
+                $weet_id = $weetTemp['reply_target'];
+                $stillMoreReplies = $weetModel->WeetExists((int)$weet_id, true);
+                $thread[] = $weetTemp;
+                array_push($repliesSeen, $weetTemp['id']);
+            }
+        }
 
-        $weets = $feed->GetReplies((int)$weet_id, 20, true);
+        // get ORIGINAL root post
+        // this is HORRIBLE AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+        $original_weet = $weetModel->GetWeet($weet_id);
+        $original_weet['liked'] = $weetModel->PostLiked($original_weet['id'], $_SESSION['Handle']);
+        $original_weet['likes'] = $weetModel->GetLikeCount($original_weet['id']);
+        $original_weet['replies'] = $weetModel->GetReplyCount($original_weet['id']);
+        $original_weet['original'] = true;
+
+        // god forgive me
+        $original_weet = $weetModel->mapWeetToReply($original_weet, true);
+
+        array_push($thread, $original_weet);
+        $thread = array_reverse($thread);
+
+        print_r($thread);
+
+        echo ")";
+        // AND THIS POINT UP ^^^^
+        // REFACTOR THIS ASAP
+
+
+        // does the owner of that weet actually exist?
+        $weets = $feed->GetReplies((int)$weet_id_original, 20, true);
 
         echo $this->Twig->render('thread.twig', array(
             "PageSettings" => $this->PageSettings($user['nickname'] . " (@" . $user['username'] . ")", $user['description']),
             "Weet" => @$weet,
-            "Target" => @$weet_id,
+            "Target" => @$weet_id_original,
             "Thread" => @$weets,
+            "FullThread" => @$thread,
             "Reply" => true,
         ));
     }

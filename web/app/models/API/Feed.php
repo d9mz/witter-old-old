@@ -12,7 +12,7 @@ class Feed extends Model
             $mappedItem['reply_author'] = $item['feed_owner'];    
             $mappedItem['reply_created'] = $item['feed_created']; 
             $mappedItem['reply_target'] = $item['id'];            
-            $mappedItem['replying_to_reply'] = 'f';   
+            // $mappedItem['replying_to_reply'] = 'f';   
         } else {
             // Mapping Reply to Weet
             $mappedItem['feed_text'] = $item['reply_text'];       
@@ -22,6 +22,24 @@ class Feed extends Model
         }
     
         return $mappedItem;
+    }
+    
+    public function getWeetThread(int $weet_id) : array {
+        $weet = $this->GetWeet($weet_id);
+        if (!empty($weet)) {
+            // Get all replies to the weet
+            $replies = $this->GetReplies($weet_id);
+            // Loop through each reply and get replies to it (i.e., reply to reply)
+            if (!empty($replies)) {
+                foreach ($replies as $key => $reply) {
+                    $replies_to_reply = $this->GetReplies($reply['id'], 20, true);
+                    $replies[$key]['replies'] = $replies_to_reply;
+                }
+            }
+            // Add all replies (including replies to replies) to the weet
+            $weet['replies'] = $replies;
+        }
+        return $weet;
     }
     
     
