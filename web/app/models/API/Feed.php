@@ -358,7 +358,10 @@ class Feed extends Model
 
             // assign user (accessible by weet.user.property in twig)
             // assign likes property (weet.likes)
+
+            echo $weet['id'];
             $weet["replies"] = $this->GetReplyCount($weet['id'], true);
+            echo $weet["replies"];
             $weet["likes"] = $LikesSearch->rowCount();
             $weet["user"] = @$user;
             $weets[] = $weet;
@@ -408,11 +411,6 @@ class Feed extends Model
                     $user = $user_fetch->GetUser($weet['feed_owner'], Type::ID);
                 }
 
-                // Relation: For getting # of likes on a specific weet
-                $LikesSearch = $this->Connection->prepare("SELECT * FROM likes WHERE target = :target");
-                $LikesSearch->bindParam(":target", $weet['id']);
-                $LikesSearch->execute();
-
                 // Relation: Did you like this post?
                 if(isset($_SESSION['Handle'])) {
                     $weet["liked"] = $this->PostLiked($weet['id'], $_SESSION['Handle']);
@@ -423,7 +421,7 @@ class Feed extends Model
                 // assign user (accessible by weet.user.property in twig)
                 // assign likes property (weet.likes)
                 $weet["replies"] = $this->GetReplyCount($weet['id']);
-                $weet["likes"] = $LikesSearch->rowCount();
+                $weet["likes"] = $this->GetLikeCount($weet['id']);
                 $weet["user"] = @$user;
                 $weets[] = $weet;
             }
@@ -444,11 +442,6 @@ class Feed extends Model
 
             // Relation: get user info while fetching forum
             while ($weet = $Feed->fetch(\PDO::FETCH_ASSOC)) {
-                // Relation: For getting # of likes on a specific weet
-                $LikesSearch = $this->Connection->prepare("SELECT * FROM likes WHERE target = :target");
-                $LikesSearch->bindParam(":target", $weet['id']);
-                $LikesSearch->execute();
-
                 // Relation: Did you like this post?
                 if(isset($_SESSION['Handle'])) {
                     $weet["liked"] = $this->PostLiked($weet['id'], $_SESSION['Handle']);
@@ -459,7 +452,7 @@ class Feed extends Model
                 // assign user (accessible by weet.user.property in twig)
                 // assign likes property (weet.likes)
                 $weet["replies"] = $this->GetReplyCount($weet['id']);
-                $weet["likes"] = $LikesSearch->rowCount();
+                $weet["likes"] = $this->GetLikeCount($weet['id']);
                 $weet["user"] = @$user;
                 $weets[] = $weet;
             }

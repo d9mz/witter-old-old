@@ -86,6 +86,15 @@ class Feed extends View {
         $user = $userModel->GetUser($weet['feed_owner'], Type::ID);
         $weet['user'] = $user;
 
+        // have to do this fucked up shit for some reason
+        $weet['likes'] = $weetModel->GetLikeCount($weet['id'], true);
+        $weet['replies'] = $weetModel->GetReplyCount($weet['id'], true);
+        if(isset($_SESSION['Handle'])) {
+            $weet['liked']   = $weetModel->PostLiked($weet['id'], $_SESSION['Handle'], true);
+        } else {
+            $weet['liked'] = false;
+        }
+
         // does the owner of that weet actually exist?
 
         $weets = $feed->GetReplies((int)$weet_id, 20, true);
