@@ -9,6 +9,22 @@ enum Type: int {
 
 class User extends Model
 {
+    public function GetFollowerCount(int $uid) : int {
+        $Follower = $this->Connection->prepare("SELECT * FROM followers WHERE target = :id");
+        $Follower->bindParam(":id", $uid);
+        $Follower->execute();
+
+        return $Follower->rowCount();
+    }
+
+    public function GetFollowingCount(int $uid) : int {
+        $Following = $this->Connection->prepare("SELECT * FROM followers WHERE user = :id");
+        $Following->bindParam(":id", $uid);
+        $Following->execute();
+
+        return $Following->rowCount();
+    }
+
     public function FollowingUser(string|int $target, string|int $user) : bool {
         $userModel = new \Witter\Models\User();
 
@@ -126,6 +142,10 @@ class User extends Model
 
             // is the logged in user following this user?
             // can't do this here because it causes a memory leak ????
+
+            // get follower & follow count & make it properties of $user
+            $user['followers'] = $this->GetFollowerCount($user['id']);
+            $user['following'] = $this->GetFollowingCount($user['id']);
 
             return $user;
         } else {

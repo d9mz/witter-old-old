@@ -29,7 +29,7 @@
         </div>
     </div>
     <div class="padding header user-header" id="banner">
-        <!-- This looks extremely ugly on the templating side. Don't do this! -->
+        <!-- TODO: This looks extremely ugly on the templating side. Don't do this! -->
         <div class="header-items right">
             <a href="/"><h1>[witter]</h1></a>
             <div class="right align-right">
@@ -87,8 +87,14 @@
         </div>
     </div>
     <hr>
-    <div class="padding user-description">
-        <span class="caption">{{ User.description }}</span>
+    <div class="padding">
+        <div class="user-description">
+            <span class="caption">{{ User.description }}</span>
+        </div>
+        <div class="user-follow-metric">
+            <span class="caption"><b><a class="keep-color" href="/user/{{ User.username }}/followers">{{ User.followers }}</b> follower(s), </a></span>
+            <span class="caption"><b><a class="keep-color" href="/user/{{ User.username }}/following">{{ User.following }}</b> following</a></span>
+        </div>
     </div>
     <hr>
     <div class="padding">

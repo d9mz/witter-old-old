@@ -216,6 +216,10 @@ h1, h2, h3, h4, h5 ,h6 {
     display: inline-block;
 }
 
+.keep-color {
+    color: inherit !important;
+}
+
 .header .right {
     border-left: 0px solid #000000;
     padding-left: unset;
@@ -517,10 +521,6 @@ input[type="password"] {
 
 .weet .padding {
     padding: 6px;
-}
-
-.user-description {
-    padding-left: 10px;
 }
 
 .negative-margin {

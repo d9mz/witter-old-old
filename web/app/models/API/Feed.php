@@ -85,8 +85,9 @@ class Feed extends Model
             }
     
             // Assign post owner data and likes count to the post
+            $post["replies"] = $this->GetReplyCount($post['id']);
             $post["user"] = @$postOwner;
-            $post["likes"] = $post["likes_count"];
+            $post["likes"] = $this->GetLikeCount($post['id']);
         }
     
         // Reverse the order of the feed to have most liked posts at the top
@@ -235,10 +236,16 @@ class Feed extends Model
         echo json_encode($response);
     }
 
-    public function WeetExists(int $weet_id) : bool {
-        $stmt = $this->Connection->prepare("SELECT id FROM feed WHERE id = :id");
-        $stmt->bindParam(":id", $weet_id);
-        $stmt->execute();
+    public function WeetExists(int $weet_id, bool $reply = false) : bool {
+        if(!$reply) {
+            $stmt = $this->Connection->prepare("SELECT id FROM feed WHERE id = :id");
+            $stmt->bindParam(":id", $weet_id);
+            $stmt->execute();
+        } else {
+            $stmt = $this->Connection->prepare("SELECT id FROM reply WHERE id = :id");
+            $stmt->bindParam(":id", $weet_id);
+            $stmt->execute();
+        }
 
         return $stmt->rowCount() === 1;
     }
@@ -307,9 +314,9 @@ class Feed extends Model
             // assign user (accessible by weet.user.property in twig)
             // assign likes property (weet.likes)
             $weet["replies"] = $this->GetReplyCount($weet['id'], true);
-            $weet["likes"] = $LikesSearch->rowCount();
+            $weet["likes"] = $this->GetLikeCount($weet['id'], true);
             $weet["user"] = @$user;
-            
+
             return $weet;
         } else {
             return [];
@@ -317,14 +324,22 @@ class Feed extends Model
     }
 
 
-    public function GetReplies(int $weet_id, int $limit = 20) {
-        $Feed = $this->Connection->prepare("SELECT * FROM reply WHERE reply_target = :id ORDER BY id DESC LIMIT " . $limit);
+    public function GetReplies(int $weet_id, int $limit = 20, bool $reply_to_reply = false) {
+        echo $weet_id . ";";
+        echo (int)$reply_to_reply;
+        if(!$reply_to_reply) $query = "SELECT * FROM reply WHERE reply_target = :id AND replying_to_reply = 'f' ORDER BY id DESC LIMIT " . $limit;
+        if($reply_to_reply) $query = "SELECT * FROM reply WHERE reply_target = :id AND replying_to_reply = 't' ORDER BY id DESC LIMIT " . $limit;
+        echo "fart";
+
+        $Feed = $this->Connection->prepare($query);
         $Feed->bindParam(":id", $weet_id);
         $Feed->execute();
+        echo "fart";
 
         // Relation: get user info while fetching forum
         $user_fetch = new \Witter\Models\User();
         while ($weet = $Feed->fetch(\PDO::FETCH_ASSOC)) {
+            echo "fart";
             if ($user_fetch->UserExists($weet['reply_author'], Type::ID)) {
                 $user = $user_fetch->GetUser($weet['reply_author'], Type::ID);
             }
@@ -366,8 +381,22 @@ class Feed extends Model
         return $Feed->rowCount();
     }
 
+    public function GetLikeCount(int $weet_id, bool $reply = false) : int {
+        if(!$reply) {
+            $Feed = $this->Connection->prepare("SELECT * FROM likes WHERE target = :id AND reply = 'f'");
+            $Feed->bindParam(":id", $weet_id);
+            $Feed->execute();
+        } else {
+            $Feed = $this->Connection->prepare("SELECT * FROM likes WHERE target = :id AND reply = 't'");
+            $Feed->bindParam(":id", $weet_id);
+            $Feed->execute();
+        }
+
+        return $Feed->rowCount();
+    }
+
     // returns pdo loopabble thingy, can use while
-    public function GetFeed(string $type = "following", int $limit = 20) : array {
+    public function GetFeed(string $type = "following", int $limit = 20) {
         if($type == "everyone") {
             $Feed = $this->Connection->prepare("SELECT * FROM feed ORDER BY id DESC LIMIT " . $limit);
             $Feed->execute();
@@ -485,6 +514,43 @@ class Feed extends Model
         return $weets;
     }    
 
+    public function ReplyToReply($weet_id) {
+        $alert    = new Alert();
+        $user     = new \Witter\Models\User();
+        $cooldown = new \Witter\Models\Cooldown();
+        $weet     = new \Witter\Models\Feed();
+        $alert    = new \Witter\Models\Alert();
+
+        if(!filter_var($weet_id, FILTER_VALIDATE_INT)) $alert->CreateAlert(Level::Error, "Invalid Weet ID");
+        if(!$weet->WeetExists((int)$weet_id)) $alert->CreateAlert(Level::Error, "This weet does not exist.");
+
+        // comment validation
+        if (!isset($_POST['comment']) && !empty(trim($_POST['comment']))) {
+            $alert->CreateAlert(Level::Error, "You did not enter a reply.");
+        }
+
+        if (strlen($_POST['comment']) < 4 || strlen($_POST['comment']) > 200) {
+            $alert->CreateAlert(Level::Error, "Your reply must be longer than 3 characters and not longer than 20.");
+        }
+
+        if(!$cooldown->GetCooldown("weet_cooldown", $_SESSION['Handle'], 10)) {
+            $alert->CreateAlert(Level::Error, "Please wait 10 seconds before replying to a Weet.");
+        } else {
+            $cooldown->SetCooldown("weet_cooldown", $_SESSION['Handle']);
+        }
+
+        $user = $user->GetUser($_SESSION['Handle']);
+
+        $stmt = $this->Connection->prepare("INSERT INTO reply (reply_author, reply_text, reply_target, replying_to_reply) VALUES (:id, :comment, :target, 't')");
+
+        $stmt->bindParam(":id", $user['id']);
+        $stmt->bindParam(":comment", $_POST['comment']);
+        $stmt->bindParam(":target", $weet_id);
+
+        $stmt->execute();
+
+        $alert->CreateAlert(Level::Success, "Successfully replied!");
+    }
     public function Reply($weet_id) {
         $alert    = new Alert();
         $user     = new \Witter\Models\User();

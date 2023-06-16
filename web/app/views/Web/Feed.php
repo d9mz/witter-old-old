@@ -66,35 +66,36 @@ class Feed extends View {
             "PageSettings" => $this->PageSettings($user['nickname'] . " (@" . $user['username'] . ")", $user['description']),
             "Weet" => @$weet,
             "Thread" => @$weets,
+            "Reply" => false,
         ));
     }
 
-    public function ViewReply(string $user, string $weet_id) {
+    public function ViewReply(string $weet_id) {
         $weetModel  = new \Witter\Models\Feed();
         $userModel  = new \Witter\Models\User();
         $alert = new \Witter\Models\Alert();
         $feed = new \Witter\Models\Feed();
         if(!filter_var($weet_id, FILTER_VALIDATE_INT)) $alert->CreateAlert(Level::Error, "Invalid Weet ID");
-        if(!$weetModel->WeetExists((int)$weet_id)) $alert->CreateAlert(Level::Error, "This weet does not exist.");
+        if(!$weetModel->WeetExists((int)$weet_id, true)) $alert->CreateAlert(Level::Error, "This weet does not exist.");
 
         $weet = $weetModel->GetReply((int)$weet_id);
         $weet = $weetModel->mapWeetToReply($weet, false);
 
         if(!$userModel->UserExists($weet['feed_owner'], Type::ID)) $alert->CreateAlert(Level::Error, "This weet does not exist.");
 
-        $user = $userModel->GetUser($user);
-
-        // no url tampering!
-        if(@$user['id'] != $weet['feed_owner']) $alert->CreateAlert(Level::Error, "This weet does not exist.");
+        $user = $userModel->GetUser($weet['feed_owner'], Type::ID);
+        $weet['user'] = $user;
 
         // does the owner of that weet actually exist?
 
-        $weets = $feed->GetReplies((int)$weet_id);
+        $weets = $feed->GetReplies((int)$weet_id, 20, true);
 
         echo $this->Twig->render('thread.twig', array(
             "PageSettings" => $this->PageSettings($user['nickname'] . " (@" . $user['username'] . ")", $user['description']),
             "Weet" => @$weet,
+            "Target" => @$weet_id,
             "Thread" => @$weets,
+            "Reply" => true,
         ));
     }
 }

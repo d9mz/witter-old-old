@@ -1,5 +1,85 @@
 {% extends "base.twig" %}
+{%- block Header -%}
+    {#- This is fucking TERRIBLE! -#}
+    <script>$(".header-container").css("display", "none");</script>
+{% endblock %}
 {%- block Container -%}
+    <style>
+        /*  TODO: Don't inline style any of this stuff!
+                  Put all user CSS in a MD5 hashed thingymcbob,
+                  could just be a hash of their username then
+                  accessible by /css/.
+        */
+
+        #banner {
+            background-image: url("/cdn/{{ Weet.user.banner }}");
+            border-bottom: var(--primary-border-color);
+        }
+
+        .user-album-container {
+
+        }
+    </style>
+    <div class="alternative-header">
+        <h3 class="inline-block"><a href="/">witter</a></h3>
+        <div class="links inline-block float-right no-border-left">
+            <a href="/user/{{ Session.Handle }}">@{{ Session.Handle }}</a>
+            <a href="/feed">feed</a>
+            <a href="/settings">settings</a>
+        </div>
+    </div>
+    <div class="padding header user-header" id="banner">
+        <!-- TODO: This looks extremely ugly on the templating side. Don't do this! -->
+        <div class="header-items right">
+            <a href="/"><h1>[witter]</h1></a>
+            <div class="right align-right">
+                {% if Session.Handle is not defined %}
+                    <a href="/users">users</a>
+                    <a href="/feed">feed</a>
+                    <a href="/">login</a>
+                {% else %}
+                    <a href="/user/{{ Session.Handle }}">@{{ Session.Handle }}</a>
+                    <a href="/feed">feed</a>
+                    <a href="/settings">settings</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="padding user-panel">
+        <div class="user-card wide">
+            <img class="profile-picture" src="/cdn/{{ Weet.user.profile_picture }}">
+            <div class="user-metadata inline-block top">
+                <b>{{ Weet.user.nickname }}</b>
+                <span class="caption inline-block" style="width: unset;">@{{ Weet.user.username }}</span><br>
+                <span class="caption">joined {{ Weet.user.created|timeago }}</span><br>
+                <span class="caption">last online {{ Weet.user.last_login|timeago }}</span>
+                <button 
+                    class="button left follow_button" 
+                    {% if Session.Handle == Weet.user.username %}disabled{% endif %}
+                    data-following="{% if Weet.user.following and Session.Handle != Weet.user.username %}true{% else %}false{% endif %}" 
+                    data-follow-target="{{ Weet.user.id }}" 
+                    aria-label="Follow">
+                    {% if Weet.user.following and Session.Handle != Weet.user.username %}unfollow{% else %}follow{% endif %}
+                </button>
+            </div>
+        </div>
+
+        <div class="tab-group">
+            <a href="/user/{{ Weet.user.username }}"><div class="tab {% if ActiveTab == 'all' %}primary{% endif %}">weets</div></a>
+            <a href="/user/{{ Weet.user.username }}/media"><div class="tab {% if ActiveTab == 'media' %}primary{% endif %}">media</div></a>
+            <a href="/user/{{ Weet.user.username }}/likes"><div class="tab {% if ActiveTab == 'likes' %}primary{% endif %}">liked weets</div></a>
+        </div>
+    </div>
+    <div class="padding">
+        <div class="user-description">
+            <span class="caption">{{ Weet.user.description }}</span>
+        </div>
+        <div class="user-follow-metric">
+            <span class="caption"><b><a class="keep-color" href="/user/{{ Weet.user.username }}/followers">{{ Weet.user.followers }}</b> follower(s), </a></span>
+            <span class="caption"><b><a class="keep-color" href="/user/{{ Weet.user.username }}/following">{{ Weet.user.following }}</b> following</a></span>
+        </div>
+    </div>
+    <hr>
     <div class="padding no-padding-top">
         <div class="weet">
             <div class="inline-block padding top">
@@ -28,16 +108,28 @@
     </div>
     <div class="padding">
         <h3>reply to a weet</h3>
-        <form class="form" method="post" action="/actions/post/{{ Weet.id }}/reply">
-            <div class="input-group">
-                <textarea type="text" id="js_comment" class="full" required placeholder="today i ..." name="comment" aria-label="Weet"></textarea>
-            </div>
-            <span class="caption"><span id="js_char_remaining">200</span> characters left</span>
-            <input type="submit" value="post" id="js_submit" aria-label="Post">
-        </form>
+        {% if Reply == false %}
+            <form class="form" method="post" action="/actions/post/{{ Weet.id }}/reply">
+                <div class="input-group">
+                    <textarea type="text" id="js_comment" class="full" required placeholder="today i ..." name="comment" aria-label="Weet"></textarea>
+                </div>
+                <span class="caption"><span id="js_char_remaining">200</span> characters left</span>
+                <input type="submit" value="post" id="js_submit" aria-label="Post">
+            </form>
+        {% else %}
+            <form class="form" method="post" action="/actions/reply/{{ Target }}/reply">
+                <div class="input-group">
+                    <textarea type="text" id="js_comment" class="full" required placeholder="today i ..." name="comment" aria-label="Weet"></textarea>
+                </div>
+                <span class="caption"><span id="js_char_remaining">200</span> characters left</span>
+                <input type="submit" value="post" id="js_submit" aria-label="Post">
+            </form>
+        {% endif %}
     </div>
     <hr>
     <div class="padding no-padding-top">
+        {% set WeetOwner = Weet.user.username %}
+        {# Shouldn't be doing this #}
         {% for Weet in Thread %}
             {% if Weet.id is defined %}
                 {# Shouldn't even be doing this #}
@@ -52,7 +144,7 @@
                         </span>
                         <span class="comment-text inline-block">{{ Weet.reply_text|nl2br }}</span>
                         <div class="comment-actions">
-                            <a href="/user/{{ Weet.user.username }}/reply/{{ Weet.id }}">
+                            <a href="/weet/reply/{{ Weet.id }}">
                                 <span class="comment-action inline-block">
                                     <span class="comment-action-text">0</span> 
                                     <i class="far fa-comment"></i>
