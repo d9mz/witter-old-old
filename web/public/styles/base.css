@@ -19,10 +19,23 @@ What the hell?
     --background-color: #fbfdff;
 }
 
+.reply-chain .weet:first-child {
+    border-bottom: 0px solid black;
+}
+
+.reply-chain .weet:not(:first-child) {
+    border-top: 1px dashed var(--primary-text-color);
+    border-bottom: 0px solid black;
+}
+
 .follow_button:disabled {
-    background-image: linear-gradient(45deg, #676869 25%, #575b5c 25%, #575b5c 50%, #676869 50%, #676869 75%, #575b5c 75%, #575b5c 100%);
-background-size: 5.66px 5.66px;
-    border: 1px solid #676869;
+    background-image: linear-gradient(45deg, #2262a6 25%, #3175bd 25%, #3175bd 50%, #2262a6 50%, #2262a6 75%, #3175bd 75%, #3175bd 100%);
+    background-size: 11.31px 11.31px;
+    border: 1px solid #2262a6;
+}
+
+.follow_button:disabled:hover {
+    background: #2262a6 !important;
 }
 
 .no-margin {
@@ -224,6 +237,7 @@ h1, h2, h3, h4, h5 ,h6 {
     border-left: 0px solid #000000;
     padding-left: unset;
     width: 170px;
+    line-height: 30px;
 }
 
 .user-header .header-items {
@@ -429,18 +443,20 @@ input[type="password"] {
 }
 
 .header a {
-    color: #6db6ff;
+    color: #f8fbff;
     text-shadow: 0px 0px 4px rgba(40, 116, 197, 0.42);
-    text-align: right;
+}
+
+.header h1 {
+    display: inline-block;
 }
 
 .header {
-    background-image: url('/images/header/1.webp');
     background-repeat: no-repeat;
-    background-color: #d9d9d9;
+    background-color: #8ab9e7;
     background-size: cover;
     background-position: center;
-    height: 60px;
+    height: 30px;
 }
 
 .user-album-container {

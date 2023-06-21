@@ -55,7 +55,10 @@
                 <span class="caption">last online {{ User.last_login|timeago }}</span>
                 <button 
                     class="button left follow_button" 
-                    {% if Session.Handle == User.username %}disabled{% endif %}
+                    {% if Session.Handle == User.username %}
+                    disabled
+                    title="You cannot follow yourself!"
+                    {% endif %}
                     data-following="{% if User.following and Session.Handle != User.username %}true{% else %}false{% endif %}" 
                     data-follow-target="{{ User.id }}" 
                     aria-label="Follow">
@@ -66,8 +69,8 @@
 
         <div class="tab-group">
             <a href="/user/{{ User.username }}"><div class="tab {% if ActiveTab == 'all' %}primary{% endif %}">weets</div></a>
-            <a href="/user/{{ User.username }}/media"><div class="tab {% if ActiveTab == 'media' %}primary{% endif %}">media</div></a>
-            <a href="/user/{{ User.username }}/likes"><div class="tab {% if ActiveTab == 'likes' %}primary{% endif %}">liked weets</div></a>
+            <a href="/media/{{ User.username }}"><div class="tab {% if ActiveTab == 'media' %}primary{% endif %}">media</div></a>
+            <a href="/likes/{{ User.username }}"><div class="tab {% if ActiveTab == 'likes' %}primary{% endif %}">liked weets</div></a>
         </div>
     </div>
     <hr>
@@ -92,8 +95,8 @@
             <span class="caption">{{ User.description }}</span>
         </div>
         <div class="user-follow-metric">
-            <span class="caption"><b><a class="keep-color" href="/user/{{ User.username }}/followers">{{ User.followers }}</b> follower(s), </a></span>
-            <span class="caption"><b><a class="keep-color" href="/user/{{ User.username }}/following">{{ User.following }}</b> following</a></span>
+            <span class="caption"><b><a class="keep-color" href="/user/{{ User.username }}/followers">{{ User.metrics.follower_count|number_format }}</b> follower(s), </a></span>
+            <span class="caption"><b><a class="keep-color" href="/user/{{ User.username }}/following">{{ User.metrics.following_count|number_format }}</b> following</a></span>
         </div>
     </div>
     <hr>
@@ -111,13 +114,13 @@
                         </span>
                         <span class="comment-text inline-block">{{ Weet.feed_text|nl2br }}</span>
                         <div class="comment-actions">
-                            <a href="/user/{{ Weet.user.username }}/weet/{{ Weet.id }}">
+                            <a href="/user/{{ Weet.user.username }}/{{ Weet.feed_id }}">
                                 <span class="comment-action inline-block">
                                     <span class="comment-action-text">{{ Weet.replies }}</span> 
                                     <i class="far fa-comment"></i>
                                 </span>
                             </a>
-                            <span class="comment-action comment_like inline-block {% if Weet.liked %}active{% endif %}" data-comment-id="{{ Weet.id }}">
+                            <span class="comment-action comment_like inline-block {% if Weet.liked %}active{% endif %}" data-comment-id="{{ Weet.feed_id }}">
                                 <span class="comment-action-text">{{ Weet.likes }}</span> 
                                 <i class="far fa-thumbs-up"></i>
                             </span>

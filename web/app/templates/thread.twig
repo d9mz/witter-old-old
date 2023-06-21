@@ -55,11 +55,14 @@
                 <span class="caption">last online {{ Weet.user.last_login|timeago }}</span>
                 <button 
                     class="button left follow_button" 
-                    {% if Session.Handle == Weet.user.username %}disabled{% endif %}
-                    data-following="{% if Weet.user.following and Session.Handle != Weet.user.username %}true{% else %}false{% endif %}" 
-                    data-follow-target="{{ Weet.user.id }}" 
+                    {% if Session.Handle == User.username %}
+                    disabled
+                    title="You cannot follow yourself!"
+                    {% endif %}
+                    data-following="{% if User.following and Session.Handle != User.username %}true{% else %}false{% endif %}" 
+                    data-follow-target="{{ User.id }}" 
                     aria-label="Follow">
-                    {% if Weet.user.following and Session.Handle != Weet.user.username %}unfollow{% else %}follow{% endif %}
+                    {% if User.following and Session.Handle != User.username %}unfollow{% else %}follow{% endif %}
                 </button>
             </div>
         </div>
@@ -75,75 +78,102 @@
             <span class="caption">{{ Weet.user.description }}</span>
         </div>
         <div class="user-follow-metric">
-            <span class="caption"><b><a class="keep-color" href="/user/{{ Weet.user.username }}/followers">{{ Weet.user.followers }}</b> follower(s), </a></span>
-            <span class="caption"><b><a class="keep-color" href="/user/{{ Weet.user.username }}/following">{{ Weet.user.following }}</b> following</a></span>
+            <span class="caption"><b><a class="keep-color" href="/user/{{ Weet.user.username }}/followers">{{ Weet.user.metrics.follower_count|number_format }}</b> follower(s), </a></span>
+            <span class="caption"><b><a class="keep-color" href="/user/{{ Weet.user.username }}/following">{{ Weet.user.metrics.following_count|number_format }}</b> following</a></span>
         </div>
     </div>
     <hr>
-    <div class="padding no-padding-top">
-        {% set WeetOwner = Weet.user.username %}
-        {# Shouldn't be doing this #}
-        {% for Weet in FullThread %}
-            {% if Weet.id is defined %}
-                {# Shouldn't even be doing this #}
-                {% if Weet.reply == true %}
-                    <div class="weet">
-                        <div class="inline-block padding top">
-                            <img src="/cdn/{{ Weet.user.profile_picture }}" class="profile-picture">
-                        </div>
-                        <div class="comment-body inline-block padding">
-                            <span class="comment-info inline-block">
-                                <a href="/user/{{ Weet.user.username }}"><b class="comment-author">{{ Weet.user.nickname }}</b> @{{ Weet.user.username }}</a>
-                                <span class="caption">{{ Weet.reply_created|timeago }}</span>
-                            </span>
-                            <span class="comment-text inline-block">{{ Weet.reply_text|nl2br }}</span>
-                            <div class="comment-actions">
-                                <a href="/weet/reply/{{ Weet.id }}">
-                                    <span class="comment-action inline-block">
-                                        <span class="comment-action-text">{{ Weet.replies }}</span> 
-                                        <i class="far fa-comment"></i>
-                                    </span>
-                                </a>
-                                <span class="comment-action comment_like_reply inline-block {% if Weet.liked %}active{% endif %}" data-comment-id="{{ Weet.id }}">
-                                    <span class="comment-action-text">{{ Weet.likes }}</span> 
-                                    <i class="far fa-thumbs-up"></i>
+    <div class="padding no-padding-top {% if Reply %}reply-chain{% endif %}">
+        {% if Reply %}
+            {% set WeetOwner = Weet.user.username %}
+            {# Shouldn't be doing this #}
+            {% for Weet in FullThread %}
+                {% if Weet.id is defined %}
+                    {# Shouldn't even be doing this #}
+                    {% if Weet.reply == true %}
+                        <div class="weet">
+                            <div class="inline-block padding top">
+                                <img src="/cdn/{{ Weet.user.profile_picture }}" class="profile-picture">
+                            </div>
+                            <div class="comment-body inline-block padding">
+                                <span class="comment-info inline-block">
+                                    <a href="/user/{{ Weet.user.username }}"><b class="comment-author">{{ Weet.user.nickname }}</b> @{{ Weet.user.username }}</a>
+                                    <span class="caption">{{ Weet.feed_created|timeago }}</span>
                                 </span>
+                                <span class="comment-text inline-block">{{ Weet.feed_text|nl2br }}</span>
+                                <div class="comment-actions">
+                                    <a href="/user/{{ Weet.user.username }}/{{ Weet.feed_id }}">
+                                        <span class="comment-action inline-block">
+                                            <span class="comment-action-text">{{ Weet.replies }}</span> 
+                                            <i class="far fa-comment"></i>
+                                        </span>
+                                    </a>
+                                    <span class="comment-action comment_like_reply inline-block {% if Weet.liked %}active{% endif %}" data-comment-id="{{ Weet.feed_id }}">
+                                        <span class="comment-action-text">{{ Weet.likes }}</span> 
+                                        <i class="far fa-thumbs-up"></i>
+                                    </span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                {% elseif Weet.original == true %}
-                    <div class="weet">
-                        <div class="inline-block padding top">
-                            <img src="/cdn/{{ Weet.user.profile_picture }}" class="profile-picture">
-                        </div>
-                        <div class="comment-body inline-block padding">
-                            <span class="comment-info inline-block">
-                                <a href="/user/{{ Weet.user.username }}"><b class="comment-author">{{ Weet.user.nickname }}</b> @{{ Weet.user.username }}</a>
-                                <span class="caption">{{ Weet.feed_created|timeago }}</span>
-                            </span>
-                            <span class="comment-text inline-block">{{ Weet.feed_text|nl2br }}</span>
-                            <div class="comment-actions">
-                                <a href="{% if Reply == true %}/weet/reply/{{ Target }}{% else %}/user/{{ Weet.user.username }}/weet/{{ Weet.id }}{% endif %}">
-                                    <span class="comment-action inline-block">
-                                        <span class="comment-action-text">{{ Weet.replies }}</span> 
-                                        <i class="far fa-comment"></i>
-                                    </span>
-                                </a>
-                                <span class="comment-action comment_like inline-block {% if Weet.liked %}active{% endif %}" data-comment-id="{{ Weet.id }}">
-                                    <span class="comment-action-text">{{ Weet.likes }}</span> 
-                                    <i class="far fa-thumbs-up"></i>
+                    {% elseif Weet.original == true %}
+                        <div class="weet">
+                            <div class="inline-block padding top">
+                                <img src="/cdn/{{ Weet.user.profile_picture }}" class="profile-picture">
+                            </div>
+                            <div class="comment-body inline-block padding">
+                                <span class="comment-info inline-block">
+                                    <a href="/user/{{ Weet.user.username }}"><b class="comment-author">{{ Weet.user.nickname }}</b> @{{ Weet.user.username }}</a>
+                                    <span class="caption">{{ Weet.feed_created|timeago }}</span>
                                 </span>
+                                <span class="comment-text inline-block">{{ Weet.feed_text|nl2br }}</span>
+                                <div class="comment-actions">
+                                    <a href="/user/{{ Weet.user.username }}/{{ Weet.feed_id }}">
+                                        <span class="comment-action inline-block">
+                                            <span class="comment-action-text">{{ Weet.replies }}</span> 
+                                            <i class="far fa-comment"></i>
+                                        </span>
+                                    </a>
+                                    <span class="comment-action comment_like inline-block {% if Weet.liked %}active{% endif %}" data-comment-id="{{ Weet.feed_id }}">
+                                        <span class="comment-action-text">{{ Weet.likes }}</span> 
+                                        <i class="far fa-thumbs-up"></i>
+                                    </span>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    {% endif %}
                 {% endif %}
-            {% endif %}
-        {% endfor %}
+            {% endfor %}
+        {% else %}
+            <div class="weet">
+                <div class="inline-block padding top">
+                    <img src="/cdn/{{ Weet.user.profile_picture }}" class="profile-picture">
+                </div>
+                <div class="comment-body inline-block padding">
+                    <span class="comment-info inline-block">
+                        <a href="/user/{{ Weet.user.username }}"><b class="comment-author">{{ Weet.user.nickname }}</b> @{{ Weet.user.username }}</a>
+                        <span class="caption">{{ Weet.feed_created|timeago }}</span>
+                    </span>
+                    <span class="comment-text inline-block">{{ Weet.feed_text|nl2br }}</span>
+                    <div class="comment-actions">
+                        <a href="/user/{{ Weet.user.username }}/{{ Weet.feed_id }}">
+                            <span class="comment-action inline-block">
+                                <span class="comment-action-text">{{ Weet.replies }}</span> 
+                                <i class="far fa-comment"></i>
+                            </span>
+                        </a>
+                        <span class="comment-action comment_like_reply inline-block {% if Weet.liked %}active{% endif %}" data-comment-id="{{ Weet.feed_id }}">
+                            <span class="comment-action-text">{{ Weet.likes }}</span> 
+                            <i class="far fa-thumbs-up"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
     </div>
     <div class="padding">
         <h3>reply to a weet</h3>
         {% if Reply == false %}
-            <form class="form" method="post" action="/actions/post/{{ Weet.id }}/reply">
+            <form class="form" method="post" action="/actions/post/{{ Weet.feed_id }}/reply">
                 <div class="input-group">
                     <textarea type="text" id="js_comment" class="full" required placeholder="today i ..." name="comment" aria-label="Weet"></textarea>
                 </div>
@@ -173,17 +203,17 @@
                     <div class="comment-body inline-block padding">
                         <span class="comment-info inline-block">
                             <a href="/user/{{ Weet.user.username }}"><b class="comment-author">{{ Weet.user.nickname }}</b> @{{ Weet.user.username }}</a>
-                            <span class="caption">{{ Weet.reply_created|timeago }}</span>
+                            <span class="caption">{{ Weet.feed_created|timeago }}</span>
                         </span>
-                        <span class="comment-text inline-block">{{ Weet.reply_text|nl2br }}</span>
+                        <span class="comment-text inline-block">{{ Weet.feed_text|nl2br }}</span>
                         <div class="comment-actions">
-                            <a href="/weet/reply/{{ Weet.id }}">
+                            <a href="/user/{{ Weet.user.username }}/{{ Weet.feed_id }}">
                                 <span class="comment-action inline-block">
                                     <span class="comment-action-text">{{ Weet.replies }}</span> 
                                     <i class="far fa-comment"></i>
                                 </span>
                             </a>
-                            <span class="comment-action comment_like_reply inline-block {% if Weet.liked %}active{% endif %}" data-comment-id="{{ Weet.id }}">
+                            <span class="comment-action comment_like_reply inline-block {% if Weet.liked %}active{% endif %}" data-comment-id="{{ Weet.feed_id }}">
                                 <span class="comment-action-text">{{ Weet.likes }}</span> 
                                 <i class="far fa-thumbs-up"></i>
                             </span>

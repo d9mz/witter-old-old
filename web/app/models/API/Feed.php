@@ -1,31 +1,18 @@
 <?php
 namespace Witter\Models;
 
+use \Godruoyi\Snowflake\Snowflake;
+
 class Feed extends Model
 {
-    public function mapWeetToReply(array $item, bool $isWeetToReply) : array {
-        $mappedItem = array();
-    
-        if ($isWeetToReply) {
-            // Mapping Weet to Reply
-            $mappedItem['reply_text'] = $item['feed_text'];       
-            $mappedItem['reply_author'] = $item['feed_owner'];    
-            $mappedItem['reply_created'] = $item['feed_created']; 
-            $mappedItem['reply_target'] = $item['id'];            
-            // $mappedItem['replying_to_reply'] = 'f';   
-        } else {
-            // Mapping Reply to Weet
-            $mappedItem['feed_text'] = $item['reply_text'];       
-            $mappedItem['feed_owner'] = $item['reply_author'];    
-            $mappedItem['feed_created'] = $item['reply_created']; 
-            $mappedItem['id'] = $item['reply_target'];
-        }
-    
-        return $mappedItem;
+    public function GenerateID() : int {
+        // Intellisense doesn't like me doing this
+        $snowflake = new Snowflake;
+        return $snowflake->id();;
     }
-    
+
     public function getWeetThread(int $weet_id) : array {
-        $weet = $this->GetWeet($weet_id);
+        $weet = $this->GetWeet($weet_id, true);
         if (!empty($weet)) {
             // Get all replies to the weet
             $replies = $this->GetReplies($weet_id);
@@ -49,8 +36,8 @@ class Feed extends Model
         if(is_int($user)) $userData = $userModel->GetUser($user, Type::ID);
         if(!is_int($user)) $userData = $userModel->GetUser($user, Type::Username);
         if(!isset($userData['id'])) return true; // THIS should not happen. Do not proceed at all
-        if($reply)  $query = "SELECT * FROM likes WHERE target = :target AND user = :user AND reply = 't' LIMIT 1";
-        if(!$reply) $query = "SELECT * FROM likes WHERE target = :target AND user = :user AND reply = 'f' LIMIT 1";
+        
+        $query = "SELECT * FROM likes WHERE target = :target AND user = :user LIMIT 1";
 
         $LikeSearch = $this->Connection->prepare($query);
         $LikeSearch->bindParam(":target", $id);
@@ -65,19 +52,19 @@ class Feed extends Model
         }
     }
 
-    public function GetTrendingFeed() : array {
+    public function GetTrendingFeed() : mixed {
         $userModel = new \Witter\Models\User();
     
         // Prepare the query
         $query = $this->Connection->prepare(
-            "SELECT f.id, f.feed_owner, f.feed_text, f.feed_created, COUNT(l.id) as likes_count 
+            "SELECT f.id, f.feed_owner, f.feed_text, f.feed_created, COUNT(l.target) AS likes
             FROM feed AS f
-            INNER JOIN likes AS l ON f.id = l.target
-            WHERE l.created_at >= NOW() - INTERVAL 1 HOUR 
+            LEFT JOIN likes AS l ON f.id = l.target
+            WHERE f.feed_created > DATE_SUB(NOW(), INTERVAL 1 HOUR)
             GROUP BY f.id
-            ORDER BY likes_count DESC"
+            ORDER BY likes DESC"
         );
-    
+
         // Execute the query
         $query->execute();
     
@@ -86,7 +73,7 @@ class Feed extends Model
     
         // Check if feed is empty
         if(empty($feed)) {
-            return []; // No posts found, return empty array
+            return [[]]; // No posts found, return empty array
         }
     
         foreach($feed as &$post) {
@@ -97,15 +84,15 @@ class Feed extends Model
     
             // Check if current user liked the post
             if(isset($_SESSION['Handle'])) {
-                $post["liked"] = $this->PostLiked($post['id'], $_SESSION['Handle']);
+                $post["liked"] = $this->PostLiked($post['feed_id'], $_SESSION['Handle']);
             } else {
                 $post["liked"] = false;
             }
     
             // Assign post owner data and likes count to the post
-            $post["replies"] = $this->GetReplyCount($post['id']);
+            $post["replies"] = $this->GetReplyCount($post['feed_id']);
             $post["user"] = @$postOwner;
-            $post["likes"] = $this->GetLikeCount($post['id']);
+            $post["likes"] = $this->GetLikeCount($post['feed_id']);
         }
     
         // Reverse the order of the feed to have most liked posts at the top
@@ -153,12 +140,12 @@ class Feed extends Model
             
             // Get likes count for the post
             $likesQuery = $this->Connection->prepare("SELECT * FROM likes WHERE target = :target");
-            $likesQuery->bindParam(":target", $post['id']);
+            $likesQuery->bindParam(":target", $post['feed_id']);
             $likesQuery->execute();
             
             // Check if current user liked the post
             if(isset($_SESSION['Handle'])) {
-                $post["liked"] = $this->PostLiked($post['id'], $_SESSION['Handle']);
+                $post["liked"] = $this->PostLiked($post['feed_id'], $_SESSION['Handle']);
             } else {
                 $post["liked"] = false;
             }
@@ -185,49 +172,8 @@ class Feed extends Model
         $data = json_decode($json);
         $comment_id = $data->weet_id;
 
-        if($this->PostLiked($comment_id, $_SESSION['Handle'], true)) {
-            $stmt = $this->Connection->prepare("DELETE FROM likes WHERE target = ? AND user = ? AND reply = 't'");
-            $stmt->execute(
-                [
-                    $id,
-                    $user['id'],
-                ]
-            );
-
-            $response = array('status' => 'success', 'action' => 'unliked');
-        } else {
-            $stmt = $this->Connection->prepare(
-                "INSERT INTO likes
-                    (target, user, reply) 
-                VALUES 
-                    (?, ?, 't')"
-            );
-            $stmt->execute([
-                $id,
-                $user['id'],
-            ]);
-
-            $response = array('status' => 'success', 'action' => 'liked');
-        }
-
-        echo json_encode($response);
-    }
-
-    public function LikePost(string $id) { 
-        $id = (int)$id; // cast $id to integer
-
-        $userModel = new \Witter\Models\User();
-        $user = $userModel->GetUser($_SESSION['Handle'], Type::Username);
-
-        // Get the JSON payload from the POST request
-        $json = file_get_contents('php://input');
-
-        // Decode the JSON into a PHP object
-        $data = json_decode($json);
-        $comment_id = $data->weet_id;
-
-        if($this->PostLiked($comment_id, $_SESSION['Handle'])) {
-            $stmt = $this->Connection->prepare("DELETE FROM likes WHERE target = ? AND user = ? AND reply = 'f'");
+        if($this->PostLiked((int)$comment_id, $_SESSION['Handle'], true)) {
+            $stmt = $this->Connection->prepare("DELETE FROM likes WHERE target = ? AND user = ?");
             $stmt->execute(
                 [
                     $id,
@@ -254,13 +200,54 @@ class Feed extends Model
         echo json_encode($response);
     }
 
-    public function WeetExists(int $weet_id, bool $reply = false) : bool {
-        if(!$reply) {
-            $stmt = $this->Connection->prepare("SELECT id FROM feed WHERE id = :id");
+    public function LikePost(string $id) { 
+        $id = (int)$id; // cast $id to integer
+
+        $userModel = new \Witter\Models\User();
+        $user = $userModel->GetUser($_SESSION['Handle'], Type::Username);
+
+        // Get the JSON payload from the POST request
+        $json = file_get_contents('php://input');
+
+        // Decode the JSON into a PHP object
+        $data = json_decode($json);
+        $comment_id = $data->weet_id;
+
+        if($this->PostLiked($comment_id, $_SESSION['Handle'])) {
+            $stmt = $this->Connection->prepare("DELETE FROM likes WHERE target = ? AND user = ?");
+            $stmt->execute(
+                [
+                    $id,
+                    $user['id'],
+                ]
+            );
+
+            $response = array('status' => 'success', 'action' => 'unliked');
+        } else {
+            $stmt = $this->Connection->prepare(
+                "INSERT INTO likes
+                    (target, user) 
+                VALUES 
+                    (?, ?)"
+            );
+            $stmt->execute([
+                $id,
+                $user['id'],
+            ]);
+
+            $response = array('status' => 'success', 'action' => 'liked');
+        }
+
+        echo json_encode($response);
+    }
+
+    public function WeetExists(int $weet_id, bool $actual_id = false) : bool {
+        if(!$actual_id) {
+            $stmt = $this->Connection->prepare("SELECT id FROM feed WHERE feed_id = :id");
             $stmt->bindParam(":id", $weet_id);
             $stmt->execute();
         } else {
-            $stmt = $this->Connection->prepare("SELECT id FROM reply WHERE id = :id");
+            $stmt = $this->Connection->prepare("SELECT id FROM feed WHERE id = :id");
             $stmt->bindParam(":id", $weet_id);
             $stmt->execute();
         }
@@ -268,8 +255,10 @@ class Feed extends Model
         return $stmt->rowCount() === 1;
     }
     
-    public function GetWeet(int $weet_id) : array {
-        $query = "SELECT * FROM feed WHERE id = :find";
+    public function GetWeet(int $weet_id, bool $actual_id) : array {
+        if($actual_id) $query = "SELECT * FROM feed WHERE id = :find";
+        if(!$actual_id) $query = "SELECT * FROM feed WHERE feed_id = :find";
+
         $stmt = $this->Connection->prepare($query);
         $stmt->bindParam(":find", $weet_id);
         $stmt->execute();
@@ -281,20 +270,20 @@ class Feed extends Model
             $user = $user_fetch->GetUser($weet['feed_owner'], Type::ID);
 
             // Relation: For getting # of likes on a specific weet
-            $LikesSearch = $this->Connection->prepare("SELECT * FROM likes WHERE target = :target AND reply = 'f'");
-            $LikesSearch->bindParam(":target", $weet['id']);
+            $LikesSearch = $this->Connection->prepare("SELECT * FROM likes WHERE target = :target");
+            $LikesSearch->bindParam(":target", $weet['feed_id']);
             $LikesSearch->execute();
 
             // Relation: Did you like this post?
             if(isset($_SESSION['Handle'])) {
-                $weet["liked"] = $this->PostLiked($weet['id'], $_SESSION['Handle']);
+                $weet["liked"] = $this->PostLiked($weet['feed_id'], $_SESSION['Handle']);
             } else {
                 $weet["liked"] = false;
             }
 
             // assign user (accessible by weet.user.property in twig)
             // assign likes property (weet.likes)
-            $weet["replies"] = $this->GetReplyCount($weet['id']);
+            $weet["replies"] = $this->GetReplyCount($weet['feed_id']);
             $weet["likes"] = $LikesSearch->rowCount();
             $weet["user"] = @$user;
 
@@ -304,8 +293,32 @@ class Feed extends Model
         }
     }
 
+    public function getReplyTree($weet_id, self $weetModel, $depth = 0) : array {
+        $tree = [];
+
+        // The base case: if a weet doesn't have a reply, return an empty array
+        if (!$weetModel->WeetExists($weet_id, false)) {
+            return $tree;
+        }
+    
+        // Recursive case: get the weet, add it to the tree, and then add all replies to the weet
+        $weet = $weetModel->GetWeet($weet_id, false);
+        $weet['reply'] = true;
+        if(isset($_SESSION['Handle'])) $weet['liked'] = $weetModel->PostLiked($weet_id, $_SESSION['Handle']);
+    
+        // Check for circular references to avoid infinite loop
+        if ($weet['feed_target'] != $weet_id && $weet['feed_target'] != -1 && $depth < 10) {
+            $tree = $this->getReplyTree($weet['feed_target'], $weetModel, $depth + 1);
+        }
+    
+        // Add the weet to the tree after adding its replies
+        $tree[] = $weet;
+    
+        return $tree;
+    }    
+
     public function GetReply(int $weet_id) : array {
-        $query = "SELECT * FROM reply WHERE id = :find";
+        $query = "SELECT * FROM feed WHERE id = :find LIMIT 1";
         $stmt = $this->Connection->prepare($query);
         $stmt->bindParam(":find", $weet_id);
         $stmt->execute();
@@ -319,20 +332,20 @@ class Feed extends Model
             // Relation: For getting # of likes on a specific weet
             // TODO: Why the hell do I not put this in a function?
             $LikesSearch = $this->Connection->prepare("SELECT * FROM likes WHERE target = :target AND reply = 't'");
-            $LikesSearch->bindParam(":target", $weet['id']);
+            $LikesSearch->bindParam(":target", $weet['feed_id']);
             $LikesSearch->execute();
 
             // Relation: Did you like this post?
             if(isset($_SESSION['Handle'])) {
-                $weet["liked"] = $this->PostLiked($weet['id'], $_SESSION['Handle'], true);
+                $weet["liked"] = $this->PostLiked($weet['feed_id'], $_SESSION['Handle'], true);
             } else {
                 $weet["liked"] = false;
             }
 
             // assign user (accessible by weet.user.property in twig)
             // assign likes property (weet.likes)
-            $weet["replies"] = $this->GetReplyCount($weet['id'], true);
-            $weet["likes"] = $this->GetLikeCount($weet['id'], true);
+            $weet["replies"] = $this->GetReplyCount($weet['feed_id'], true);
+            $weet["likes"] = $this->GetLikeCount($weet['feed_id'], true);
             $weet["user"] = @$user;
 
             return $weet;
@@ -343,33 +356,22 @@ class Feed extends Model
 
 
     public function GetReplies(int $weet_id, int $limit = 20, bool $reply_to_reply = false) {
-        echo $weet_id . ";";
-        echo (int)$reply_to_reply;
-        if(!$reply_to_reply) $query = "SELECT * FROM reply WHERE reply_target = :id AND replying_to_reply = 'f' ORDER BY id DESC LIMIT " . $limit;
-        if($reply_to_reply) $query = "SELECT * FROM reply WHERE reply_target = :id AND replying_to_reply = 't' ORDER BY id DESC LIMIT " . $limit;
-        echo "fart";
+        $query = "SELECT * FROM feed WHERE feed_target = :id ORDER BY id DESC LIMIT " . $limit;
 
         $Feed = $this->Connection->prepare($query);
         $Feed->bindParam(":id", $weet_id);
         $Feed->execute();
-        echo "fart";
 
         // Relation: get user info while fetching forum
         $user_fetch = new \Witter\Models\User();
         while ($weet = $Feed->fetch(\PDO::FETCH_ASSOC)) {
-            echo "fart";
-            if ($user_fetch->UserExists($weet['reply_author'], Type::ID)) {
-                $user = $user_fetch->GetUser($weet['reply_author'], Type::ID);
+            if ($user_fetch->UserExists($weet['feed_owner'], Type::ID)) {
+                $user = $user_fetch->GetUser($weet['feed_owner'], Type::ID);
             }
-
-            // Relation: For getting # of likes on a specific weet
-            $LikesSearch = $this->Connection->prepare("SELECT * FROM likes WHERE target = :target AND reply = 't'");
-            $LikesSearch->bindParam(":target", $weet['id']);
-            $LikesSearch->execute();
 
             // Relation: Did you like this post?
             if(isset($_SESSION['Handle'])) {
-                $weet["liked"] = $this->PostLiked($weet['id'], $_SESSION['Handle'], true);
+                $weet["liked"] = $this->PostLiked($weet['feed_id'], $_SESSION['Handle'], true);
             } else {
                 $weet["liked"] = false;
             }
@@ -377,10 +379,8 @@ class Feed extends Model
             // assign user (accessible by weet.user.property in twig)
             // assign likes property (weet.likes)
 
-            echo $weet['id'];
-            $weet["replies"] = $this->GetReplyCount($weet['id'], true);
-            echo $weet["replies"];
-            $weet["likes"] = $LikesSearch->rowCount();
+            $weet["replies"] = $this->GetReplyCount($weet['feed_id'], true);
+            $weet["likes"] = $this->GetLikeCount($weet['feed_id']);
             $weet["user"] = @$user;
             $weets[] = $weet;
         }
@@ -389,29 +389,17 @@ class Feed extends Model
     }
 
     public function GetReplyCount(int $weet_id, bool $reply = false) : int {
-        if(!$reply) {
-            $Feed = $this->Connection->prepare("SELECT * FROM reply WHERE reply_target = :id AND replying_to_reply = 'f'");
-            $Feed->bindParam(":id", $weet_id);
-            $Feed->execute();
-        } else {
-            $Feed = $this->Connection->prepare("SELECT * FROM reply WHERE reply_target = :id AND replying_to_reply = 't'");
-            $Feed->bindParam(":id", $weet_id);
-            $Feed->execute();
-        }
+        $Feed = $this->Connection->prepare("SELECT * FROM feed WHERE feed_target = :id");
+        $Feed->bindParam(":id", $weet_id);
+        $Feed->execute();
 
         return $Feed->rowCount();
     }
 
     public function GetLikeCount(int $weet_id, bool $reply = false) : int {
-        if(!$reply) {
-            $Feed = $this->Connection->prepare("SELECT * FROM likes WHERE target = :id AND reply = 'f'");
-            $Feed->bindParam(":id", $weet_id);
-            $Feed->execute();
-        } else {
-            $Feed = $this->Connection->prepare("SELECT * FROM likes WHERE target = :id AND reply = 't'");
-            $Feed->bindParam(":id", $weet_id);
-            $Feed->execute();
-        }
+        $Feed = $this->Connection->prepare("SELECT * FROM likes WHERE target = :id");
+        $Feed->bindParam(":id", $weet_id);
+        $Feed->execute();
 
         return $Feed->rowCount();
     }
@@ -419,7 +407,7 @@ class Feed extends Model
     // returns pdo loopabble thingy, can use while
     public function GetFeed(string $type = "following", int $limit = 20) {
         if($type == "everyone") {
-            $Feed = $this->Connection->prepare("SELECT * FROM feed ORDER BY id DESC LIMIT " . $limit);
+            $Feed = $this->Connection->prepare("SELECT * FROM feed WHERE feed_target = -1 ORDER BY id DESC LIMIT " . $limit);
             $Feed->execute();
 
             // Relation: get user info while fetching forum
@@ -431,15 +419,15 @@ class Feed extends Model
 
                 // Relation: Did you like this post?
                 if(isset($_SESSION['Handle'])) {
-                    $weet["liked"] = $this->PostLiked($weet['id'], $_SESSION['Handle']);
+                    $weet["liked"] = $this->PostLiked($weet['feed_id'], $_SESSION['Handle']);
                 } else {
                     $weet["liked"] = false;
                 }
     
                 // assign user (accessible by weet.user.property in twig)
                 // assign likes property (weet.likes)
-                $weet["replies"] = $this->GetReplyCount($weet['id']);
-                $weet["likes"] = $this->GetLikeCount($weet['id']);
+                $weet["replies"] = $this->GetReplyCount($weet['feed_id']);
+                $weet["likes"] = $this->GetLikeCount($weet['feed_id']);
                 $weet["user"] = @$user;
                 $weets[] = $weet;
             }
@@ -454,7 +442,7 @@ class Feed extends Model
 
             $user = $user_fetch->GetUser($type, Type::Username);
 
-            $Feed = $this->Connection->prepare("SELECT * FROM feed WHERE feed_owner = :id ORDER BY id DESC LIMIT " . $limit);
+            $Feed = $this->Connection->prepare("SELECT * FROM feed WHERE feed_owner = :id AND feed_target = -1 ORDER BY id DESC LIMIT " . $limit);
             $Feed->bindParam(":id", $user['id']);
             $Feed->execute();
 
@@ -462,15 +450,15 @@ class Feed extends Model
             while ($weet = $Feed->fetch(\PDO::FETCH_ASSOC)) {
                 // Relation: Did you like this post?
                 if(isset($_SESSION['Handle'])) {
-                    $weet["liked"] = $this->PostLiked($weet['id'], $_SESSION['Handle']);
+                    $weet["liked"] = $this->PostLiked($weet['feed_id'], $_SESSION['Handle']);
                 } else {
                     $weet["liked"] = false;
                 }
     
                 // assign user (accessible by weet.user.property in twig)
                 // assign likes property (weet.likes)
-                $weet["replies"] = $this->GetReplyCount($weet['id']);
-                $weet["likes"] = $this->GetLikeCount($weet['id']);
+                $weet["replies"] = $this->GetReplyCount($weet['feed_id']);
+                $weet["likes"] = $this->GetLikeCount($weet['feed_id']);
                 $weet["user"] = @$user;
                 $weets[] = $weet;
             }
@@ -495,7 +483,7 @@ class Feed extends Model
         $weets = [];
         while ($like = $query->fetch(\PDO::FETCH_ASSOC)) {
             // Get the feed info for each liked weet
-            $Feed = $this->Connection->prepare("SELECT * FROM feed WHERE id = :id");
+            $Feed = $this->Connection->prepare("SELECT * FROM feed WHERE feed_id = :id");
             $Feed->bindParam(":id", $like['target']);
             $Feed->execute();
     
@@ -507,15 +495,15 @@ class Feed extends Model
     
                 // Get likes info for this weet
                 $LikesSearch = $this->Connection->prepare("SELECT * FROM likes WHERE target = :target");
-                $LikesSearch->bindParam(":target", $weet['id']);
+                $LikesSearch->bindParam(":target", $weet['feed_id']);
                 $LikesSearch->execute();
     
                 // Check if the specified user liked this post
-                $weet["liked"] = $this->PostLiked($weet['id'], $userData['id']);
+                $weet["liked"] = $this->PostLiked($weet['feed_id'], $userData['id']);
                 
                 // Assign user (accessible by weet.user.property in twig)
                 // Assign likes property (weet.likes)
-                $weet["replies"] = $this->GetReplyCount($weet['id']);
+                $weet["replies"] = $this->GetReplyCount($weet['feed_id']);
                 $weet["likes"] = $LikesSearch->rowCount();
                 $weet["user"] = @$user;
                 $weets[] = $weet;
@@ -544,16 +532,20 @@ class Feed extends Model
             $alert->CreateAlert(Level::Error, "Your reply must be longer than 3 characters and not longer than 20.");
         }
 
+        /*
         if(!$cooldown->GetCooldown("weet_cooldown", $_SESSION['Handle'], 10)) {
             $alert->CreateAlert(Level::Error, "Please wait 10 seconds before replying to a Weet.");
         } else {
             $cooldown->SetCooldown("weet_cooldown", $_SESSION['Handle']);
         }
+        */
 
         $user = $user->GetUser($_SESSION['Handle']);
 
-        $stmt = $this->Connection->prepare("INSERT INTO reply (reply_author, reply_text, reply_target, replying_to_reply) VALUES (:id, :comment, :target, 't')");
+        $stmt = $this->Connection->prepare("INSERT INTO feed (feed_id, feed_owner, feed_text, feed_target) VALUES (:snowflake, :id, :comment, :target)");
 
+        $id = $this->GenerateID();
+        $stmt->bindParam(":snowflake", $id);
         $stmt->bindParam(":id", $user['id']);
         $stmt->bindParam(":comment", $_POST['comment']);
         $stmt->bindParam(":target", $weet_id);
@@ -589,8 +581,10 @@ class Feed extends Model
 
         $user = $user->GetUser($_SESSION['Handle']);
 
-        $stmt = $this->Connection->prepare("INSERT INTO reply (reply_author, reply_text, reply_target) VALUES (:id, :comment, :target)");
+        $stmt = $this->Connection->prepare("INSERT INTO feed (feed_id, feed_owner, feed_text, feed_target) VALUES (:snowflake, :id, :comment, :target)");
 
+        $id = $this->GenerateID();
+        $stmt->bindParam(":snowflake", $id);
         $stmt->bindParam(":id", $user['id']);
         $stmt->bindParam(":comment", $_POST['comment']);
         $stmt->bindParam(":target", $weet_id);
@@ -622,8 +616,10 @@ class Feed extends Model
 
         $user = $user->GetUser($_SESSION['Handle']);
 
-        $stmt = $this->Connection->prepare("INSERT INTO feed (feed_owner, feed_text) VALUES (:id, :comment)");
+        $stmt = $this->Connection->prepare("INSERT INTO feed (feed_id, feed_owner, feed_text) VALUES (:snowflake, :id, :comment)");
 
+        $id = $this->GenerateID();
+        $stmt->bindParam(":snowflake", $id);
         $stmt->bindParam(":id", $user['id']);
         $stmt->bindParam(":comment", $_POST['comment']);
 

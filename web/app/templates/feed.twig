@@ -33,13 +33,13 @@
                         </span>
                         <span class="comment-text inline-block">{{ Weet.feed_text|nl2br }}</span>
                         <div class="comment-actions">
-                            <a href="/user/{{ Weet.user.username }}/weet/{{ Weet.id }}">
+                            <a href="/user/{{ Weet.user.username }}/{{ Weet.feed_id }}">
                                 <span class="comment-action inline-block">
                                     <span class="comment-action-text">{{ Weet.replies }}</span> 
                                     <i class="far fa-comment"></i>
                                 </span>
                             </a>
-                            <span class="comment-action comment_like inline-block {% if Weet.liked %}active{% endif %}" data-comment-id="{{ Weet.id }}">
+                            <span class="comment-action comment_like inline-block {% if Weet.liked %}active{% endif %}" data-comment-id="{{ Weet.feed_id }}">
                                 <span class="comment-action-text">{{ Weet.likes }}</span> 
                                 <i class="far fa-thumbs-up"></i>
                             </span>

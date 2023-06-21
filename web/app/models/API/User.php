@@ -9,22 +9,21 @@ enum Type: int {
 
 class User extends Model
 {
-    public function GetFollowerCount(int $uid) : int {
-        $Follower = $this->Connection->prepare("SELECT * FROM followers WHERE target = :id");
-        $Follower->bindParam(":id", $uid);
-        $Follower->execute();
-
-        return $Follower->rowCount();
+    public function GetFollowerFollowingCount(int $uid) : array {
+        $followerStmt = $this->Connection->prepare("SELECT * FROM followers WHERE target = :id");
+        $followerStmt->bindParam(":id", $uid);
+        $followerStmt->execute();
+    
+        $followingStmt = $this->Connection->prepare("SELECT * FROM followers WHERE user = :id");
+        $followingStmt->bindParam(":id", $uid);
+        $followingStmt->execute();
+    
+        return [
+            "follower_count" => $followerStmt->rowCount(),
+            "following_count" => $followingStmt->rowCount(),
+        ];
     }
-
-    public function GetFollowingCount(int $uid) : int {
-        $Following = $this->Connection->prepare("SELECT * FROM followers WHERE user = :id");
-        $Following->bindParam(":id", $uid);
-        $Following->execute();
-
-        return $Following->rowCount();
-    }
-
+    
     public function FollowingUser(string|int $target, string|int $user) : bool {
         $userModel = new \Witter\Models\User();
 
@@ -39,7 +38,7 @@ class User extends Model
 
         if($userData['id'] == $userTarget['id']) return true; // No following yourself...
 
-        $query = $this->Connection->prepare("SELECT * FROM followers WHERE user = :user AND target = :target LIMIT 1");
+        $query = $this->Connection->prepare("SELECT * FROM followers WHERE user = :user AND target = :target");
         $query->bindParam(":target", $userTarget['id']);
         $query->bindParam(":user", $userData['id']);
         $query->execute();
@@ -144,9 +143,7 @@ class User extends Model
             // can't do this here because it causes a memory leak ????
 
             // get follower & follow count & make it properties of $user
-            $user['followers'] = $this->GetFollowerCount($user['id']);
-            $user['following'] = $this->GetFollowingCount($user['id']);
-
+            $user['metrics'] = $this->GetFollowerFollowingCount($user['id']);
             return $user;
         } else {
             return [];

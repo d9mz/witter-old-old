@@ -43,9 +43,8 @@ if(!isset($_SESSION['Handle'])) {
     $Router->Post('/settings/picture/banner', "\Witter\Models\Settings@Banner");
 
     // [WEB] Profiles
-    $Router->Get('/user/{user}/weet/{id}', "\Witter\Views\Feed@ViewWeet");
-    $Router->Get('/weet/reply/{id}', "\Witter\Views\Feed@ViewReply");
-    $Router->Get('/user/{user}/likes', "\Witter\Views\User@Likes");
+    $Router->Get('/likes/{user}', "\Witter\Views\User@Likes");
+    $Router->Get('/user/{user}/{id}', "\Witter\Views\Feed@ViewWeet");
     $Router->Get('/user/{user}', "\Witter\Views\User@View");
 
     // [WEB] Feed
