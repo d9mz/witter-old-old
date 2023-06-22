@@ -144,6 +144,7 @@ class User extends Model
 
             // get follower & follow count & make it properties of $user
             $user['metrics'] = $this->GetFollowerFollowingCount($user['id']);
+            $user['username_md5'] = base64_encode($user['username']);
             return $user;
         } else {
             return [];

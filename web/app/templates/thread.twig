@@ -1,25 +1,11 @@
 {% extends "base.twig" %}
 {%- block Header -%}
+    {{ parent() }}
     {#- This is fucking TERRIBLE! -#}
-    <script>$(".header-container").css("display", "none");</script>
+    <script src="/scripts/no-header.js"></script>
+    <link href="/cdn/css/{{ User.username_md5 }}" rel="stylesheet">
 {% endblock %}
 {%- block Container -%}
-    <style>
-        /*  TODO: Don't inline style any of this stuff!
-                  Put all user CSS in a MD5 hashed thingymcbob,
-                  could just be a hash of their username then
-                  accessible by /css/.
-        */
-
-        #banner {
-            background-image: url("/cdn/{{ Weet.user.banner }}");
-            border-bottom: var(--primary-border-color);
-        }
-
-        .user-album-container {
-
-        }
-    </style>
     <div class="alternative-header">
         <h3 class="inline-block"><a href="/">witter</a></h3>
         <div class="links inline-block float-right no-border-left">
@@ -100,7 +86,7 @@
                                     <a href="/user/{{ Weet.user.username }}"><b class="comment-author">{{ Weet.user.nickname }}</b> @{{ Weet.user.username }}</a>
                                     <span class="caption">{{ Weet.feed_created|timeago }}</span>
                                 </span>
-                                <span class="comment-text inline-block">{{ Weet.feed_text|nl2br }}</span>
+                                <span class="comment-text inline-block">{{ Weet.feed_text|escape|linkify|mentionify|raw|nl2br }}</span>
                                 <div class="comment-actions">
                                     <a href="/user/{{ Weet.user.username }}/{{ Weet.feed_id }}">
                                         <span class="comment-action inline-block">
@@ -125,7 +111,7 @@
                                     <a href="/user/{{ Weet.user.username }}"><b class="comment-author">{{ Weet.user.nickname }}</b> @{{ Weet.user.username }}</a>
                                     <span class="caption">{{ Weet.feed_created|timeago }}</span>
                                 </span>
-                                <span class="comment-text inline-block">{{ Weet.feed_text|nl2br }}</span>
+                                <span class="comment-text inline-block">{{ Weet.feed_text|escape|linkify|mentionify|raw|nl2br }}</span>
                                 <div class="comment-actions">
                                     <a href="/user/{{ Weet.user.username }}/{{ Weet.feed_id }}">
                                         <span class="comment-action inline-block">
@@ -153,7 +139,7 @@
                         <a href="/user/{{ Weet.user.username }}"><b class="comment-author">{{ Weet.user.nickname }}</b> @{{ Weet.user.username }}</a>
                         <span class="caption">{{ Weet.feed_created|timeago }}</span>
                     </span>
-                    <span class="comment-text inline-block">{{ Weet.feed_text|nl2br }}</span>
+                    <span class="comment-text inline-block">{{ Weet.feed_text|escape|linkify|mentionify|raw|nl2br }}</span>
                     <div class="comment-actions">
                         <a href="/user/{{ Weet.user.username }}/{{ Weet.feed_id }}">
                             <span class="comment-action inline-block">
@@ -205,7 +191,7 @@
                             <a href="/user/{{ Weet.user.username }}"><b class="comment-author">{{ Weet.user.nickname }}</b> @{{ Weet.user.username }}</a>
                             <span class="caption">{{ Weet.feed_created|timeago }}</span>
                         </span>
-                        <span class="comment-text inline-block">{{ Weet.feed_text|nl2br }}</span>
+                        <span class="comment-text inline-block">{{ Weet.feed_text|escape|linkify|mentionify|raw|nl2br }}</span>
                         <div class="comment-actions">
                             <a href="/user/{{ Weet.user.username }}/{{ Weet.feed_id }}">
                                 <span class="comment-action inline-block">

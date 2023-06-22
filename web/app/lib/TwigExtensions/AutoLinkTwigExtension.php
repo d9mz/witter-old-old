@@ -1,6 +1,6 @@
 <?php
 
-namespace Crapblox\TwigExtensions;
+namespace Witter\TwigExtensions;
 
 class AutoLinkTwigExtension extends AbstractExtension
 {

@@ -26,6 +26,7 @@ $Router         = new \Bramus\Router\Router();
 
 // witter.jacksden.com
 
+$Router->Get('/cdn/css/{md5}', "\Witter\Models\CDN@GetCSS");
 $Router->Get('/cdn/{md5}', "\Witter\Models\CDN@GetFile");
 
 if(!isset($_SESSION['Handle'])) {
@@ -38,6 +39,7 @@ if(!isset($_SESSION['Handle'])) {
     // [WEB] [API] Settings
     $Router->Get('/settings', "\Witter\Views\Settings@View");
     $Router->Post('/settings/description', "\Witter\Models\Settings@Description");
+    $Router->Post('/settings/css', "\Witter\Models\Settings@CSS");
     $Router->Post('/settings/nickname', "\Witter\Models\Settings@nickname");
     $Router->Post('/settings/picture/profile', "\Witter\Models\Settings@ProfilePicture");
     $Router->Post('/settings/picture/banner', "\Witter\Models\Settings@Banner");

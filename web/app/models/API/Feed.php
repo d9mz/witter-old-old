@@ -111,7 +111,7 @@ class Feed extends Model
     
         // Prepare the query
         $query = $this->Connection->prepare(
-            "SELECT f.id, f.feed_owner, f.feed_text, f.feed_created 
+            "SELECT f.id, f.feed_id, f.feed_owner, f.feed_text, f.feed_created 
             FROM followers AS flw
             INNER JOIN feed AS f ON flw.target = f.feed_owner
             WHERE flw.user = :user
@@ -138,11 +138,6 @@ class Feed extends Model
                 $postOwner = $userModel->GetUser($post['feed_owner'], Type::ID);
             }
             
-            // Get likes count for the post
-            $likesQuery = $this->Connection->prepare("SELECT * FROM likes WHERE target = :target");
-            $likesQuery->bindParam(":target", $post['feed_id']);
-            $likesQuery->execute();
-            
             // Check if current user liked the post
             if(isset($_SESSION['Handle'])) {
                 $post["liked"] = $this->PostLiked($post['feed_id'], $_SESSION['Handle']);
@@ -151,7 +146,9 @@ class Feed extends Model
             }
     
             // Assign likes count and post owner data to the post
-            $post["likes"] = $likesQuery->rowCount();
+            $post["likes"] = $this->GetLikeCount($post['feed_id']);
+            $post["replies"] = $this->GetReplyCount($post['feed_id']);
+            $post['liked'] = $this->PostLiked($post['feed_id'], @$_SESSION['Handle']);
             $post["user"] = @$postOwner;
         }
     

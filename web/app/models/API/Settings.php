@@ -6,9 +6,7 @@ use Intervention\Image\ImageManager;
 class Settings extends Model
 {
     public function Description() {
-        $cdn    = new \Witter\Models\CDN();
         $alert  = new \Witter\Models\Alert();
-        $util   = new \Witter\Models\Utility();
         $user   = new \Witter\Models\User();
         $user   = $user->GetUser($_SESSION['Handle']);
 
@@ -27,7 +25,26 @@ class Settings extends Model
         ]);
         $stmt = null;
 
-        $alert->CreateAlert(Level::Success, "Successfully set the description.");
+        $alert->CreateAlert(Level::Success, "Successfully set your description.");
+    }
+
+    public function CSS() {
+        $alert  = new \Witter\Models\Alert();
+        $user   = new \Witter\Models\User();
+        $user   = $user->GetUser($_SESSION['Handle']);
+
+        if (strlen(@$_POST['css']) > 2048) {
+            $alert->CreateAlert(Level::Error, "Your description must be longer than 3 characters and not longer than 200.");
+        }
+
+        $stmt = $this->Connection->prepare("UPDATE users SET css = ? WHERE id = ?");
+        $stmt->execute([
+            $_POST['css'],
+            $user['id'],
+        ]);
+        $stmt = null;
+
+        $alert->CreateAlert(Level::Success, "Successfully set your CSS.");
     }
 
     public function Nickname() {

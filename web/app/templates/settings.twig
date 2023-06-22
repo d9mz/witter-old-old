@@ -22,6 +22,14 @@
                 <span class="caption">make sure to describe yourself well</span>
                 <input type="submit" value="set" aria-label="Set">
             </form>
+            <div class="bold">css</div>
+            <form class="form" method="post" action="/settings/css">
+                <div class="input-group">
+                    <textarea type="text" class="full" required placeholder="body { color: blue; }" name="css" aria-label="CSS">{{ User.css }}</textarea>
+                </div>
+                <span class="caption">prepend image urls with <code>https://wsrv.nl/?url=</code> for them to display</span>
+                <input type="submit" value="set" aria-label="Set">
+            </form>
         </div>
 
         <div class="right padding-top padding-bottom">

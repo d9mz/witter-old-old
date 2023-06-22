@@ -9,8 +9,6 @@ class Feed extends View {
         $feedModel = new \Witter\Models\Feed();
         $feed = $feedModel->GetFeed("everyone", 20);
 
-        echo $feedModel->GenerateID();
-
         // UGLY.... Why do ?
         echo $this->Twig->render('feed.twig', array(
             "PageSettings" => $this->PageSettings("Feed", "This is your feed."),

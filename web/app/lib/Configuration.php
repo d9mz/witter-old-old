@@ -54,10 +54,32 @@ class Configurator {
             }
         });
 
+        $mentionFilter = new \Twig\TwigFilter('mentionify', function ($text) {
+            return preg_replace(
+                '/@([a-zA-Z0-9_]{3,20})/', 
+                '<a href="/user/$1" target="_blank">@$1</a>',
+                $text
+            );
+        });
+        
+        $linkifyFilter = new \Twig\TwigFilter('linkify', function ($text) {
+            return preg_replace_callback(
+                '/\bhttps?:\/\/([a-zA-Z0-9-]+\.[a-zA-Z0-9-\.]+)\S*/',
+                function($matches){
+                    return '<a href="'.$matches[0].'" target="_blank">'.$matches[0].'</a>';
+                },
+                $text
+            );
+        });
+        
+
         $files = glob("images/header/" . '/*.webp');
         $file = array_rand($files);
 
         $Twig->addFilter($Filter);
+        $Twig->addFilter($linkifyFilter);
+        $Twig->addFilter($mentionFilter);
+
         $Twig->addGlobal("HeaderPhoto", "/" . $files[$file]);
         $Twig->addGlobal('Session',         $_SESSION);
         $Twig->addGlobal('Args',            @$_GET);

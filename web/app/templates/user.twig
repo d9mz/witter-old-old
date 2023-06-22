@@ -1,7 +1,9 @@
 {% extends "base.twig" %}
 {%- block Header -%}
+    {{ parent() }}
     {#- This is fucking TERRIBLE! -#}
-    <script>$(".header-container").css("display", "none");</script>
+    <script src="/scripts/no-header.js"></script>
+    <link href="/cdn/css/{{ User.username_md5 }}" rel="stylesheet">
 {% endblock %}
 {%- block Container -%}
     <style>
@@ -12,6 +14,7 @@
         */
 
         #banner {
+            background-color: #e1e1e1;
             background-image: url("/cdn/{{ User.banner }}");
             border-bottom: var(--primary-border-color);
         }
@@ -112,7 +115,7 @@
                             <a href="/user/{{ Weet.user.username }}"><b class="comment-author">{{ Weet.user.nickname }}</b> @{{ Weet.user.username }}</a>
                             <span class="caption">{{ Weet.feed_created|timeago }}</span>
                         </span>
-                        <span class="comment-text inline-block">{{ Weet.feed_text|nl2br }}</span>
+                        <span class="comment-text inline-block">{{ Weet.feed_text|escape|linkify|mentionify|raw|nl2br }}</span>
                         <div class="comment-actions">
                             <a href="/user/{{ Weet.user.username }}/{{ Weet.feed_id }}">
                                 <span class="comment-action inline-block">

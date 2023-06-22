@@ -8,6 +8,35 @@ enum ContentType: int {
 
 class CDN extends Model
 {
+    // Not actually md5, just too lazy to change to base64
+    public function GetCSS(string $md5) {
+        $userModel = new \Witter\Models\User();
+        if(!$userModel->UserExists(base64_decode($md5))) die("User doesn't exist");
+        $user = $userModel->GetUser(base64_decode($md5));
+
+        header("Content-type: text/css");
+
+        $prepend_css = "/* witter - " . $md5 . " */
+
+#banner {
+    background-image: url('/cdn/" . $user['banner'] . "');
+    border-bottom: var(--primary-border-color);
+    background-repeat: no-repeat;
+    background-color: #d5d5d5;
+    background-size: cover;
+    background-position: center;
+}
+
+.user-album-container {
+
+}
+
+/* witter - " . $md5 . " */\n\n";
+
+        $user['css'] = $prepend_css . $user['css'];
+        die($user['css']);
+    }
+
     // Return filename of PFP -- :D
     // most likely returns md5 hash of file
     public function GetFile(string $md5) {

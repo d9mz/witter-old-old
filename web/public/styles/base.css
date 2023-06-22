@@ -443,8 +443,8 @@ input[type="password"] {
 }
 
 .header a {
-    color: #f8fbff;
-    text-shadow: 0px 0px 4px rgba(40, 116, 197, 0.42);
+    color: #f8fbffe0;
+    text-shadow: 0px 0px 4px rgb(194 204 215);
 }
 
 .header h1 {
@@ -452,10 +452,8 @@ input[type="password"] {
 }
 
 .header {
-    background-repeat: no-repeat;
-    background-color: #8ab9e7;
-    background-size: cover;
-    background-position: center;
+    background-image: linear-gradient(45deg, #8ab9e7 25%, #a1c8f0 25%, #a1c8f0 50%, #8ab9e7 50%, #8ab9e7 75%, #a1c8f0 75%, #a1c8f0 100%);
+    background-size: 14.14px 14.14px;
     height: 30px;
 }
 
