@@ -24,6 +24,15 @@ What the hell?
     border: 1px solid var(--primary-border-color);;
 }
 
+.reweet:hover {
+    background-color: rgb(236, 236, 236);
+    cursor: pointer;
+}
+
+.fake-link {
+    color: var(--primary-text-color);
+}
+
 .reply-chain .weet:first-child {
     border-bottom: 0px solid black;
 }
@@ -106,7 +115,7 @@ h1, h2, h3, h4, h5 ,h6 {
 }
 
 .container {
-    background-color: #ffffff4d;
+    background-color: #fcfeff;
     width: 800px;
     margin: auto;
     margin-bottom: 10px;

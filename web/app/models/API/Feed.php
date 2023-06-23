@@ -258,36 +258,35 @@ class Feed extends Model
             $user = $user_fetch->GetUser($weet['feed_owner'], Type::ID);
 
             // Relation: For getting # of likes on a specific weet
-            $LikesSearch = $this->Connection->prepare("SELECT * FROM likes WHERE target = :target");
-            $LikesSearch->bindParam(":target", $weet['feed_id']);
-            $LikesSearch->execute();
+            if(!$optimize) {
+                $LikesSearch = $this->Connection->prepare("SELECT * FROM likes WHERE target = :target");
+                $LikesSearch->bindParam(":target", $weet['feed_id']);
+                $LikesSearch->execute();
 
-            // Relation: Did you like this post?
-            if(isset($_SESSION['Handle'])) {
-                $weet["liked"] = $this->PostLiked($weet['feed_id'], $_SESSION['Handle']);
-            } else {
-                $weet["liked"] = false;
+                // Relation: Did you like this post?
+                if(isset($_SESSION['Handle'])) {
+                    $weet["liked"] = $this->PostLiked($weet['feed_id'], $_SESSION['Handle']);
+                } else {
+                    $weet["liked"] = false;
+                }
+
+                // assign user (accessible by weet.user.property in twig)
+                // assign likes property (weet.likes)
+                $weet["replies"] = $this->GetReplyCount($weet['feed_id']);
+                $weet["likes"] = $LikesSearch->rowCount();
             }
 
-            // assign user (accessible by weet.user.property in twig)
-            // assign likes property (weet.likes)
-            $weet["replies"] = $this->GetReplyCount($weet['feed_id']);
-            $weet["likes"] = $LikesSearch->rowCount();
             $weet["user"] = @$user;
 
             // Remove Witter links if 
-            echo "(" . $weet['feed_embed'] . ")";
             if(!empty(trim($weet['feed_embed']))) {
                 // Get all that reweet metadata
                 $retweet = $this->GetWitterLinksInWeet($weet['feed_text']);
                 $user_exists = $userModel->UserExists($retweet[0]);
                 $weet_exists = $this->GetWeet($retweet[1], false);
 
-                echo (int)$user_exists;
-                echo (int)$weet_exists;
-
                 if($user_exists && $weet_exists) {
-                    $weet["reweet"] = $this->GetWeet($retweet[1], false);
+                    $weet["reweet"] = $this->GetWeet($retweet[1], false, false, true);
                     $weet["feed_text"] = $this->RemoveWitterLinkInWeet($weet["feed_text"], $retweet[2]);
                 } else if($user_exists) {
                     // Most likely Weet got deleted
@@ -603,7 +602,7 @@ class Feed extends Model
         $reweet = $this->GetWitterLinksInWeet($_POST['comment']);
 
         // TODO: This is pretty ugly...
-        if(count($reweet) == 2) {
+        if(count($reweet) == 3) {
             // weet link detected ...
             if($userModel->UserExists($reweet[0]) && $weetModel->WeetExists($reweet[1])) { 
                 // insert into feed w/ metadata
