@@ -76,7 +76,7 @@ class Feed extends Model
     
         // Prepare the query
         $query = $this->Connection->prepare(
-            "SELECT f.id, f.feed_owner, f.feed_text, f.feed_created, COUNT(l.target) AS likes
+            "SELECT f.feed_id, COUNT(l.target) AS likes
             FROM feed AS f
             LEFT JOIN likes AS l ON f.id = l.target
             WHERE f.feed_created > DATE_SUB(NOW(), INTERVAL 1 HOUR)
@@ -96,22 +96,7 @@ class Feed extends Model
         }
     
         foreach($feed as &$post) {
-            // Get post owner data
-            if($userModel->UserExists($post['feed_owner'], Type::ID)) {
-                $postOwner = $userModel->GetUser($post['feed_owner'], Type::ID);
-            }
-    
-            // Check if current user liked the post
-            if(isset($_SESSION['Handle'])) {
-                $post["liked"] = $this->PostLiked($post['feed_id'], $_SESSION['Handle']);
-            } else {
-                $post["liked"] = false;
-            }
-    
-            // Assign post owner data and likes count to the post
-            $post["replies"] = $this->GetReplyCount($post['feed_id']);
-            $post["user"] = @$postOwner;
-            $post["likes"] = $this->GetLikeCount($post['feed_id']);
+            $post = $this->GetWeet($post['feed_id'], false);
         }
     
         // Reverse the order of the feed to have most liked posts at the top
@@ -130,7 +115,7 @@ class Feed extends Model
     
         // Prepare the query
         $query = $this->Connection->prepare(
-            "SELECT f.id, f.feed_id, f.feed_owner, f.feed_text, f.feed_created 
+            "SELECT f.feed_id 
             FROM followers AS flw
             INNER JOIN feed AS f ON flw.target = f.feed_owner
             WHERE flw.user = :user
@@ -152,23 +137,7 @@ class Feed extends Model
         }
     
         foreach($feed as &$post) {
-            // Get post owner data
-            if($userModel->UserExists($post['feed_owner'], Type::ID)) {
-                $postOwner = $userModel->GetUser($post['feed_owner'], Type::ID);
-            }
-            
-            // Check if current user liked the post
-            if(isset($_SESSION['Handle'])) {
-                $post["liked"] = $this->PostLiked($post['feed_id'], $_SESSION['Handle']);
-            } else {
-                $post["liked"] = false;
-            }
-    
-            // Assign likes count and post owner data to the post
-            $post["likes"] = $this->GetLikeCount($post['feed_id']);
-            $post["replies"] = $this->GetReplyCount($post['feed_id']);
-            $post['liked'] = $this->PostLiked($post['feed_id'], @$_SESSION['Handle']);
-            $post["user"] = @$postOwner;
+            $post = $this->GetWeet($post['feed_id'], false);
         }
     
         return $feed;
@@ -271,7 +240,10 @@ class Feed extends Model
         return $stmt->rowCount() === 1;
     }
     
-    public function GetWeet(int $weet_id, bool $actual_id) : array {
+    // Optimize option set to true disables unneeded database queries (such as getting likes, replies, liked, etc.)
+    public function GetWeet(int $weet_id, bool $actual_id, bool $remove_witter_links = true, bool $optimize = false) : array {
+        $userModel = new User();
+        
         if($actual_id) $query = "SELECT * FROM feed WHERE id = :find";
         if(!$actual_id) $query = "SELECT * FROM feed WHERE feed_id = :find";
 
@@ -302,6 +274,32 @@ class Feed extends Model
             $weet["replies"] = $this->GetReplyCount($weet['feed_id']);
             $weet["likes"] = $LikesSearch->rowCount();
             $weet["user"] = @$user;
+
+            // Remove Witter links if 
+            echo "(" . $weet['feed_embed'] . ")";
+            if(!empty(trim($weet['feed_embed']))) {
+                // Get all that reweet metadata
+                $retweet = $this->GetWitterLinksInWeet($weet['feed_text']);
+                $user_exists = $userModel->UserExists($retweet[0]);
+                $weet_exists = $this->GetWeet($retweet[1], false);
+
+                echo (int)$user_exists;
+                echo (int)$weet_exists;
+
+                if($user_exists && $weet_exists) {
+                    $weet["reweet"] = $this->GetWeet($retweet[1], false);
+                    $weet["feed_text"] = $this->RemoveWitterLinkInWeet($weet["feed_text"], $retweet[2]);
+                } else if($user_exists) {
+                    // Most likely Weet got deleted
+
+                    $weet["reweet"]["user"]["username"] = "n/a";
+                    $weet["reweet"]["user"]["nickname"] = "N/A";
+                    $weet["reweet"]["feed_text"] = "This weet is currently unavailable.";
+                    $weet["reweet"]["feed_created"] = "2021-09-10 01:23:45";
+                    $weet["reweet"]["feed_target"] = -1;
+                    $weet["reweet"]["feed_id"] = 0;
+                }
+            }
 
             return $weet;
         } else {
@@ -423,59 +421,28 @@ class Feed extends Model
     // returns pdo loopabble thingy, can use while
     public function GetFeed(string $type = "following", int $limit = 20) {
         if($type == "everyone") {
-            $Feed = $this->Connection->prepare("SELECT * FROM feed WHERE feed_target = -1 ORDER BY id DESC LIMIT " . $limit);
+            $Feed = $this->Connection->prepare("SELECT feed_id FROM feed WHERE feed_target = -1 ORDER BY id DESC LIMIT " . $limit);
             $Feed->execute();
 
             // Relation: get user info while fetching forum
             $user_fetch = new \Witter\Models\User();
             while ($weet = $Feed->fetch(\PDO::FETCH_ASSOC)) {
-                if ($user_fetch->UserExists($weet['feed_owner'], Type::ID)) {
-                    $user = $user_fetch->GetUser($weet['feed_owner'], Type::ID);
-                }
-
-                // Relation: Did you like this post?
-                if(isset($_SESSION['Handle'])) {
-                    $weet["liked"] = $this->PostLiked($weet['feed_id'], $_SESSION['Handle']);
-                } else {
-                    $weet["liked"] = false;
-                }
-    
-                // assign user (accessible by weet.user.property in twig)
-                // assign likes property (weet.likes)
-                $weet["replies"] = $this->GetReplyCount($weet['feed_id']);
-                $weet["likes"] = $this->GetLikeCount($weet['feed_id']);
-                $weet["user"] = @$user;
+                $weet = $this->GetWeet($weet['feed_id'], false);
                 $weets[] = $weet;
             }
         } elseif($type == "following") {
             return [];
         } else {
             $user_fetch = new \Witter\Models\User();
-
-            // Just get the user here, no need to requery the 
-            // database to get the user again when the same 
-            // person will always appear.
-
             $user = $user_fetch->GetUser($type, Type::Username);
 
-            $Feed = $this->Connection->prepare("SELECT * FROM feed WHERE feed_owner = :id AND feed_target = -1 ORDER BY id DESC LIMIT " . $limit);
+            $Feed = $this->Connection->prepare("SELECT feed_id FROM feed WHERE feed_owner = :id AND feed_target = -1 ORDER BY id DESC LIMIT " . $limit);
             $Feed->bindParam(":id", $user['id']);
             $Feed->execute();
 
             // Relation: get user info while fetching forum
             while ($weet = $Feed->fetch(\PDO::FETCH_ASSOC)) {
-                // Relation: Did you like this post?
-                if(isset($_SESSION['Handle'])) {
-                    $weet["liked"] = $this->PostLiked($weet['feed_id'], $_SESSION['Handle']);
-                } else {
-                    $weet["liked"] = false;
-                }
-    
-                // assign user (accessible by weet.user.property in twig)
-                // assign likes property (weet.likes)
-                $weet["replies"] = $this->GetReplyCount($weet['feed_id']);
-                $weet["likes"] = $this->GetLikeCount($weet['feed_id']);
-                $weet["user"] = @$user;
+                $weet = $this->GetWeet($weet['feed_id'], false);
                 $weets[] = $weet;
             }
         }

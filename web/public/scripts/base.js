@@ -38,6 +38,12 @@ $(function() {
         });        
     });
 
+    $('.reweet').on('click', function() {
+        window.location.replace(
+            $(this).data('target-url')
+        );
+    });
+
     $('.comment_like_reply').on('click', function() {
         let commentID = $(this).data('comment-id'); // Get the data attribute value
         let commentLabel = $(this).find('.comment-action-text');

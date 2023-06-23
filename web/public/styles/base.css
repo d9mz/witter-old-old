@@ -19,6 +19,11 @@ What the hell?
     --background-color: #fbfdff;
 }
 
+.reweet {
+    margin-top: 5px;
+    border: 1px solid var(--primary-border-color);;
+}
+
 .reply-chain .weet:first-child {
     border-bottom: 0px solid black;
 }
