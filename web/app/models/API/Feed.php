@@ -605,6 +605,17 @@ class Feed extends Model
         if(count($reweet) == 3) {
             // weet link detected ...
             if($userModel->UserExists($reweet[0]) && $weetModel->WeetExists($reweet[1])) { 
+                // add +1 to reweets of target weet
+                $weet = $weetModel->GetWeet($reweet[1], false, false, true);
+                $reweets = $weet['feed_reweets'] + 1;
+
+                $stmt = $this->Connection->prepare("UPDATE feed SET feed_reweets = ? WHERE feed_id = ?");
+                $stmt->execute([
+                    $reweets,
+                    $weet['feed_id'],
+                ]);
+                $stmt = null;
+                
                 // insert into feed w/ metadata
                 $stmt = $this->Connection->prepare("INSERT INTO feed (feed_id, feed_owner, feed_text, feed_embed) VALUES (:snowflake, :id, :comment, :embed)");
 
