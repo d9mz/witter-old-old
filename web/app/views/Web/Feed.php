@@ -8,7 +8,7 @@ class Feed extends View {
     public function View() {
         $feedModel = new \Witter\Models\Feed();
         $feed = $feedModel->GetFeed("everyone", 20);
-
+        
         // UGLY.... Why do ?
         echo $this->Twig->render('feed.twig', array(
             "PageSettings" => $this->PageSettings("Feed", "This is your feed."),

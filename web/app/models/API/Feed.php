@@ -5,6 +5,25 @@ use \Godruoyi\Snowflake\Snowflake;
 
 class Feed extends Model
 {
+    public function RemoveWitterLinkInWeet(string $weet, string $link) : string {
+        $pos = strpos($weet, $link);
+        if ($pos !== false) {
+            return substr_replace($weet, "", $pos, strlen($link));
+        }
+
+        // Edge case, should never happen regardless
+        return "";
+    }
+
+    public function GetWitterLinksInWeet(string $weet) : array {
+        $pattern = '/https?:\/\/genericlink\.com\/user\/([a-zA-Z0-9-]+)\/(\d+)/';
+        preg_match($pattern, $weet, $matches);
+
+        // This looks really weird
+        if(isset($matches[1])) return [$matches[1], $matches[2], $matches[0]];
+        else                   return [];
+    }
+
     public function GenerateID() : int {
         // Intellisense doesn't like me doing this
         $snowflake = new Snowflake;
@@ -592,9 +611,10 @@ class Feed extends Model
     }
 
     public function NewPost() {
-        $alert    = new Alert();
-        $user     = new \Witter\Models\User();
-        $cooldown = new \Witter\Models\Cooldown();
+        $alert     = new Alert();
+        $userModel = new \Witter\Models\User();
+        $weetModel = new \Witter\Models\Feed();
+        $cooldown  = new \Witter\Models\Cooldown();
 
         // comment validation
         if (!isset($_POST['comment']) && !empty(trim($_POST['comment']))) {
@@ -611,16 +631,43 @@ class Feed extends Model
             $cooldown->SetCooldown("weet_cooldown", $_SESSION['Handle']);
         }
 
-        $user = $user->GetUser($_SESSION['Handle']);
+        $user   = $userModel->GetUser($_SESSION['Handle']);
+        $id     = $this->GenerateID();
+        $reweet = $this->GetWitterLinksInWeet($_POST['comment']);
 
-        $stmt = $this->Connection->prepare("INSERT INTO feed (feed_id, feed_owner, feed_text) VALUES (:snowflake, :id, :comment)");
+        // TODO: This is pretty ugly...
+        if(count($reweet) == 2) {
+            // weet link detected ...
+            if($userModel->UserExists($reweet[0]) && $weetModel->WeetExists($reweet[1])) { 
+                // insert into feed w/ metadata
+                $stmt = $this->Connection->prepare("INSERT INTO feed (feed_id, feed_owner, feed_text, feed_embed) VALUES (:snowflake, :id, :comment, :embed)");
 
-        $id = $this->GenerateID();
-        $stmt->bindParam(":snowflake", $id);
-        $stmt->bindParam(":id", $user['id']);
-        $stmt->bindParam(":comment", $_POST['comment']);
+                $stmt->bindParam(":snowflake", $id);
+                $stmt->bindParam(":id", $user['id']);
+                $stmt->bindParam(":comment", $_POST['comment']);
+                $stmt->bindParam(":embed", $reweet[1]);
+        
+                $stmt->execute();        
+            } else {
+                $stmt = $this->Connection->prepare("INSERT INTO feed (feed_id, feed_owner, feed_text) VALUES (:snowflake, :id, :comment)");
 
-        $stmt->execute();
+                $stmt->bindParam(":snowflake", $id);
+                $stmt->bindParam(":id", $user['id']);
+                $stmt->bindParam(":comment", $_POST['comment']);
+        
+                $stmt->execute();        
+            }
+        } else {
+            $stmt = $this->Connection->prepare("INSERT INTO feed (feed_id, feed_owner, feed_text) VALUES (:snowflake, :id, :comment)");
+
+            $stmt->bindParam(":snowflake", $id);
+            $stmt->bindParam(":id", $user['id']);
+            $stmt->bindParam(":comment", $_POST['comment']);
+    
+            $stmt->execute();
+    
+        }
+
 
         $alert->CreateAlert(Level::Success, "Successfully weeted!");
     }
