@@ -1,16 +1,4 @@
 <div class="header padding">
-    <a href="/"><h1>witter</h1></a>
-    <div class="header-items right">
-        <div class="right align-right">
-            {% if Session.Handle is not defined %}
-                <a href="/users">users</a>
-                <a href="/feed">feed</a>
-                <a href="/">login</a>
-            {% else %}
-                <a href="/user/{{ Session.Handle }}">@{{ Session.Handle }}</a>
-                <a href="/feed">feed</a>
-                <a href="/settings">settings</a>
-            {% endif %}
-        </div>
-    </div>
+    <a href="/" class="logo"><img src="/images/text.png"></a>
+    <div
 </div>
