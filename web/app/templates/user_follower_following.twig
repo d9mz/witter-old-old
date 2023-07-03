@@ -87,47 +87,40 @@
     </div>
     <hr>
     <div class="padding">
-        {% for Weet in Feed %}
-            {% if Weet.id is defined %}
-                <div class="weet">
-                    <div class="inline-block padding top">
-                        <img src="/cdn/{{ Weet.user.profile_picture }}" class="profile-picture">
-                    </div>
-                    <div class="comment-body inline-block padding">
-                        <span class="comment-info inline-block">
-                            <a href="/user/{{ Weet.user.username }}"><b class="comment-author">{{ Weet.user.nickname }}</b> @{{ Weet.user.username }}</a>
-                            <span class="caption">{{ Weet.feed_created|timeago }}</span>
-                        </span>
-                        <span class="comment-text inline-block">{{ Weet.feed_text|escape|linkify|mentionify|raw|nl2br }}</span>
-                        {% if Weet.reweet is defined %}
-                            <div class="reweet padding" data-target-url="/user/{{Weet.reweet.user.username }}/{{ Weet.reweet.feed_id }}">
-                                <b class="comment-author">{{ Weet.reweet.user.nickname }}</b> <span class="fake-link">@{{ Weet.reweet.user.username }}</span><br>
-                                <span class="comment-text inline-block">{{ Weet.reweet.feed_text|escape|linkify|mentionify|raw|nl2br }}</span>
-                            </div>
-                        {% endif %}
-                        <div class="comment-actions">
-                            <a href="/user/{{ Weet.user.username }}/{{ Weet.feed_id }}">
-                                <span class="comment-action inline-block">
-                                    <span class="comment-action-text">{{ Weet.replies }}</span> 
-                                    <i class="far fa-comment"></i>
-                                </span>
-                            </a>
-                            <span class="comment-action comment_like inline-block {% if Weet.liked %}active{% endif %}" data-comment-id="{{ Weet.feed_id }}">
-                                <span class="comment-action-text">{{ Weet.likes }}</span> 
-                                <i class="far fa-thumbs-up"></i>
-                            </span>
+        <div class="followers-following-list">
+            {% for User in Followers %}
+                {% if User.id is defined %}
+                    <div class="user-card wide" data-target-url="/user/{{ User.username }}/">
+                        <img class="profile-picture" src="/cdn/{{ User.profile_picture }}">
+                        <div class="user-metadata inline-block top">
+                            <b>{{ User.nickname }}</b>
+                            <span class="caption inline-block" style="width: unset;">@{{ User.username }}</span><br>
+                            <span class="caption">joined {{ User.created|timeago }}</span><br>
+                            <span class="caption">last online {{ User.last_login|timeago }}</span>
+                            <button 
+                                class="button left follow_button" 
+                                {% if Session.Handle == User.username %}
+                                disabled
+                                title="You cannot follow yourself!"
+                                {% endif %}
+                                data-following="{% if User.following and Session.Handle != User.username %}true{% else %}false{% endif %}" 
+                                data-follow-target="{{ User.id }}" 
+                                aria-label="Follow">
+                                {% if User.following and Session.Handle != User.username %}unfollow{% else %}follow{% endif %}
+                            </button>
                         </div>
                     </div>
-                </div>
-            {% endif %}
-        {% endfor %}
-        {% if Feed|length == 0 %}
-            <div class="center caption padding-top padding-bottom">
-                {% if ActiveTab == 'all' %}
-                    This user has no Weets.
-                {% elseif ActiveTab == 'likes' %}
-                    This user has no liked Weets.
                 {% endif %}
+            {% endfor %}
+        </div>
+        {% if Followers|length == 0 and Followers is defined %}
+            <div class="center caption padding-top padding-bottom">
+                This user has no followers.
+            </div>
+        {% endif %}
+        {% if Following|length == 0 and Following is defined %}
+            <div class="center caption padding-top padding-bottom">
+                This user is not following anybody.
             </div>
         {% endif %}
     </div>

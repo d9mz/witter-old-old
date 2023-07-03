@@ -78,12 +78,12 @@ class Feed extends Model
         $query = $this->Connection->prepare(
             "SELECT f.feed_id, COUNT(l.target) AS likes
             FROM feed AS f
-            LEFT JOIN likes AS l ON f.id = l.target
+            LEFT JOIN likes AS l ON f.feed_id = l.target
             WHERE f.feed_created > DATE_SUB(NOW(), INTERVAL 1 HOUR)
-            GROUP BY f.id
+            GROUP BY f.feed_id
             ORDER BY likes DESC"
         );
-
+    
         // Execute the query
         $query->execute();
     

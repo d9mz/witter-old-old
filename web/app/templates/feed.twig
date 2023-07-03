@@ -71,24 +71,4 @@
             </div>
         {% endif %}
     </div>
-    <script>
-        let characters = 200;
-        let characterCounter = $('span#js_char_remaining');
-        let submitButton = $('#js_submit')
-
-        $("#js_comment").on('input', function() {
-            let value = $('textarea#js_comment').val()
-            let charactersLeft = characters - value.length;
-
-            characterCounter.text(charactersLeft);
-
-            if(charactersLeft < 0) {
-                characterCounter.css("color", "darkred");
-                submitButton.prop("disabled", true);
-            } else {
-                characterCounter.css("color", "unset");
-                submitButton.prop("disabled", false);
-            }
-        });
-    </script>
 {% endblock %}

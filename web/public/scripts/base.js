@@ -38,12 +38,6 @@ $(function() {
         });        
     });
 
-    $('.reweet').on('click', function() {
-        window.location.replace(
-            $(this).data('target-url')
-        );
-    });
-
     $('.comment_like_reply').on('click', function() {
         let commentID = $(this).data('comment-id'); // Get the data attribute value
         let commentLabel = $(this).find('.comment-action-text');
@@ -81,7 +75,16 @@ $(function() {
         });        
     });
 
+    $('.reweet, .followers-following-list .user-card.wide').on('click', function() {
+        window.location.replace(
+            $(this).data('target-url')
+        );
+    });
+
     $('.follow_button').on('click', function() {
+        event.stopPropagation();
+        event.preventDefault();
+        
         let followTarget = $(this).data('follow-target');
         let following = $(this).data('following'); 
 
@@ -113,5 +116,24 @@ $(function() {
                 console.error('[follow action] failed to follow/unfollow! ' + error);
             }
         });        
+    });
+
+    let characters = 200;
+    let characterCounter = $('span#js_char_remaining');
+    let submitButton = $('#js_submit')
+
+    $("#js_comment").on('input', function() {
+        let value = $('textarea#js_comment').val()
+        let charactersLeft = characters - value.length;
+
+        characterCounter.text(charactersLeft);
+
+        if(charactersLeft < 0) {
+            characterCounter.css("color", "darkred");
+            submitButton.prop("disabled", true);
+        } else {
+            characterCounter.css("color", "unset");
+            submitButton.prop("disabled", false);
+        }
     });
 });

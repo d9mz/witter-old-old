@@ -2,8 +2,36 @@
 namespace Witter\Views;
 
 use Witter\Models\Level;
+use Witter\Models\Type;
 
 class User extends View {
+    public function Followers($user) {
+        $handle = $user;
+        $userclass = new \Witter\Models\User();
+        $user = $userclass->GetUser($user);
+
+        if($userclass->UserExists($handle)) {
+            $followerStmt = $this->Connection->prepare("SELECT * FROM followers WHERE target = :id");
+            $followerStmt->bindParam(":id", $user['id']);
+            $followerStmt->execute();
+
+            while ($follower = $followerStmt->fetch(\PDO::FETCH_ASSOC)) {
+                $user_follower = $userclass->GetUser($follower['user'], Type::ID);
+                $user_follower['following'] = $userclass->FollowingUser((int)$follower['user'], $_SESSION['Handle']);
+                $followers[] = $user_follower;
+            }
+
+            echo $this->Twig->render('user_follower_following.twig', array(
+                "PageSettings" => $this->PageSettings($user['nickname'] . " (@" . $user['username'] . ")", $user['description']),
+                "User" => $user,
+                "Followers" => @$followers,
+                "ActiveTab" => "followers",
+            ));
+        } else {
+            $alert = new \Witter\Models\Alert();
+            $alert->CreateAlert(Level::Error, "This user does not exist.");
+        }
+    }
     public function View($user) {
         $handle = $user;
         $userclass = new \Witter\Models\User();

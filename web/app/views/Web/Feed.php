@@ -17,18 +17,6 @@ class Feed extends View {
         ));
     }
 
-    public function Following() {
-        $feed = new \Witter\Models\Feed();
-        $feed = $feed->GetFollowingFeed($_SESSION['Handle']);
-
-        // UGLY.... Why do ?
-        echo $this->Twig->render('feed.twig', array(
-            "PageSettings" => $this->PageSettings("Feed", "This is your feed."),
-            "Feed" => @$feed,
-            "ActiveTab" => "following",
-        ));
-    }
-
     public function Trending() {
         $feed = new \Witter\Models\Feed();
         $feed = $feed->GetTrendingFeed();
@@ -38,6 +26,18 @@ class Feed extends View {
             "PageSettings" => $this->PageSettings("Feed", "This is your feed."),
             "Feed" => @$feed,
             "ActiveTab" => "trending",
+        ));
+    }
+
+    public function Following() {
+        $feed = new \Witter\Models\Feed();
+        $feed = $feed->GetFollowingFeed($_SESSION['Handle']);
+
+        // UGLY.... Why do ?
+        echo $this->Twig->render('feed.twig', array(
+            "PageSettings" => $this->PageSettings("Feed", "This is your feed."),
+            "Feed" => @$feed,
+            "ActiveTab" => "following",
         ));
     }
 

@@ -64,10 +64,11 @@
             <span class="caption">{{ Weet.user.description }}</span>
         </div>
         <div class="user-follow-metric">
-            <span class="caption"><b><a class="keep-color" href="/user/{{ Weet.user.username }}/followers">{{ Weet.user.metrics.follower_count|number_format }}</b> follower(s), </a></span>
-            <span class="caption"><b><a class="keep-color" href="/user/{{ Weet.user.username }}/following">{{ Weet.user.metrics.following_count|number_format }}</b> following</a></span>
+            <span class="caption"><b><a class="keep-color" href="/user/followers/{{ Weet.user.username }}">{{ Weet.user.metrics.follower_count|number_format }}</b> follower(s), </a></span>
+            <span class="caption"><b><a class="keep-color" href="/user/following/{{ Weet.user.username }}">{{ Weet.user.metrics.following_count|number_format }}</b> following</a></span>
         </div>
     </div>
+    
     <hr>
     <div class="padding no-padding-top {% if Reply %}reply-chain{% endif %}">
         {% if Reply %}
@@ -87,11 +88,23 @@
                                     <span class="caption">{{ Weet.feed_created|timeago }}</span>
                                 </span>
                                 <span class="comment-text inline-block">{{ Weet.feed_text|escape|linkify|mentionify|raw|nl2br }}</span>
+                                {% if Weet.reweet is defined %}
+                                    <div class="reweet padding" data-target-url="/user/{{Weet.reweet.user.username }}/{{ Weet.reweet.feed_id }}">
+                                        <b class="comment-author">{{ Weet.reweet.user.nickname }}</b> <span class="fake-link">@{{ Weet.reweet.user.username }}</span><br>
+                                        <span class="comment-text inline-block">{{ Weet.reweet.feed_text|escape|linkify|mentionify|raw|nl2br }}</span>
+                                    </div>
+                                {% endif %}
                                 <div class="comment-actions">
                                     <a href="/user/{{ Weet.user.username }}/{{ Weet.feed_id }}">
                                         <span class="comment-action inline-block">
                                             <span class="comment-action-text">{{ Weet.replies }}</span> 
                                             <i class="far fa-comment"></i>
+                                        </span>
+                                    </a>
+                                    <a href="/feed?intent=%0A%0Ahttps://genericlink.com/user/{{ Weet.user.username }}/{{ Weet.feed_id }}">
+                                        <span class="comment-action inline-block">
+                                            <span class="comment-action-text">{{ Weet.feed_reweets }}</span> 
+                                            <i class="far fa-retweet"></i>
                                         </span>
                                     </a>
                                     <span class="comment-action comment_like_reply inline-block {% if Weet.liked %}active{% endif %}" data-comment-id="{{ Weet.feed_id }}">
@@ -112,11 +125,23 @@
                                     <span class="caption">{{ Weet.feed_created|timeago }}</span>
                                 </span>
                                 <span class="comment-text inline-block">{{ Weet.feed_text|escape|linkify|mentionify|raw|nl2br }}</span>
+                                {% if Weet.reweet is defined %}
+                                    <div class="reweet padding" data-target-url="/user/{{Weet.reweet.user.username }}/{{ Weet.reweet.feed_id }}">
+                                        <b class="comment-author">{{ Weet.reweet.user.nickname }}</b> <span class="fake-link">@{{ Weet.reweet.user.username }}</span><br>
+                                        <span class="comment-text inline-block">{{ Weet.reweet.feed_text|escape|linkify|mentionify|raw|nl2br }}</span>
+                                    </div>
+                                {% endif %}
                                 <div class="comment-actions">
                                     <a href="/user/{{ Weet.user.username }}/{{ Weet.feed_id }}">
                                         <span class="comment-action inline-block">
                                             <span class="comment-action-text">{{ Weet.replies }}</span> 
                                             <i class="far fa-comment"></i>
+                                        </span>
+                                    </a>
+                                    <a href="/feed?intent=%0A%0Ahttps://genericlink.com/user/{{ Weet.user.username }}/{{ Weet.feed_id }}">
+                                        <span class="comment-action inline-block">
+                                            <span class="comment-action-text">{{ Weet.feed_reweets }}</span> 
+                                            <i class="far fa-retweet"></i>
                                         </span>
                                     </a>
                                     <span class="comment-action comment_like inline-block {% if Weet.liked %}active{% endif %}" data-comment-id="{{ Weet.feed_id }}">
@@ -140,11 +165,23 @@
                         <span class="caption">{{ Weet.feed_created|timeago }}</span>
                     </span>
                     <span class="comment-text inline-block">{{ Weet.feed_text|escape|linkify|mentionify|raw|nl2br }}</span>
+                    {% if Weet.reweet is defined %}
+                        <div class="reweet padding" data-target-url="/user/{{Weet.reweet.user.username }}/{{ Weet.reweet.feed_id }}">
+                            <b class="comment-author">{{ Weet.reweet.user.nickname }}</b> <span class="fake-link">@{{ Weet.reweet.user.username }}</span><br>
+                            <span class="comment-text inline-block">{{ Weet.reweet.feed_text|escape|linkify|mentionify|raw|nl2br }}</span>
+                        </div>
+                    {% endif %}
                     <div class="comment-actions">
                         <a href="/user/{{ Weet.user.username }}/{{ Weet.feed_id }}">
                             <span class="comment-action inline-block">
                                 <span class="comment-action-text">{{ Weet.replies }}</span> 
                                 <i class="far fa-comment"></i>
+                            </span>
+                        </a>
+                        <a href="/feed?intent=%0A%0Ahttps://genericlink.com/user/{{ Weet.user.username }}/{{ Weet.feed_id }}">
+                            <span class="comment-action inline-block">
+                                <span class="comment-action-text">{{ Weet.feed_reweets }}</span> 
+                                <i class="far fa-retweet"></i>
                             </span>
                         </a>
                         <span class="comment-action comment_like_reply inline-block {% if Weet.liked %}active{% endif %}" data-comment-id="{{ Weet.feed_id }}">
@@ -192,11 +229,23 @@
                             <span class="caption">{{ Weet.feed_created|timeago }}</span>
                         </span>
                         <span class="comment-text inline-block">{{ Weet.feed_text|escape|linkify|mentionify|raw|nl2br }}</span>
+                        {% if Weet.reweet is defined %}
+                            <div class="reweet padding" data-target-url="/user/{{Weet.reweet.user.username }}/{{ Weet.reweet.feed_id }}">
+                                <b class="comment-author">{{ Weet.reweet.user.nickname }}</b> <span class="fake-link">@{{ Weet.reweet.user.username }}</span><br>
+                                <span class="comment-text inline-block">{{ Weet.reweet.feed_text|escape|linkify|mentionify|raw|nl2br }}</span>
+                            </div>
+                        {% endif %}
                         <div class="comment-actions">
                             <a href="/user/{{ Weet.user.username }}/{{ Weet.feed_id }}">
                                 <span class="comment-action inline-block">
                                     <span class="comment-action-text">{{ Weet.replies }}</span> 
                                     <i class="far fa-comment"></i>
+                                </span>
+                            </a>
+                            <a href="/feed?intent=%0A%0Ahttps://genericlink.com/user/{{ Weet.user.username }}/{{ Weet.feed_id }}">
+                                <span class="comment-action inline-block">
+                                    <span class="comment-action-text">{{ Weet.feed_reweets }}</span> 
+                                    <i class="far fa-retweet"></i>
                                 </span>
                             </a>
                             <span class="comment-action comment_like_reply inline-block {% if Weet.liked %}active{% endif %}" data-comment-id="{{ Weet.feed_id }}">

@@ -46,6 +46,8 @@ if(!isset($_SESSION['Handle'])) {
 
     // [WEB] Profiles
     $Router->Get('/likes/{user}', "\Witter\Views\User@Likes");
+    $Router->Get('/user/followers/{user}', "\Witter\Views\User@Followers");
+    $Router->Get('/user/following/{user}', "\Witter\Views\User@Following");
     $Router->Get('/user/{user}/{id}', "\Witter\Views\Feed@ViewWeet");
     $Router->Get('/user/{user}', "\Witter\Views\User@View");
 

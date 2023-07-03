@@ -82,8 +82,8 @@ class Settings extends Model
         $user   = $user->GetUser($_SESSION['Handle']);
 
         // Is the file bigger than 1mb?
-        if($_FILES['banner']['size'] > 1000000) {
-            $alert->CreateAlert(Level::Error, "Your upload cannot be larger than 1mb.");
+        if($_FILES['banner']['size'] > 10000000) {
+            $alert->CreateAlert(Level::Error, "Your upload cannot be larger than 10mb.");
         }
 
         // Check if PHP reported an error with the upload.
@@ -145,8 +145,8 @@ class Settings extends Model
         $user   = $user->GetUser($_SESSION['Handle']);
 
         // Is the file bigger than 500kb?
-        if($_FILES['asset']['size'] > 500000) {
-            $alert->CreateAlert(Level::Error, "Your upload cannot be larger than 500Kb.");
+        if($_FILES['asset']['size'] > 5000000) {
+            $alert->CreateAlert(Level::Error, "Your upload cannot be larger than 5mb.");
         }
 
         // Check if PHP reported an error with the upload.
