@@ -3,5 +3,5 @@ $(function() {
     // This is hacky as hell...
     // Oh well!
 
-    $(".header-container").css("display", "none");
+    // $("nav").css("display", "none");
 });

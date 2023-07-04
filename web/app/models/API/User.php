@@ -23,6 +23,33 @@ class User extends Model
             "following_count" => $followingStmt->rowCount(),
         ];
     }
+
+    public function GetUserMetricFollow(int | string $user, bool $follower = true) : array {
+        if(is_int($user)) $userData = $this->GetUser($user, Type::ID);
+        if(!is_int($user)) $userData = $this->GetUser($user, Type::Username);
+        if(!isset($userData['id'])) return []; // THIS should not happen.
+        
+        if($follower) $query = "SELECT * FROM followers WHERE target = :id";
+        if(!$follower) $query = "SELECT * FROM followers WHERE user = :id";
+        
+        $followerStmt = $this->Connection->prepare($query);
+        $followerStmt->bindParam(":id", $userData['id']);
+        $followerStmt->execute();
+
+        while ($follower = $followerStmt->fetch(\PDO::FETCH_ASSOC)) {
+            if($follower) { 
+                $user_follower = $this->GetUser($follower['user'], Type::ID);
+                $user_follower['following'] = isset($_SESSION['Handle']) ? $this->FollowingUser((int)$follower['user'], $_SESSION['Handle']) : false;
+            } elseif (!$follower) {
+                $user_follower = $this->GetUser($follower['target'], Type::ID);
+                $user_follower['following'] = isset($_SESSION['Handle']) ? $this->FollowingUser((int)$follower['target'], $_SESSION['Handle']) : false;
+            } 
+            
+            $followers[] = $user_follower;
+        } 
+
+        return $followers;
+    }
     
     public function FollowingUser(string|int $target, string|int $user) : bool {
         $userModel = new \Witter\Models\User();

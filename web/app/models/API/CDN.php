@@ -18,6 +18,10 @@ class CDN extends Model
 
         $prepend_css = "/* witter - " . $md5 . " */
 
+body, html {
+    margin-top: 5px;
+}
+
 #banner {
     background-image: url('/cdn/" . $user['banner'] . "');
     border-bottom: var(--primary-border-color);
@@ -25,6 +29,8 @@ class CDN extends Model
     background-color: #d5d5d5;
     background-size: cover;
     background-position: center;
+    width: 800px;
+    margin-top: 0px;
 }
 
 .user-album-container {

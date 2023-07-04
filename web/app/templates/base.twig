@@ -15,11 +15,9 @@
         {% endblock %}
     </head>
     <body>
-        <div class="container header-container">
-            {% block Header %}
-                {% include 'includes/Header.twig' %}
-            {% endblock %}
-        </div>
+        {% block Header %}
+            {% include 'includes/Header.twig' %}
+        {% endblock %}
 
         {% if Session.Alert is defined %}
             {% for Alert in Session.Alert %}

@@ -88,7 +88,33 @@
     <hr>
     <div class="padding">
         <div class="followers-following-list">
+            {# this is stupid and gay and stupid #}
             {% for User in Followers %}
+                {% if User.id is defined %}
+                    <div class="user-card wide" data-target-url="/user/{{ User.username }}/">
+                        <img class="profile-picture" src="/cdn/{{ User.profile_picture }}">
+                        <div class="user-metadata inline-block top">
+                            <b>{{ User.nickname }}</b>
+                            <span class="caption inline-block" style="width: unset;">@{{ User.username }}</span><br>
+                            <span class="caption">joined {{ User.created|timeago }}</span><br>
+                            <span class="caption">last online {{ User.last_login|timeago }}</span>
+                            <button 
+                                class="button left follow_button" 
+                                {% if Session.Handle == User.username %}
+                                disabled
+                                title="You cannot follow yourself!"
+                                {% endif %}
+                                data-following="{% if User.following and Session.Handle != User.username %}true{% else %}false{% endif %}" 
+                                data-follow-target="{{ User.id }}" 
+                                aria-label="Follow">
+                                {% if User.following and Session.Handle != User.username %}unfollow{% else %}follow{% endif %}
+                            </button>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+            {% for User in Following %}
                 {% if User.id is defined %}
                     <div class="user-card wide" data-target-url="/user/{{ User.username }}/">
                         <img class="profile-picture" src="/cdn/{{ User.profile_picture }}">

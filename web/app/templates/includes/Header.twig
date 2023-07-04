@@ -1,4 +1,24 @@
-<div class="header padding">
-    <a href="/" class="logo"><img src="/images/text.png"></a>
-    <div
-</div>
+<nav>
+    <div id="navbar">
+        <div class="buffer"></div>
+        <div id="logo"><a href="/" class="logo">
+            <div><img src="/images/text.png"></a></div>
+        </div>
+        {% if Session.Handle is defined %}
+        <div class="navlink"><div><a href="/">home</a></div></div>
+        <div class="navlink"><div><a href="/user/{{ Session.Handle }}">profile</a></div></div>
+        <div class="navlink"><div><a href="/settings/">settings</a></div></div>
+        <div class="navlink"><div><a href="/notifications">notifications</a></div></div>
+        <div class="navlink"><div><a href="/messages">messages</a></div></div>
+        <div class="navlink"><div><a href="/sign_out">sign out</a></div></div>
+        <div class="navlink"><div></div></div>
+        <div class="navlink"><div></div></div>
+        <div class="navlink"><div></div></div>
+        <div class="navlink"><div></div></div>
+        <!-- what the hell -->
+        {% endif %}
+        <div class="buffer"></div>
+    </div>
+</nav>
+
+<!-- thanks to @clotheswife on discord (https://hardly.link/projects/navbar/) -->

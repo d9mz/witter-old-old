@@ -29,6 +29,15 @@
                 </div>
                 <span class="caption">prepend image urls with <code>https://wsrv.nl/?url=</code> for them to display</span>
                 <input type="submit" value="set" aria-label="Set">
+            </form><br>
+            <div class="bold">private account</div>
+            <form class="form" method="post" action="/settings/private/">
+                <div class="input-group">
+                    <label for="private" style="width: 25%;">private</label>
+                    <input type="checkbox" id="private" required name="private" aria-label="Private">
+                </div>
+                <span class="caption">disabled by default; people must request to see your weets</span>
+                <input type="submit" value="set" aria-label="Set">
             </form>
         </div>
 
@@ -37,7 +46,7 @@
             <form class="form" method="post" action="/settings/picture/profile/" enctype="multipart/form-data">
                 <div class="input-group">
                     <label for="profile_picture" style="width: 25%;">profile picture</label>
-                    <input type="file" class="input-text-prefix-form" id="profile_picture" required name="asset" aria-label="Profile Picture">
+                    <input type="file" id="profile_picture" required name="asset" aria-label="Profile Picture">
                 </div>
                 <span class="caption">max: 500kb / accepts png, jpg, gif</span>
                 <input type="submit" value="set" aria-label="Set">
@@ -47,9 +56,31 @@
             <form class="form" method="post" action="/settings/picture/banner/" enctype="multipart/form-data">
                 <div class="input-group">
                     <label for="banner" style="width: 25%;">banner</label>
-                    <input type="file" class="input-text-prefix-form" id="banner" required name="banner" aria-label="Banner">
+                    <input type="file" id="banner" required name="banner" aria-label="Banner">
                 </div>
                 <span class="caption">max: 1mb / accepts png, jpg, gif</span>
+                <input type="submit" value="set" aria-label="Set">
+            </form>
+        </div>
+        <div class="right padding-bottom">
+            <div class="bold">visual</div>
+            <form class="form" method="post" action="/settings/preferences/">
+                <div class="input-group">
+                    <label for="hidecss" style="width: 25%;">hide css</label>
+                    <input type="checkbox" id="hidecss" required name="hide_css" aria-label="Hide CSS">
+                </div>
+                <span class="caption">enabled by default; all CSS is moderated to account for epilepsy, etc.</span>
+                <input type="submit" value="set" aria-label="Set">
+            </form>
+        </div>
+        <div class="right padding-bottom">
+            <div class="bold">last.fm</div>
+            <form class="form" method="post" action="/settings/lastfm/">
+                <div class="input-group">
+                    <label for="lastfm" style="width: 25%;">username</label>
+                    <input type="text" class="input-text-prefix-form" id="lastfm" required name="lastfm" aria-label="Last.FM username">
+                </div>
+                <span class="caption">linking your last.fm will show what you are scrobbling to everybody</span>
                 <input type="submit" value="set" aria-label="Set">
             </form>
         </div>

@@ -10,6 +10,11 @@ What the hell?
     src: url("/styles/pgothic.ttf") format("opentype");
 }
 
+body, html {
+    padding: 0px;
+    margin: 0px;
+    overflow-x: hidden;
+}
 
 :root {
     --primary-text-color: #2874c5;
@@ -95,6 +100,12 @@ h1, h2, h3, h4, h5 ,h6 {
     margin-bottom: -10px;
 }
 
+.separator {
+    border-left: 1px solid var(--caption-text-color);;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
 .tab-group .tab {
     display: inline-block;
     width: 100px;
@@ -118,9 +129,8 @@ h1, h2, h3, h4, h5 ,h6 {
     background-color: #fcfeff;
     width: 800px;
     margin: auto;
-    margin-bottom: 10px;
-    border: 1px solid var(--primary-border-color);
-    overflow: auto;
+    margin-bottom: 5px;
+    /* overflow: auto; */
 }
 
 .center {
@@ -158,6 +168,9 @@ h1, h2, h3, h4, h5 ,h6 {
 
 .alternative-header {
     padding: 8px;
+    border-left: 1px solid var(--primary-border-color);
+    border-top: 1px solid var(--primary-border-color);
+    border-right: 1px solid var(--primary-border-color);
 }
 
 .alternative-header a {
@@ -267,10 +280,12 @@ h1, h2, h3, h4, h5 ,h6 {
 
 .footer {
     width: 800px;
+    line-height: 20px;
     margin: auto;
     font-size: 12px;
     border: 0px solid black;
     color: var(--caption-text-color);
+    border-top: 1px solid var(--primary-border-color);
 }
 
 .padding {
@@ -467,10 +482,107 @@ input[type="password"] {
     display: inline-block;
 }
 
-.header {
-    background-image: linear-gradient(45deg, #8ab9e7 25%, #a1c8f0 25%, #a1c8f0 50%, #8ab9e7 50%, #8ab9e7 75%, #a1c8f0 75%, #a1c8f0 100%);
-    background-size: 14.14px 14.14px;
+.logo img {
+    width: 115px;
+}
+
+.header-container {
+    margin-top: 10px;
+}
+
+.header-background.first-part {
+    left: 0px;
+    border-right: 1px solid #799bb9;
+    width: 10vw;
+}
+
+.header-background.second-part {
+    right: 0px;
+    border-left: 1px solid #799bb9;
+    width: 72vw;
+}
+
+
+.header-background {
+    z-index: -1;
+    position: absolute;
+    width: 100%;
     height: 30px;
+    background: rgb(128,169,207);
+    background: linear-gradient(0deg, #588ec7 0%, #92c1f3 100%);
+    border-top: 1px solid #799bb9;
+    border-bottom: 1px solid #799bb9;
+    top: 18px;
+
+    /* todo: this rgb & hex mixing is ugly DONT do it !! */
+}
+
+.buffer {
+    height: 1.5rem;
+    background: rgb(128,169,207);
+    flex-grow: 1;
+}
+
+.navlink {
+    background: rgb(128,169,207);
+}
+
+#logo > div {
+    width: 8rem;
+    height: 4rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.header {
+    width: 800px;
+    margin: auto;
+    margin-top: 10px;
+    padding: 0px;
+    margin-bottom: 10px;
+}
+
+nav {
+    width: 100%;
+}
+
+#navbar {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+#logo > div {
+    width: 8rem;
+    height: 4rem;
+}
+
+hr.wide {
+    width: 1000000%;
+    position: absolute;
+    left: 0px;
+}
+
+.buffer {
+    height: 1.5rem;
+    flex-grow: 1;
+}
+
+.navlink a {
+    color: white;
+}
+
+.navlink > div {
+    text-align: center;
+    height: 1.5rem;
+    padding: 0 1rem;
+    color: white;
+    position: relative;
+    top: 3px;
 }
 
 .user-album-container {

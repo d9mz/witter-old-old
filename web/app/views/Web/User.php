@@ -11,15 +11,7 @@ class User extends View {
         $user = $userclass->GetUser($user);
 
         if($userclass->UserExists($handle)) {
-            $followerStmt = $this->Connection->prepare("SELECT * FROM followers WHERE target = :id");
-            $followerStmt->bindParam(":id", $user['id']);
-            $followerStmt->execute();
-
-            while ($follower = $followerStmt->fetch(\PDO::FETCH_ASSOC)) {
-                $user_follower = $userclass->GetUser($follower['user'], Type::ID);
-                $user_follower['following'] = $userclass->FollowingUser((int)$follower['user'], $_SESSION['Handle']);
-                $followers[] = $user_follower;
-            }
+            $followers = $userclass->GetUserMetricFollow($handle);
 
             echo $this->Twig->render('user_follower_following.twig', array(
                 "PageSettings" => $this->PageSettings($user['nickname'] . " (@" . $user['username'] . ")", $user['description']),
@@ -32,6 +24,27 @@ class User extends View {
             $alert->CreateAlert(Level::Error, "This user does not exist.");
         }
     }
+
+    public function Following($user) {
+        $handle = $user;
+        $userclass = new \Witter\Models\User();
+        $user = $userclass->GetUser($user);
+
+        if($userclass->UserExists($handle)) {
+            $following = $userclass->GetUserMetricFollow($handle, false);
+
+            echo $this->Twig->render('user_follower_following.twig', array(
+                "PageSettings" => $this->PageSettings($user['nickname'] . " (@" . $user['username'] . ")", $user['description']),
+                "User" => $user,
+                "Following" => @$following,
+                "ActiveTab" => "following",
+            ));
+        } else {
+            $alert = new \Witter\Models\Alert();
+            $alert->CreateAlert(Level::Error, "This user does not exist.");
+        }
+    }
+
     public function View($user) {
         $handle = $user;
         $userclass = new \Witter\Models\User();

@@ -79,9 +79,9 @@ class Feed extends Model
             "SELECT f.feed_id, COUNT(l.target) AS likes
             FROM feed AS f
             LEFT JOIN likes AS l ON f.feed_id = l.target
-            WHERE f.feed_created > DATE_SUB(NOW(), INTERVAL 1 HOUR)
+            WHERE f.feed_created > DATE_SUB(NOW(), INTERVAL 1 DAY)
             GROUP BY f.feed_id
-            ORDER BY likes DESC"
+            ORDER BY likes"
         );
     
         // Execute the query

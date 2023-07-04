@@ -70,10 +70,16 @@ if(!isset($_SESSION['Handle'])) {
     // [API] Actions for user
     $Router->Post('/actions/user/{id}/follow', "\Witter\Models\User@Follow");
     $Router->Post('/actions/user/{id}/block', "\Witter\Models\User@Block");
+
+    // todo: create tos / privacy under /info/
 }
 
 $Router->Set404(function() {
+    // this shit is gay
     header("HTTP/1.0 404 Not Found");
+
+    $page = new \Witter\Views\Error;
+    $page->View();
 });
 
 $Router->run();
