@@ -43,6 +43,8 @@ if(!isset($_SESSION['Handle'])) {
     $Router->Post('/settings/nickname', "\Witter\Models\Settings@nickname");
     $Router->Post('/settings/picture/profile', "\Witter\Models\Settings@ProfilePicture");
     $Router->Post('/settings/picture/banner', "\Witter\Models\Settings@Banner");
+    $Router->Post('/settings/preferences/', "\Witter\Models\Settings@HideCSS");
+    $Router->Post('/settings/private/', "\Witter\Models\Settings@Private");
 
     // [WEB] Profiles
     $Router->Get('/likes/{user}', "\Witter\Views\User@Likes");

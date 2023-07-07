@@ -137,6 +137,21 @@ h1, h2, h3, h4, h5 ,h6 {
     text-align: center;
 }
 
+.homepage-padding {
+    padding-top: 75px;
+}
+
+.homepage-photo {
+    width: 270px;
+    margin: auto;
+    display: block;
+    margin-bottom: 15px;
+}
+
+.homepage-info {
+    line-height: 22px;
+}
+
 .full-width {
     width: 100%;
 }
@@ -167,6 +182,7 @@ h1, h2, h3, h4, h5 ,h6 {
 }
 
 .alternative-header {
+    display: none;
     padding: 8px;
     border-left: 1px solid var(--primary-border-color);
     border-top: 1px solid var(--primary-border-color);
@@ -519,12 +535,26 @@ input[type="password"] {
 
 .buffer {
     height: 1.5rem;
-    background: rgb(128,169,207);
+    background: rgb(107,149,189);
+    background: linear-gradient(0deg, rgba(107,149,189,1) 0%, rgba(128,169,207,1) 100%);
     flex-grow: 1;
+    border-bottom: 1px solid rgb(74 108 141);
+    border-top: 1px solid rgb(74 108 141);
+}
+
+.buffer:first-child {
+    border-right: 1px solid rgb(74 108 141);
+}
+
+.navlink-border {
+    border-left: 1px solid rgb(74 108 141);
 }
 
 .navlink {
-    background: rgb(128,169,207);
+    background: rgb(107,149,189);
+    background: linear-gradient(0deg, rgba(107,149,189,1) 0%, rgba(128,169,207,1) 100%);
+    border-bottom: 1px solid rgb(74 108 141);
+    border-top: 1px solid rgb(74 108 141);
 }
 
 #logo > div {

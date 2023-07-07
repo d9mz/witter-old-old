@@ -52,7 +52,7 @@
         <div class="user-card wide">
             <img class="profile-picture" src="/cdn/{{ User.profile_picture }}">
             <div class="user-metadata inline-block top">
-                <b>{{ User.nickname }}</b>
+                <b>{% if User.private == 't' %}<i class="far fa-lock"></i>{% endif %} {{ User.nickname }}</b>
                 <span class="caption inline-block" style="width: unset;">@{{ User.username }}</span><br>
                 <span class="caption">joined {{ User.created|timeago }}</span><br>
                 <span class="caption">last online {{ User.last_login|timeago }}</span>
@@ -94,7 +94,7 @@
                     <div class="user-card wide" data-target-url="/user/{{ User.username }}/">
                         <img class="profile-picture" src="/cdn/{{ User.profile_picture }}">
                         <div class="user-metadata inline-block top">
-                            <b>{{ User.nickname }}</b>
+                            <b>{% if User.private == 't' %}<i class="far fa-lock"></i>{% endif %} {{ User.nickname }}</b>
                             <span class="caption inline-block" style="width: unset;">@{{ User.username }}</span><br>
                             <span class="caption">joined {{ User.created|timeago }}</span><br>
                             <span class="caption">last online {{ User.last_login|timeago }}</span>
@@ -119,7 +119,7 @@
                     <div class="user-card wide" data-target-url="/user/{{ User.username }}/">
                         <img class="profile-picture" src="/cdn/{{ User.profile_picture }}">
                         <div class="user-metadata inline-block top">
-                            <b>{{ User.nickname }}</b>
+                            <b>{% if User.private == 't' %}<i class="far fa-lock"></i>{% endif %} {{ User.nickname }}</b>
                             <span class="caption inline-block" style="width: unset;">@{{ User.username }}</span><br>
                             <span class="caption">joined {{ User.created|timeago }}</span><br>
                             <span class="caption">last online {{ User.last_login|timeago }}</span>

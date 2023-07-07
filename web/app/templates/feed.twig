@@ -20,15 +20,18 @@
     </div>
     <hr>
     <div class="padding no-padding-top">
+        {% if not Weet.user.visible %}
+            
+        {% endif %}
         {% for Weet in Feed %}
-            {% if Weet.id is defined %}
+            {% if Weet.id is defined and Weet.user.visible %}
                 <div class="weet">
                     <div class="inline-block padding top">
                         <img src="/cdn/{{ Weet.user.profile_picture }}" class="profile-picture">
                     </div>
                     <div class="comment-body inline-block padding">
                         <span class="comment-info inline-block">
-                            <a href="/user/{{ Weet.user.username }}"><b class="comment-author">{{ Weet.user.nickname }}</b> @{{ Weet.user.username }}</a>
+                            <a href="/user/{{ Weet.user.username }}"><b class="comment-author">{{ Weet.user.nickname }}</b> @{{ Weet.user.username }}</a> {% if Weet.user.private == 't' %}<i class="far fa-lock"></i>{% endif %}
                             <span class="caption">{{ Weet.feed_created|timeago }}</span>
                         </span>
                         <span class="comment-text inline-block">{{ Weet.feed_text|escape|linkify|mentionify|raw|nl2br }}</span>

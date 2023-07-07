@@ -9,6 +9,23 @@ enum Type: int {
 
 class User extends Model
 {
+    public function IsMutuals(int $userAId, int $userBId) : bool {
+        // Checking if User A is following User B
+        $stmtA = $this->Connection->prepare("SELECT * FROM followers WHERE user = :idA AND target = :idB");
+        $stmtA->bindParam(":idA", $userAId);
+        $stmtA->bindParam(":idB", $userBId);
+        $stmtA->execute();
+    
+        // Checking if User B is following User A
+        $stmtB = $this->Connection->prepare("SELECT * FROM followers WHERE user = :idB AND target = :idA");
+        $stmtB->bindParam(":idA", $userAId);
+        $stmtB->bindParam(":idB", $userBId);
+        $stmtB->execute();
+    
+        // If both queries return a result, then they are mutuals
+        return $stmtA->rowCount() > 0 && $stmtB->rowCount() > 0;
+    }
+    
     public function GetFollowerFollowingCount(int $uid) : array {
         $followerStmt = $this->Connection->prepare("SELECT * FROM followers WHERE target = :id");
         $followerStmt->bindParam(":id", $uid);
@@ -36,13 +53,21 @@ class User extends Model
         $followerStmt->bindParam(":id", $userData['id']);
         $followerStmt->execute();
 
+        $followers = [];
         while ($follower = $followerStmt->fetch(\PDO::FETCH_ASSOC)) {
             if($follower) { 
+                echo "fart";
+
+                $user_follower = $this->GetUser($follower['target'], Type::ID);
+                $user_follower['following'] = isset($_SESSION['Handle']) ? $this->FollowingUser((int)$follower['user'], $_SESSION['Handle']) : false;
+                if($user_follower['id'] == $userData['id']) {
+                    // what the fuck
+                    $user_follower = $this->GetUser($follower['user'], Type::ID);
+                    $user_follower['following'] = isset($_SESSION['Handle']) ? $this->FollowingUser((int)$follower['target'], $_SESSION['Handle']) : false;
+                }
+            } elseif (!$follower) {
                 $user_follower = $this->GetUser($follower['user'], Type::ID);
                 $user_follower['following'] = isset($_SESSION['Handle']) ? $this->FollowingUser((int)$follower['user'], $_SESSION['Handle']) : false;
-            } elseif (!$follower) {
-                $user_follower = $this->GetUser($follower['target'], Type::ID);
-                $user_follower['following'] = isset($_SESSION['Handle']) ? $this->FollowingUser((int)$follower['target'], $_SESSION['Handle']) : false;
             } 
             
             $followers[] = $user_follower;
@@ -78,15 +103,50 @@ class User extends Model
         }
     }
 
-    public function Follow(string $uid) {
+    // accidental-recursion safe
+    // REALLY shouldn't have to be doing this
+    public function SafeFollowingUser(string|int $target, string|int $user) : bool {
         $userModel = new \Witter\Models\User();
-        $user = $userModel->GetUser($_SESSION['Handle'], Type::Username);
 
+        // TODO: UGLY!! Ugly as shit
+        if(is_int($target)) $userTarget = $userModel->GetUID($target, Type::ID);
+        if(!is_int($target)) $userTarget = $userModel->GetUID($target, Type::Username);
+        if($userTarget == -1) return true; // THIS should not happen. Do not proceed at all
+
+
+        if(is_int($user)) $userData = $userModel->GetUID($user, Type::ID);
+        if(!is_int($user)) $userData = $userModel->GetUID($user, Type::Username);
+        if($userData == -1) return true; // THIS should not happen. Do not proceed at all
+
+        if($userData == $userTarget) return true; // No following yourself...
+
+        $query = $this->Connection->prepare("SELECT * FROM followers WHERE user = :user AND target = :target");
+        $query->bindParam(":target", $userTarget);
+        $query->bindParam(":user", $userData);
+        $query->execute();
+        $follow = $query->fetch();
+
+        if (isset($follow['id'])) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    public function Follow(string $uid) {
         // Get the JSON payload from the POST request
         $json = file_get_contents('php://input');
 
         // Decode the JSON into a PHP object
         $data = json_decode($json);
+
+        $user = $this->GetUser($_SESSION['Handle'], Type::Username);
+        if($this->UserExists($uid, Type::ID)) {
+            $target = $this->GetUser($uid, Type::ID);
+        } else {
+            $response = array('status' => 'fail', 'action' => 'user_nonexistant');
+        }
 
         if($this->FollowingUser((int)$uid, $_SESSION['Handle'])) {
             $stmt = $this->Connection->prepare("DELETE FROM followers WHERE target = ? AND user = ?");
@@ -99,25 +159,68 @@ class User extends Model
 
             $response = array('status' => 'success', 'action' => 'follow');
         } else {
-            $stmt = $this->Connection->prepare(
-                "INSERT INTO followers
-                    (target, user) 
-                VALUES 
-                    (?, ?)"
-            );
-            $stmt->execute([
-                $uid,
-                $user['id'],
-            ]);
-
-            $response = array('status' => 'success', 'action' => 'unfollow');
+            if($target['private'] == "t") {
+                $stmt = $this->Connection->prepare(
+                    "INSERT INTO followers
+                        (target, user) 
+                    VALUES 
+                        (?, ?)"
+                );
+                $stmt->execute([
+                    $uid,
+                    $user['id'],
+                ]);
+    
+                $response = array('status' => 'requested', 'action' => 'unfollow');
+            } else {
+                $stmt = $this->Connection->prepare(
+                    "INSERT INTO followers
+                        (target, user) 
+                    VALUES 
+                        (?, ?)"
+                );
+                $stmt->execute([
+                    $uid,
+                    $user['id'],
+                ]);
+    
+                $response = array('status' => 'requested', 'action' => 'unfollow');
+            }
         }
 
         echo json_encode($response);
     }
 
+    public function GetUID($user, Type $type = Type::Username) : int {
+        $type = match ($type) {
+            Type::ID => "id",
+            Type::Username => "handle",
+            Type::Nickname => "nickname",
+        };
+
+        if($type == "id") {
+            $query = "SELECT id FROM users WHERE id = :find";
+        } elseif($type == "handle") {
+            $query = "SELECT id FROM users WHERE username = :find";
+        } elseif($type == "nickname") {
+            $query = "SELECT id FROM users WHERE nickname = :find";
+        }
+
+        $stmt = $this->Connection->prepare($query);
+        $stmt->bindParam(":find", $user);
+        $stmt->execute();
+
+        $user = $stmt->rowCount() === 0 ? 0 : $stmt->fetch(\PDO::FETCH_ASSOC);
+
+        if(isset($user['id'])) {
+            return $user['id'];
+        } else {
+            return -1;
+        }
+    }
+
     // vvv Type type = Type ??? Looks weird but whatever
-    public function GetUser($user, Type $type = Type::Username) {
+    public function GetUser($user, Type $type = Type::Username) : array {
         $type = match ($type) {
             Type::ID => "id",
             Type::Username => "handle",
@@ -165,6 +268,15 @@ class User extends Model
             }
 
             $user['banner'] = $cdn;
+
+            // "viewable"? private user thing
+            $user['visible'] = true;
+
+            if(isset($_SESSION['Handle'])) {
+                if($this->SafeFollowingUser($_SESSION['Handle'], $user['id']) && $user['private'] == "t") $user['visible'] = true;
+                if(!$this->SafeFollowingUser($_SESSION['Handle'], $user['id']) && $user['private'] == "t") $user['visible'] = false;
+                if($_SESSION['Handle'] == $user['username']) $user['visible'] = true;
+            }
 
             // is the logged in user following this user?
             // can't do this here because it causes a memory leak ????

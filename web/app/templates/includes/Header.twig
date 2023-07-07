@@ -5,7 +5,7 @@
             <div><img src="/images/text.png"></a></div>
         </div>
         {% if Session.Handle is defined %}
-        <div class="navlink"><div><a href="/">home</a></div></div>
+        <div class="navlink navlink-border"><div><a href="/">home</a></div></div>
         <div class="navlink"><div><a href="/user/{{ Session.Handle }}">profile</a></div></div>
         <div class="navlink"><div><a href="/settings/">settings</a></div></div>
         <div class="navlink"><div><a href="/notifications">notifications</a></div></div>
@@ -17,7 +17,11 @@
         <div class="navlink"><div></div></div>
         <!-- what the hell -->
         {% endif %}
-        <div class="buffer"></div>
+        {% if Session.Handle is not defined %}
+            <div class="buffer navlink-border"></div>
+        {% else %}
+            <div class="buffer"></div>
+        {% endif %}
     </div>
 </nav>
 

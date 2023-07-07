@@ -300,6 +300,10 @@ class Feed extends Model
                 }
             }
 
+            if(!$weet['user']['visible']) {
+                $weet["feed_text"] = "The post owner limits who can see their posts.";
+            }
+
             return $weet;
         } else {
             return [];

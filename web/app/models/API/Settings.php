@@ -196,4 +196,44 @@ class Settings extends Model
 
         $alert->CreateAlert(Level::Success, "Successfully uploaded your profile.");
     }
+
+    public function HideCSS() {
+        $alert  = new \Witter\Models\Alert();
+
+        if(isset($_POST['hide_css'])) {
+            $stmt = $this->Connection->prepare("UPDATE users SET hide_css = 't' WHERE username = ?");
+            $stmt->execute([
+                $_SESSION['Handle'],
+            ]);
+            $stmt = null;
+        } else {
+            $stmt = $this->Connection->prepare("UPDATE users SET hide_css = 'f' WHERE username = ?");
+            $stmt->execute([
+                $_SESSION['Handle'],
+            ]);
+            $stmt = null;
+        }
+
+        $alert->CreateAlert(Level::Success, "Successfully updated your CSS preferences.");
+    }
+
+    public function Private() {
+        $alert  = new \Witter\Models\Alert();
+
+        if(isset($_POST['private'])) {
+            $stmt = $this->Connection->prepare("UPDATE users SET private = 't' WHERE username = ?");
+            $stmt->execute([
+                $_SESSION['Handle'],
+            ]);
+            $stmt = null;
+        } else {
+            $stmt = $this->Connection->prepare("UPDATE users SET private = 'f' WHERE username = ?");
+            $stmt->execute([
+                $_SESSION['Handle'],
+            ]);
+            $stmt = null;
+        }
+
+        $alert->CreateAlert(Level::Success, "Successfully updated your privacy settings.");
+    }
 }
