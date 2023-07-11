@@ -24,7 +24,7 @@ class Feed extends Model
         else                   return [];
     }
 
-    public function GenerateID() : int {
+    public function GenerateID() : string {
         // Intellisense doesn't like me doing this
         $snowflake = new Snowflake;
         return $snowflake->id();;
