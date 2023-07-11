@@ -53,6 +53,7 @@ body, html {
         $cache = $this->GetCache($md5);
         if(isset($cache['data'])) {
             $cache = json_decode($cache['data']);
+            $type  = $this->StringToContentType($cache->type);
 
             // get mime type from file type stored in cache & set as content-type
             $mime = $util->ext2mime($cache->file_type);
@@ -60,8 +61,14 @@ body, html {
             
             $filename = "/var/www/volumes/" . $cache->type . "/" . $cache->file_name;
             // get actual file itself
-            if(file_exists($filename)) $file = file_get_contents($filename);
-            if(!file_exists($filename)) $file = file_get_contents($default);
+            // stupid edge case for banners which i really shouldn't be doing but i don't care
+            if($type == ContentType::Banner) {
+                if(file_exists($filename)) $file = file_get_contents($filename);
+                if(!file_exists($filename)) $file = "";
+            } else {
+                if(file_exists($filename)) $file = file_get_contents($filename);
+                if(!file_exists($filename)) $file = file_get_contents($default);
+            }
         } elseif($md5 == "default") {
             header("Content-type: image/png");
             $file = file_get_contents($default);
@@ -72,13 +79,20 @@ body, html {
         die($file);
     }
 
-    public function ContentTypeToString(ContentType $type) {
+    public function ContentTypeToString(ContentType $type) : string {
         // BEWARE: this corresponds to what the folder in /var/www/volumes/* should be!!!
         // ex: ContentType::ProfilePicture => /var/www/volumes/profile_picture/
 
         return match ($type) {
             ContentType::ProfilePicture => "profile_picture",
             ContentType::Banner => "banner",
+        };
+    }
+
+    public function StringToContentType(string $type) : ContentType {
+        return match ($type) {
+            "profile_picture" => ContentType::ProfilePicture,
+            "banner" => ContentType::Banner,
         };
     }
 
