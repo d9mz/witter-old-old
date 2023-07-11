@@ -47,6 +47,7 @@ body, html {
     // most likely returns md5 hash of file
     public function GetFile(string $md5) {
         $util  = new \Witter\Models\Utility();
+        $default = "/var/www/volumes/profile_picture/default";
 
         // get cache from database
         $cache = $this->GetCache($md5);
@@ -56,12 +57,14 @@ body, html {
             // get mime type from file type stored in cache & set as content-type
             $mime = $util->ext2mime($cache->file_type);
             header("Content-type: " . $mime);
-
+            
+            $filename = "/var/www/volumes/" . $cache->type . "/" . $cache->file_name;
             // get actual file itself
-            $file = file_get_contents("/var/www/volumes/" . $cache->type . "/" . $cache->file_name);
+            if(file_exists($filename)) $file = file_get_contents($filename);
+            if(!file_exists($filename)) $file = file_get_contents($default);
         } elseif($md5 == "default") {
             header("Content-type: image/png");
-            $file = file_get_contents("/var/www/volumes/profile_picture/default");
+            $file = file_get_contents($default);
         } else {
             $file = "Invalid hash";
         }
