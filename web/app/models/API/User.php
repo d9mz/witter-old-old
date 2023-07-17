@@ -65,8 +65,6 @@ class User extends Model
         $followers = [];
         while ($follower = $followerStmt->fetch(\PDO::FETCH_ASSOC)) {
             if($follower) { 
-                echo "fart";
-
                 $user_follower = $this->GetUser($follower['target'], Type::ID);
                 $user_follower['following'] = isset($_SESSION['Handle']) ? $this->FollowingUser((int)$follower['user'], $_SESSION['Handle']) : false;
                 if($user_follower['id'] == $userData['id']) {
@@ -310,9 +308,11 @@ class User extends Model
             $user['visible'] = true;
 
             if(isset($_SESSION['Handle'])) {
-                if($this->SafeFollowingUser($_SESSION['Handle'], $user['id']) && $user['private'] == "t") $user['visible'] = true;
                 if(!$this->SafeFollowingUser($_SESSION['Handle'], $user['id']) && $user['private'] == "t") $user['visible'] = false;
+                if($this->SafeFollowingUser($_SESSION['Handle'], $user['id']) && $user['private'] == "t") $user['visible'] = true;
                 if($_SESSION['Handle'] == $user['username']) $user['visible'] = true;
+
+                echo $user['visible'];
             }
 
             // is the logged in user following this user?
