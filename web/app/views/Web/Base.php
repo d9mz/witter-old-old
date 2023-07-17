@@ -9,6 +9,12 @@ class View extends \Witter\Configurator {
     function __construct() {
         parent::__construct();
         $this->MakeConnection();
+
+        if(isset($_SESSION['Handle'])) {
+            $userModel = new \Witter\Models\User();
+            $css = $userModel->showCSS($_SESSION['Handle']);
+            $this->Twig->addGlobal('CSS', $css);
+        }
     }
 
     function MakeConnection() {

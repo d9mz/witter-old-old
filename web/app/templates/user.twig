@@ -3,7 +3,9 @@
     {{ parent() }}
     {#- This is fucking TERRIBLE! -#}
     <script src="/scripts/no-header.js"></script>
+    {% if CSS %}
     <link href="/cdn/css/{{ User.username_md5 }}" rel="stylesheet">
+    {% endif %}
 {% endblock %}
 {%- block Container -%}
     <style>

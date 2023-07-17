@@ -24,6 +24,22 @@ body, html {
     --background-color: #fbfdff;
 }
 
+.form-input-button-fix .input-group {
+    width: 275px;
+    display: inline-block;
+}
+
+.forn-input-button-fix input[type="file"] {
+    width: 302px !important;
+    height: 21px;
+    position: relative;
+    top: 1px;
+}
+
+.form-input-button-fix input[type="submit"] {
+    margin-top: 37px !important;
+}
+
 .reweet {
     margin-top: 5px;
     border: 1px solid var(--primary-border-color);;

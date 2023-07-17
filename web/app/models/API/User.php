@@ -9,6 +9,15 @@ enum Type: int {
 
 class User extends Model
 {
+    public function showCSS(int | string $user) : bool {
+        $toggle = $this->GetCSSToggle($user, Type::Username);
+        if(trim($toggle) == "f") {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public function IsMutuals(int $userAId, int $userBId) : bool {
         // Checking if User A is following User B
         $stmtA = $this->Connection->prepare("SELECT * FROM followers WHERE user = :idA AND target = :idB");
@@ -214,6 +223,34 @@ class User extends Model
 
         if(isset($user['id'])) {
             return $user['id'];
+        } else {
+            return -1;
+        }
+    }
+
+    public function GetCSSToggle($user, Type $type = Type::Username) : string {
+        $type = match ($type) {
+            Type::ID => "id",
+            Type::Username => "handle",
+            Type::Nickname => "nickname",
+        };
+
+        if($type == "id") {
+            $query = "SELECT hide_css FROM users WHERE id = :find";
+        } elseif($type == "handle") {
+            $query = "SELECT hide_css FROM users WHERE username = :find";
+        } elseif($type == "nickname") {
+            $query = "SELECT hide_css FROM users WHERE nickname = :find";
+        }
+
+        $stmt = $this->Connection->prepare($query);
+        $stmt->bindParam(":find", $user);
+        $stmt->execute();
+
+        $user = $stmt->rowCount() === 0 ? 0 : $stmt->fetch(\PDO::FETCH_ASSOC);
+
+        if(isset($user['hide_css'])) {
+            return $user['hide_css'];
         } else {
             return -1;
         }
