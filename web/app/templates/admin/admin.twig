@@ -1,0 +1,90 @@
+{% extends "misc/base.twig" %}
+{%- block Container -%}
+    <div class="padding">
+        <h3><i class="far fa-wrench"></i> admin panel</h3>
+    </div>
+    <hr>
+    <div class="padding no-padding-top no-padding-bottom">
+        <div class="left padding-top padding-bottom">
+            <div class="bold">unmoderated css</div><br>
+            {% for User in Users %}
+                {% if User.id is defined %}
+                    <div class="user-card admin-panel-exclusive wide block">
+                        <img class="profile-picture" src="/cdn/{{ User.profile_picture }}">
+                        <div class="user-metadata inline-block top">
+                            <a href="/user/{{ User.username }}"><b>{{ User.nickname }}</b></a>
+                            <span class="caption inline-block">@{{ User.username }}</span><br>
+                            <span class="caption">joined {{ User.created|timeago }}</span><br>
+                            <span class="caption">last online {{ User.last_login|timeago }}</span>
+                            <a href="/user/{{ User.username }}?unmoderated">
+                            <button 
+                                class="button left" 
+                                data-moderation-target="{{ User.id }}" 
+                                aria-label="Follow">
+                                view profile
+                            </button>
+                            <button 
+                                class="button moderate left"
+                                data-moderation-type="css"
+                                data-moderation-target="{{ User.id }}" 
+                                aria-label="Follow">
+                                disapprove
+                            </button>
+                            <button 
+                                class="button left" 
+                                data-moderation-target="{{ User.id }}" 
+                                aria-label="Follow">
+                                approve
+                            </button>
+                            </a>
+                        </div>
+                    </div><br>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <div class="right padding-top">
+            <div class="bold">photos</div>
+            <form class="form form-input-button-fix" method="post" action="/settings/picture/profile/" enctype="multipart/form-data">
+                <div class="input-group">
+                    <label for="profile_picture" class="padding-top padding-bottom">profile picture</label>
+                    <input type="file" id="profile_picture" required name="asset" aria-label="Profile Picture">
+                </div>
+                <input type="submit" value="set" aria-label="Set">
+                <span class="caption">max: 500kb / accepts png, jpg, gif</span>
+            </form>
+        </div>
+        <div class="right padding-bottom negative-margin-top">
+            <form class="form form-input-button-fix" method="post" action="/settings/picture/banner/" enctype="multipart/form-data">
+                <div class="input-group">
+                    <label for="banner" class="padding-top padding-bottom">banner</label>
+                    <input type="file" id="banner" required name="banner" aria-label="Banner">
+                </div>
+                <input type="submit" value="set" aria-label="Set">
+                <span class="caption">max: 1mb / accepts png, jpg, gif</span>
+            </form>
+        </div>
+        <div class="right padding-bottom">
+            <div class="bold">visual</div>
+            <form class="form" method="post" action="/settings/preferences/">
+                <div class="input-group">
+                    <label for="hidecss">hide unmoderated css</label>
+                    <input type="checkbox" id="hidecss" {% if User.hide_css == "t" %}checked{% endif %} name="hide_css" aria-label="Hide CSS">
+                </div>
+                <span class="caption">enabled by default; all CSS is moderated to account for epilepsy, etc.</span>
+                <input type="submit" value="set" aria-label="Set">
+            </form>
+        </div>
+        <div class="right padding-bottom">
+            <div class="bold">last.fm</div>
+            <form class="form" method="post" action="/settings/lastfm/">
+                <div class="input-group">
+                    <label for="lastfm">username</label>
+                    <input type="text" id="lastfm" required name="lastfm" aria-label="Last.FM username">
+                </div>
+                <span class="caption">linking your last.fm will show what you are scrobbling to everybody</span>
+                <input type="submit" value="set" aria-label="Set">
+            </form>
+        </div>
+    </div>
+{% endblock %}

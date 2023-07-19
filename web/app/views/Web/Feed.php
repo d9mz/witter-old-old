@@ -67,7 +67,7 @@ class Feed extends View {
             $user = $userModel->GetUser($weet['feed_owner'], Type::ID);
             $user['following'] = $userModel->FollowingUser($user['id'], $_SESSION['Handle']); // Why the hell do I have to do this?
     
-            echo $this->Twig->render('thread.twig', array(
+            echo $this->Twig->render('user_related/thread.twig', array(
                 "PageSettings" => $this->PageSettings($user['nickname'] . " (@" . $user['username'] . ")", $user['description']),
                 "Weet" => @$weet,
                 "Target" => @$weet_id_original,
@@ -87,7 +87,7 @@ class Feed extends View {
             if(@$user['id'] != $weet['feed_owner']) $alert->CreateAlert(Level::Error, "This weet does not exist.");
 
             $weets = $feed->GetReplies((int)$weet_id);
-            echo $this->Twig->render('thread.twig', array(
+            echo $this->Twig->render('user_related/thread.twig', array(
                 "PageSettings" => $this->PageSettings($user['nickname'] . " (@" . $user['username'] . ")", $user['description']),
                 "Weet" => @$weet,
                 "Thread" => @$weets,

@@ -1,7 +1,13 @@
 <?php
 namespace Witter\Models;
 
-use Intervention\Image\ImageManager;
+enum ModeratableTypes : string {
+    case CSS = "CSS";
+    case ProfilePicture = "ProfilePicture";
+    case Banner = "Banner";
+    case Description = "Description";
+    case Post = "Post";
+}
 
 class Admin extends Model
 {
@@ -36,5 +42,25 @@ class Admin extends Model
         $stmt = null;
 
         $alert->CreateAlert(Level::Success, "Successfully set your description.");
+    }
+
+    // Create a general all-purpose function for the enum
+    // We're gonna have to make some pagination for this so better to do this now than later
+    public function getUnmoderatedItems(ModeratableTypes $moderationType, int $page = 0) : array {
+        if($moderationType == ModeratableTypes::CSS) {
+            $userModel = new \Witter\Models\User();
+
+            $items = $this->Connection->prepare("SELECT username FROM users WHERE moderated_css = 'f' ORDER BY id DESC");
+            $items->execute();
+
+            while ($item = $items->fetch(\PDO::FETCH_ASSOC)) {
+                $users[] = $userModel->GetUser($item['username'], Type::Username, true);
+            }
+            
+            return $users;
+        }
+
+        // shouldn't happen ... "default"
+        return [];
     }
 }

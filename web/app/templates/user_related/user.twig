@@ -1,9 +1,9 @@
-{% extends "base.twig" %}
+{% extends "misc/base.twig" %}
 {%- block Header -%}
     {{ parent() }}
     {#- This is fucking TERRIBLE! -#}
     <script src="/scripts/no-header.js"></script>
-    {% if (showUnmoderatedCSS and User.moderated_css == "f") or (User.moderated_css == "t") %}
+    {% if (Session.Handle == User.username) or (showUnmoderatedCSS and User.moderated_css == "f") or (User.moderated_css == "t") or (Args.unmoderated is defined) %}
     <link href="/cdn/css/{{ User.username_md5 }}" rel="stylesheet">
     {% endif %}
 {% endblock %}

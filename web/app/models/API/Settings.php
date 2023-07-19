@@ -37,7 +37,7 @@ class Settings extends Model
             $alert->CreateAlert(Level::Error, "Your description must be longer than 3 characters and not longer than 200.");
         }
 
-        $stmt = $this->Connection->prepare("UPDATE users SET css = ? WHERE id = ?");
+        $stmt = $this->Connection->prepare("UPDATE users SET css = ?, moderated_css = 'f' WHERE id = ?");
         $stmt->execute([
             $_POST['css'],
             $user['id'],

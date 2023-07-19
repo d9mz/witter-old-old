@@ -749,6 +749,10 @@ hr.wide {
     margin-top: 5px;
 }
 
+.block {
+    display: block !important;
+}
+
 .user-panel {
     display: inline-block;
     width: 96%;
@@ -758,6 +762,11 @@ hr.wide {
     left: 10px;
     z-index: 5;
     margin-bottom: -73px;
+}
+
+.user-card.admin-panel-exclusive {
+    width: 345px;
+    height: 125px;
 }
 
 .user-card {

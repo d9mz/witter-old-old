@@ -13,7 +13,7 @@ class User extends View {
         if($userclass->UserExists($handle)) {
             $followers = $userclass->GetUserMetricFollow($handle);
 
-            echo $this->Twig->render('user_follower_following.twig', array(
+            echo $this->Twig->render('user_related/user_follower_following.twig', array(
                 "PageSettings" => $this->PageSettings($user['nickname'] . " (@" . $user['username'] . ")", $user['description']),
                 "User" => $user,
                 "Followers" => @$followers,
@@ -33,7 +33,7 @@ class User extends View {
         if($userclass->UserExists($handle)) {
             $following = $userclass->GetUserMetricFollow($handle, false);
 
-            echo $this->Twig->render('user_follower_following.twig', array(
+            echo $this->Twig->render('user_related/user_follower_following.twig', array(
                 "PageSettings" => $this->PageSettings($user['nickname'] . " (@" . $user['username'] . ")", $user['description']),
                 "User" => $user,
                 "Following" => @$following,
@@ -63,7 +63,7 @@ class User extends View {
                 $user['following'] = false;
             }
 
-            echo $this->Twig->render('user.twig', array(
+            echo $this->Twig->render('user_related/user.twig', array(
                 "PageSettings" => $this->PageSettings($user['nickname'] . " (@" . $user['username'] . ")", $user['description']),
                 "User" => $user,
                 "Feed" => $feed,
@@ -93,7 +93,7 @@ class User extends View {
                 $user['following'] = false;
             }
 
-            echo $this->Twig->render('user.twig', array(
+            echo $this->Twig->render('user_related/user.twig', array(
                 "PageSettings" => $this->PageSettings($user['nickname'] . " (@" . $user['username'] . ")", $user['description']),
                 "User" => $user,
                 "Feed" => $feed,

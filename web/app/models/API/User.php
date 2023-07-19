@@ -266,7 +266,7 @@ class User extends Model
     }
 
     // vvv Type type = Type ??? Looks weird but whatever
-    public function GetUser($user, Type $type = Type::Username) : array {
+    public function GetUser($user, Type $type = Type::Username, bool $optimized = false) : array {
         $type = match ($type) {
             Type::ID => "id",
             Type::Username => "handle",
@@ -318,20 +318,20 @@ class User extends Model
             // "viewable"? private user thing
             $user['visible'] = true;
 
-            if(isset($_SESSION['Handle'])) {
-                if(!$this->SafeFollowingUser($_SESSION['Handle'], $user['id']) && $user['private'] == "t") $user['visible'] = false;
-                if($this->SafeFollowingUser($_SESSION['Handle'], $user['id']) && $user['private'] == "t") $user['visible'] = true;
-                if($_SESSION['Handle'] == $user['username']) $user['visible'] = true;
+            if(!$optimized) {
+                if(isset($_SESSION['Handle'])) {
+                    if(!$this->SafeFollowingUser($_SESSION['Handle'], $user['id']) && $user['private'] == "t") $user['visible'] = false;
+                    if($this->SafeFollowingUser($_SESSION['Handle'], $user['id']) && $user['private'] == "t") $user['visible'] = true;
+                    if($_SESSION['Handle'] == $user['username']) $user['visible'] = true;
+                }
 
-                echo $user['visible'];
+                // is the logged in user following this user?
+                // can't do this here because it causes a memory leak ????
+
+                // get follower & follow count & make it properties of $user
+                $user['metrics'] = $this->GetFollowerFollowingCount($user['id']);
+                $user['username_md5'] = base64_encode($user['username']);
             }
-
-            // is the logged in user following this user?
-            // can't do this here because it causes a memory leak ????
-
-            // get follower & follow count & make it properties of $user
-            $user['metrics'] = $this->GetFollowerFollowingCount($user['id']);
-            $user['username_md5'] = base64_encode($user['username']);
             return $user;
         } else {
             return [];
