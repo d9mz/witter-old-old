@@ -3,7 +3,7 @@
     {{ parent() }}
     {#- This is fucking TERRIBLE! -#}
     <script src="/scripts/no-header.js"></script>
-    {% if CSS %}
+    {% if (showUnmoderatedCSS and User.moderated_css == "f") or (User.moderated_css == "t") %}
     <link href="/cdn/css/{{ User.username_md5 }}" rel="stylesheet">
     {% endif %}
 {% endblock %}
@@ -78,7 +78,7 @@
             <a href="/likes/{{ User.username }}"><div class="tab {% if ActiveTab == 'likes' %}primary{% endif %}">liked weets</div></a>
         </div>
     </div>
-    <div class="padding">
+    <div class="padding user-infobox">
         <div class="user-description">
             <span class="caption">{{ User.description }}</span>
         </div>

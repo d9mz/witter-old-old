@@ -1,10 +1,8 @@
 /*
-    base.css
+    -- base.css --
+    cram every css rule in here? YES !
 */
 
-/*
-What the hell?
-*/
 @font-face {
     font-family: "MS PGothic";
     src: url("/styles/pgothic.ttf") format("opentype");
@@ -573,6 +571,10 @@ input[type="password"] {
     border-top: 1px solid rgb(74 108 141);
 }
 
+.user-infobox {
+    line-height: 15px;
+}
+
 #logo > div {
     width: 8rem;
     height: 4rem;
@@ -721,6 +723,10 @@ hr.wide {
     margin: -10px;
     height: 20px;
     width: 108%;
+}
+
+.negative-margin-top {
+    margin-top: -10px;
 }
 
 .user-card .user-metadata {

@@ -12,8 +12,12 @@ class View extends \Witter\Configurator {
 
         if(isset($_SESSION['Handle'])) {
             $userModel = new \Witter\Models\User();
-            $css = $userModel->showCSS($_SESSION['Handle']);
-            $this->Twig->addGlobal('CSS', $css);
+
+            $css     = $userModel->showUnmoderatedCSS($_SESSION['Handle']);
+            $isAdmin = $userModel->isAdmin($_SESSION['Handle']);
+            
+            $this->Twig->addGlobal('showUnmoderatedCSS', $css);
+            $this->Twig->addGlobal('isAdmin', $isAdmin);
         }
     }
 

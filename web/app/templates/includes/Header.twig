@@ -10,6 +10,9 @@
         <div class="navlink"><div><a href="/settings/">settings</a></div></div>
         <div class="navlink"><div><a href="/notifications">notifications</a></div></div>
         <div class="navlink"><div><a href="/messages">messages</a></div></div>
+        {% if isAdmin %}
+        <div class="navlink"><div><a href="/admin/">admin</a></div></div>
+        {% endif %}
         <div class="navlink"><div><a href="/sign_out">sign out</a></div></div>
         <div class="navlink"><div></div></div>
         <div class="navlink"><div></div></div>

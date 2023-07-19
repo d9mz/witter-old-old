@@ -73,6 +73,11 @@ if(!isset($_SESSION['Handle'])) {
     $Router->Post('/actions/user/{id}/follow', "\Witter\Models\User@Follow");
     $Router->Post('/actions/user/{id}/block', "\Witter\Models\User@Block");
 
+    // [WEB] Admin pages
+    $Router->Get('/admin/', "\Witter\Views\Admin@View");
+
+    // [API] Admin actions
+ 
     // todo: create tos / privacy under /info/
 }
 

@@ -9,9 +9,28 @@ enum Type: int {
 
 class User extends Model
 {
-    public function showCSS(int | string $user) : bool {
-        $toggle = $this->GetCSSToggle($user, Type::Username);
-        if(trim($toggle) == "f") {
+    public function showUnmoderatedCSS(string $user) : bool {
+        $query = $this->Connection->prepare("SELECT hide_css FROM users WHERE username = :user");
+        $query->bindParam(":user", $user);
+        $query->execute();
+        $css = $query->fetch();
+
+        // this switch thing is really confusing the shit out of me
+        if(trim($css['hide_css']) == "t") {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    // using strings for bools suck dookie
+    public function isAdmin(int | string $user) : bool {
+        $query = $this->Connection->prepare("SELECT admin FROM users WHERE username = :user");
+        $query->bindParam(":user", $user);
+        $query->execute();
+        $admin = $query->fetch();
+
+        if(trim($admin['admin']) == "t") {
             return true;
         } else {
             return false;
@@ -226,29 +245,21 @@ class User extends Model
         }
     }
 
-    public function GetCSSToggle($user, Type $type = Type::Username) : string {
-        $type = match ($type) {
-            Type::ID => "id",
-            Type::Username => "handle",
-            Type::Nickname => "nickname",
-        };
+    // worst function ever?
+    // try to make a database class down the line -- this REALLY sucks
+    // try implementing string : array so if array, implode(", ") etc etc for SELECT from
 
-        if($type == "id") {
-            $query = "SELECT hide_css FROM users WHERE id = :find";
-        } elseif($type == "handle") {
-            $query = "SELECT hide_css FROM users WHERE username = :find";
-        } elseif($type == "nickname") {
-            $query = "SELECT hide_css FROM users WHERE nickname = :find";
-        }
+    public function getSingleColumnFromTable(string $column, string $table, string $where, string $where_equals) {
+        $query = "SELECT " . $column . " FROM " . $table . " WHERE " . $where . " = :find";
 
         $stmt = $this->Connection->prepare($query);
-        $stmt->bindParam(":find", $user);
+        $stmt->bindParam(":find", $where_equals);
         $stmt->execute();
 
-        $user = $stmt->rowCount() === 0 ? 0 : $stmt->fetch(\PDO::FETCH_ASSOC);
+        $find = $stmt->rowCount() === 0 ? 0 : $stmt->fetch(\PDO::FETCH_ASSOC);
 
-        if(isset($user['hide_css'])) {
-            return $user['hide_css'];
+        if(isset($find[$column])) {
+            return $find[$column];
         } else {
             return -1;
         }
