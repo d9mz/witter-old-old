@@ -18,6 +18,8 @@ class Admin extends Model
 
             $page = new \Witter\Views\Error;
             $page->View();
+
+            die();
         }
     }
 
