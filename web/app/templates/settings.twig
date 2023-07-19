@@ -33,7 +33,7 @@
             <div class="bold">private account</div>
             <form class="form" method="post" action="/settings/private/">
                 <div class="input-group">
-                    <label for="private" style="width: 25%;">private</label>
+                    <label for="private">private</label>
                     <input type="checkbox" {% if User.private == "t" %}checked{% endif %} id="private" name="private" aria-label="Private">
                 </div>
                 <span class="caption">disabled by default; people must request to see your weets</span>
@@ -55,7 +55,7 @@
         <div class="right padding-bottom">
             <form class="form form-input-button-fix" method="post" action="/settings/picture/banner/" enctype="multipart/form-data">
                 <div class="input-group">
-                    <label for="banner" class="padding-top padding-bottom" style="width: 25%;">banner</label>
+                    <label for="banner" class="padding-top padding-bottom">banner</label>
                     <input type="file" id="banner" required name="banner" aria-label="Banner">
                 </div>
                 <input type="submit" value="set" aria-label="Set">
@@ -66,7 +66,7 @@
             <div class="bold">visual</div>
             <form class="form" method="post" action="/settings/preferences/">
                 <div class="input-group">
-                    <label for="hidecss" style="width: 25%;">hide css</label>
+                    <label for="hidecss">hide unmoderated css</label>
                     <input type="checkbox" id="hidecss" {% if User.hide_css == "t" %}checked{% endif %} name="hide_css" aria-label="Hide CSS">
                 </div>
                 <span class="caption">enabled by default; all CSS is moderated to account for epilepsy, etc.</span>
@@ -77,7 +77,7 @@
             <div class="bold">last.fm</div>
             <form class="form" method="post" action="/settings/lastfm/">
                 <div class="input-group">
-                    <label for="lastfm" style="width: 25%;">username</label>
+                    <label for="lastfm">username</label>
                     <input type="text" id="lastfm" required name="lastfm" aria-label="Last.FM username">
                 </div>
                 <span class="caption">linking your last.fm will show what you are scrobbling to everybody</span>

@@ -36,7 +36,7 @@
             <img class="profile-picture" src="/cdn/{{ Weet.user.profile_picture }}">
             <div class="user-metadata inline-block top">
                 <b>{% if Weet.user.private == 't' %}<i class="far fa-lock"></i>{% endif %} {{ Weet.user.nickname }}</b>
-                <span class="caption inline-block" style="width: unset;">@{{ Weet.user.username }}</span><br>
+                <span class="caption inline-block">@{{ Weet.user.username }}</span><br>
                 <span class="caption">joined {{ Weet.user.created|timeago }}</span><br>
                 <span class="caption">last online {{ Weet.user.last_login|timeago }}</span>
                 <button 
