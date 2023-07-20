@@ -215,10 +215,8 @@
     </div>
     <hr>
     <div class="padding no-padding-top">
-        {# Shouldn't be doing this #}
         {% for Weet in Thread %}
-            {% if Weet.id is defined %}
-                {# Shouldn't even be doing this #}
+            {% if Weet.id is defined and Weet.user.visible %}
                 <div class="weet">
                     <div class="inline-block padding top">
                         <img src="/cdn/{{ Weet.user.profile_picture }}" class="profile-picture">

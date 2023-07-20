@@ -142,48 +142,6 @@ class Feed extends Model
     
         return $feed;
     }
-       
-    // ugly to have two functions for this
-    public function LikeReply(string $id) { 
-        $id = (int)$id; // cast $id to integer
-
-        $userModel = new \Witter\Models\User();
-        $user = $userModel->GetUser($_SESSION['Handle'], Type::Username);
-
-        // Get the JSON payload from the POST request
-        $json = file_get_contents('php://input');
-
-        // Decode the JSON into a PHP object
-        $data = json_decode($json);
-        $comment_id = $data->weet_id;
-
-        if($this->PostLiked((int)$comment_id, $_SESSION['Handle'], true)) {
-            $stmt = $this->Connection->prepare("DELETE FROM likes WHERE target = ? AND user = ?");
-            $stmt->execute(
-                [
-                    $id,
-                    $user['id'],
-                ]
-            );
-
-            $response = array('status' => 'success', 'action' => 'unliked');
-        } else {
-            $stmt = $this->Connection->prepare(
-                "INSERT INTO likes
-                    (target, user) 
-                VALUES 
-                    (?, ?)"
-            );
-            $stmt->execute([
-                $id,
-                $user['id'],
-            ]);
-
-            $response = array('status' => 'success', 'action' => 'liked');
-        }
-
-        echo json_encode($response);
-    }
 
     public function LikePost(string $id) { 
         $id = (int)$id; // cast $id to integer
@@ -198,29 +156,35 @@ class Feed extends Model
         $data = json_decode($json);
         $comment_id = $data->weet_id;
 
-        if($this->PostLiked($comment_id, $_SESSION['Handle'])) {
-            $stmt = $this->Connection->prepare("DELETE FROM likes WHERE target = ? AND user = ?");
-            $stmt->execute(
-                [
+        $weet = $this->GetWeet($comment_id, false);
+
+        if($weet['user']['visible'] == true) {
+            if($this->PostLiked($comment_id, $_SESSION['Handle'])) {
+                $stmt = $this->Connection->prepare("DELETE FROM likes WHERE target = ? AND user = ?");
+                $stmt->execute(
+                    [
+                        $id,
+                        $user['id'],
+                    ]
+                );
+
+                $response = array('status' => 'success', 'action' => 'unliked');
+            } else {
+                $stmt = $this->Connection->prepare(
+                    "INSERT INTO likes
+                        (target, user) 
+                    VALUES 
+                        (?, ?)"
+                );
+                $stmt->execute([
                     $id,
                     $user['id'],
-                ]
-            );
+                ]);
 
-            $response = array('status' => 'success', 'action' => 'unliked');
+                $response = array('status' => 'success', 'action' => 'liked');
+            }
         } else {
-            $stmt = $this->Connection->prepare(
-                "INSERT INTO likes
-                    (target, user) 
-                VALUES 
-                    (?, ?)"
-            );
-            $stmt->execute([
-                $id,
-                $user['id'],
-            ]);
-
-            $response = array('status' => 'success', 'action' => 'liked');
+            $response = array('status' => 'fail', 'action' => 'urgay');
         }
 
         echo json_encode($response);
@@ -608,27 +572,44 @@ class Feed extends Model
         // TODO: This is pretty ugly...
         if(count($reweet) == 3) {
             // weet link detected ...
-            if($userModel->UserExists($reweet[0]) && $weetModel->WeetExists($reweet[1])) { 
-                // add +1 to reweets of target weet
-                $weet = $weetModel->GetWeet($reweet[1], false, false, true);
-                $reweets = $weet['feed_reweets'] + 1;
+            if($userModel->UserExists($reweet[0]) && $weetModel->WeetExists($reweet[1])) {
+                // a bit ugly
+                // TODO: i really shouldn't be returning the username for this? what if username change
+                $reweetUser = $userModel->GetUser($reweet[0], Type::Username);
 
-                $stmt = $this->Connection->prepare("UPDATE feed SET feed_reweets = ? WHERE feed_id = ?");
-                $stmt->execute([
-                    $reweets,
-                    $weet['feed_id'],
-                ]);
-                $stmt = null;
-                
-                // insert into feed w/ metadata
-                $stmt = $this->Connection->prepare("INSERT INTO feed (feed_id, feed_owner, feed_text, feed_embed) VALUES (:snowflake, :id, :comment, :embed)");
+                // if the priv user is following the logged in user
+                if($reweetUser['visible']) {
+                    // add +1 to reweets of target weet
+                    $weet = $weetModel->GetWeet($reweet[1], false, false, true);
+                    $reweets = $weet['feed_reweets'] + 1;
 
-                $stmt->bindParam(":snowflake", $id);
-                $stmt->bindParam(":id", $user['id']);
-                $stmt->bindParam(":comment", $_POST['comment']);
-                $stmt->bindParam(":embed", $reweet[1]);
-        
-                $stmt->execute();        
+                    $stmt = $this->Connection->prepare("UPDATE feed SET feed_reweets = ? WHERE feed_id = ?");
+                    $stmt->execute([
+                        $reweets,
+                        $weet['feed_id'],
+                    ]);
+                    $stmt = null;
+                    
+                    // insert into feed w/ metadata
+                    $stmt = $this->Connection->prepare("INSERT INTO feed (feed_id, feed_owner, feed_text, feed_embed) VALUES (:snowflake, :id, :comment, :embed)");
+
+                    $stmt->bindParam(":snowflake", $id);
+                    $stmt->bindParam(":id", $user['id']);
+                    $stmt->bindParam(":comment", $_POST['comment']);
+                    $stmt->bindParam(":embed", $reweet[1]);
+            
+                    $stmt->execute();        
+                } else {
+                    // REALLY ugly.
+                    
+                    $stmt = $this->Connection->prepare("INSERT INTO feed (feed_id, feed_owner, feed_text) VALUES (:snowflake, :id, :comment)");
+
+                    $stmt->bindParam(":snowflake", $id);
+                    $stmt->bindParam(":id", $user['id']);
+                    $stmt->bindParam(":comment", $_POST['comment']);
+            
+                    $stmt->execute();
+                }
             } else {
                 $stmt = $this->Connection->prepare("INSERT INTO feed (feed_id, feed_owner, feed_text) VALUES (:snowflake, :id, :comment)");
 
@@ -646,7 +627,6 @@ class Feed extends Model
             $stmt->bindParam(":comment", $_POST['comment']);
     
             $stmt->execute();
-    
         }
 
 

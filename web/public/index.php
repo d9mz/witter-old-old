@@ -61,7 +61,8 @@ if(!isset($_SESSION['Handle'])) {
 
     // [API] Actions for replies
     $Router->Post('/actions/reply/{id}/reply', "\Witter\Models\Feed@ReplyToReply");
-    $Router->Post('/actions/reply/{id}/like', "\Witter\Models\Feed@LikeReply");
+    // why the fuck are there two endpoints for this
+    $Router->Post('/actions/reply/{id}/like', "\Witter\Models\Feed@LikePost");
 
     // [API] Actions for posts
     $Router->Post('/actions/post/{id}/like', "\Witter\Models\Feed@LikePost");
