@@ -2,6 +2,18 @@
 namespace Witter\Models;
 
 class Utility extends Model {
+    public function SignOut() : void {
+        $_SESSION = [];
+        session_destroy(); // DESTROY... EVERYTHIIING!
+
+        $alertModel = new \Witter\Models\Alert();
+
+        header("Location: /");
+    }
+
+    // these functions below are mostly used for the CDN
+    // split into different classes but under same namespaces?
+
     // https://stackoverflow.com/questions/2510434/format-bytes-to-kilobytes-megabytes-gigabytes
     // useful for expressing max file upload sizes
     public function formatBytes($bytes, $precision = 2) {

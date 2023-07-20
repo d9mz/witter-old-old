@@ -10,6 +10,7 @@ enum Level: int {
 }
 
 class Alert extends Model {
+    
     public function InternalLog(Level $level, string $message = "Message") {
         echo "not implemented";
     }
