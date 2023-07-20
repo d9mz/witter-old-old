@@ -78,6 +78,11 @@
             <a href="/likes/{{ User.username }}"><div class="tab {% if ActiveTab == 'likes' %}primary{% endif %}">liked weets</div></a>
         </div>
     </div>
+    {% if isAdmin %}
+    <div class="padding">
+        <a href="/cdn/css/{{ User.username_md5 }}">view css</a> &bull; <a href="#" class="admin-moderate-item">moderate user</a> 
+    </div>
+    {% endif %}
     <div class="padding user-infobox">
         <div class="user-description">
             <span class="caption">{{ User.description }}</span>
@@ -141,7 +146,7 @@
             {% endif %}
         {% else %}
             <div class="center caption padding-top padding-bottom">
-                This weeter's weets are private. Send them a follow request to see their weets.
+                This weeter's weets are private. They have to follow you first in order for you to see their weets.
             </div>
         {% endif %}
     </div>

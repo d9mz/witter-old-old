@@ -1,4 +1,7 @@
 $(function() {
+    // base.js
+    // this is not good js
+
     // Handles ALL comment likes site-wide
     // Could probably do this better. But it works
     $('.comment_like').on('click', function() {
