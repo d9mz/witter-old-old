@@ -139,4 +139,11 @@ $(function() {
             submitButton.prop("disabled", false);
         }
     });
+
+    $(".dropdown-show").on("click", function() {
+        // this STINKS!
+
+        console.log($(this).parent())
+        $(this).parent().find(".dropdown-content").toggleClass("block");
+    });
 });
