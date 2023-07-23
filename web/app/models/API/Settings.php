@@ -18,6 +18,9 @@ class Settings extends Model
             $alert->CreateAlert(Level::Error, "Your description must be longer than 3 characters and not longer than 200.");
         }
 
+        // hacky shitty fix nbecasue my dumbass forgot to accoutn for this
+        $_POST['description'] = trim($_POST['description']);
+
         $stmt = $this->Connection->prepare("UPDATE users SET description = ? WHERE id = ?");
         $stmt->execute([
             $_POST['description'],
