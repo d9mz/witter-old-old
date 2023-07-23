@@ -479,7 +479,7 @@ class Feed extends Model
         if(!$weet->WeetExists((int)$weet_id)) $alert->CreateAlert(Level::Error, "This weet does not exist.");
 
         // comment validation
-        if (!isset($_POST['comment']) && !empty(trim($_POST['comment']))) {
+        if (!isset($_POST['comment']) || empty(trim($_POST['comment']))) {
             $alert->CreateAlert(Level::Error, "You did not enter a reply.");
         }
 
@@ -520,7 +520,7 @@ class Feed extends Model
         if(!$weet->WeetExists((int)$weet_id)) $alert->CreateAlert(Level::Error, "This weet does not exist.");
 
         // comment validation
-        if (!isset($_POST['comment']) && !empty(trim($_POST['comment']))) {
+        if (!isset($_POST['comment']) || empty(trim($_POST['comment']))) {
             $alert->CreateAlert(Level::Error, "You did not enter a reply.");
         }
 
@@ -556,7 +556,7 @@ class Feed extends Model
         $cooldown  = new \Witter\Models\Cooldown();
 
         // comment validation
-        if (!isset($_POST['comment']) && !empty(trim($_POST['comment']))) {
+        if (!isset($_POST['comment']) || empty(trim($_POST['comment']))) {
             $alert->CreateAlert(Level::Error, "You did not enter a post.");
         }
 
@@ -569,6 +569,9 @@ class Feed extends Model
         } else {
             $cooldown->SetCooldown("weet_cooldown", $_SESSION['Handle']);
         }
+
+        // hacky shitty fix nbecasue my dumbass forgot to accoutn for this
+        $_POST['comment'] = trim($_POST['comment']);
 
         $user   = $userModel->GetUser($_SESSION['Handle']);
         $id     = $this->GenerateID();

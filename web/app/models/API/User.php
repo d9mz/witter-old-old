@@ -393,7 +393,7 @@ class User extends Model
         $alert = new Alert();
 
         // password validation
-        if (!isset($_POST['password']) && !empty(trim($_POST['password']))) {
+        if (!isset($_POST['password']) || empty(trim($_POST['password']))) {
             $alert->CreateAlert(Level::Error, "You did not enter a password.");
         }
 
@@ -402,7 +402,7 @@ class User extends Model
         }
 
         // username validation
-        if (!isset($_POST['username']) && !empty(trim($_POST['username']))) {
+        if (!isset($_POST['username']) || empty(trim($_POST['username']))) {
             $alert->CreateAlert(Level::Error, "You did not enter a handle.");
         }
 
@@ -454,7 +454,7 @@ class User extends Model
         // TODO: Use new Validator class... :)
 
         // password validation
-        if (!isset($_POST['password']) && !empty(trim($_POST['password']))) {
+        if (!isset($_POST['password']) || empty(trim($_POST['password']))) {
             $alert->CreateAlert(Level::Error, "You did not enter a password.");
         }
 
@@ -463,7 +463,7 @@ class User extends Model
         }
 
         // username validation
-        if (!isset($_POST['username']) && !empty(trim($_POST['username']))) {
+        if (!isset($_POST['username']) || empty(trim($_POST['username']))) {
             $alert->CreateAlert(Level::Error, "You did not enter a handle.");
         }
 
@@ -477,7 +477,7 @@ class User extends Model
         }
 
         // email validation
-        if (!isset($_POST['email']) && !empty(trim($_POST['email']))) {
+        if (!isset($_POST['email']) || empty(trim($_POST['email']))) {
             $alert->CreateAlert(Level::Error, "You did not enter an e-mail address.");
         }
 

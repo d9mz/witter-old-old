@@ -10,7 +10,7 @@ class Settings extends Model
         $user   = new \Witter\Models\User();
         $user   = $user->GetUser($_SESSION['Handle']);
 
-        if (!isset($_POST['description']) && !empty(trim($_POST['description']))) {
+        if (!isset($_POST['description']) || empty(trim($_POST['description']))) {
             $alert->CreateAlert(Level::Error, "You did not enter a description.");
         }
 
@@ -54,13 +54,16 @@ class Settings extends Model
         $user   = new \Witter\Models\User();
         $user   = $user->GetUser($_SESSION['Handle']);
 
-        if (!isset($_POST['nickname']) && !empty(trim($_POST['nickname']))) {
+        if (!isset($_POST['nickname']) || empty(trim($_POST['nickname']))) {
             $alert->CreateAlert(Level::Error, "You did not enter a display name.");
         }
 
         if (strlen($_POST['nickname']) < 4 || strlen($_POST['nickname']) > 20) {
             $alert->CreateAlert(Level::Error, "Your display name must be longer than 3 characters and not longer than 20.");
         }
+
+        // hacky shitty fix nbecasue my dumbass forgot to accoutn for this
+        $_POST['nickname'] = trim($_POST['nickname']);
 
         $stmt = $this->Connection->prepare("UPDATE users SET nickname = ? WHERE id = ?");
         $stmt->execute([
