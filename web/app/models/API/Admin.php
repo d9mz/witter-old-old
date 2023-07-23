@@ -31,11 +31,37 @@ class Admin extends Model
         // Decode the JSON into a PHP object
         $data = json_decode($json);
 
-        if(!is_int($data->target)) die();
+        if(!is_numeric($data->target)) die();
         $user = $userModel->GetUser($data->target, Type::ID);
         
         if(isset($user['id'])) {
-            
+            $stmt = $this->Connection->prepare("UPDATE users SET moderated_css = 't' WHERE id = ?");
+            $stmt->execute([
+                $user['id'],
+            ]);
+            $stmt = null;
+        }
+
+        echo json_encode($data);
+    }
+
+    public function DisapproveCSS() {
+        // Get the JSON payload from the POST request
+        $json = file_get_contents('php://input');
+        $userModel = new \Witter\Models\User();
+
+        // Decode the JSON into a PHP object
+        $data = json_decode($json);
+
+        if(!is_numeric($data->target)) die();
+        $user = $userModel->GetUser($data->target, Type::ID);
+        
+        if(isset($user['id'])) {
+            $stmt = $this->Connection->prepare("UPDATE users SET moderated_css = 'd' WHERE id = ?");
+            $stmt->execute([
+                $user['id'],
+            ]);
+            $stmt = null;
         }
 
         echo json_encode($data);

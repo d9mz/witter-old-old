@@ -29,7 +29,19 @@
                 </div>
                 <span class="caption">prepend image urls with <code>https://wsrv.nl/?url=</code> for them to display</span>
                 <input type="submit" value="set" aria-label="Set">
-            </form><br>
+            </form>
+            {% if waitingApprovalCSS %}
+                <br>
+                <div class="container alert-success height-unset width-unset" id="js_alert">
+                    <span class="padding inline-block">
+                        <b class="color-unset">Your CSS is currently waiting to be approved </b><br>
+                        <span class="caption">
+                        Please be patient, as this may sometimes take a few hours.
+                        </span>
+                    </span>
+                </div>
+            {% endif %}
+            <br>
             <div class="bold">private account</div>
             <form class="form" method="post" action="/settings/private/">
                 <div class="input-group">

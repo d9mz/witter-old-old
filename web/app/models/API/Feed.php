@@ -3,6 +3,11 @@ namespace Witter\Models;
 
 use \Godruoyi\Snowflake\Snowflake;
 
+
+// TODO: REFACTOR ALL OF THIS
+// SPLIT INTO DIFFERENT FEED classes
+// But still under a \Witter\Models\Feed\* namespace;
+
 class Feed extends Model
 {
     public function RemoveWitterLinkInWeet(string $weet, string $link) : string {

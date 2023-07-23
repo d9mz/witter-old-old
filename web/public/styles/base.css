@@ -547,6 +547,19 @@ input[type="password"] {
     /* todo: this rgb & hex mixing is ugly DONT do it !! */
 }
 
+/* this shit STINKS */
+.height-unset {
+    height: unset !important;
+}
+
+.color-unset {
+    color: unset !important;
+}
+
+.width-unset {
+    width: unset;
+}
+
 .buffer {
     height: 1.5rem;
     background: rgb(107,149,189);

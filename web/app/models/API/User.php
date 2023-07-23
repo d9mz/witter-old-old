@@ -37,6 +37,33 @@ class User extends Model
         }
     }
 
+    // this shit STINKS
+    public function isCSSUnapproved(int | string $user) : bool {
+        $query = $this->Connection->prepare("SELECT moderated_css FROM users WHERE username = :user");
+        $query->bindParam(":user", $user);
+        $query->execute();
+        $admin = $query->fetch();
+
+        if(trim($admin['moderated_css']) == "d") {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function isCSSWaiting(int | string $user) : bool {
+        $query = $this->Connection->prepare("SELECT moderated_css FROM users WHERE username = :user");
+        $query->bindParam(":user", $user);
+        $query->execute();
+        $admin = $query->fetch();
+
+        if(trim($admin['moderated_css']) == "f") {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public function IsMutuals(int $userAId, int $userBId) : bool {
         // Checking if User A is following User B
         $stmtA = $this->Connection->prepare("SELECT * FROM followers WHERE user = :idA AND target = :idB");

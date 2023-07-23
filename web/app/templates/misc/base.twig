@@ -26,6 +26,20 @@
             {% include 'includes/Header.twig' %}
         {% endblock %}
 
+        {% if hasDisprovenCSS %}
+            <div class="container alert-error height-unset" id="js_alert">
+                <span class="padding inline-block">
+                    <b class="color-unset">Your CSS has been refused to be approved. </b><br>
+                    <span class="caption">
+                    Your CSS may not have been approved for these following reasons:<br>
+                    - contained flashing lights or obnoxious colors / patterns.<br>
+                    - contained NSFW / grotesque content.<br><br>
+                    Please revise your CSS, then submit again to get rid of this message.
+                    </span>
+                </span>
+            </div>
+        {% endif %}
+
         {% if Session.Alert is defined %}
             {% for Alert in Session.Alert %}
                 <div class="container alert-{{ Alert.Type }}" id="js_alert">
