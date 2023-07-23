@@ -749,6 +749,33 @@ hr.wide {
     margin-top: 5px;
 }
 
+.feed-create-form .caption {
+    width: 680px;
+    /* this is gay stupid and ugly but who cares */
+    /* and also who the fuck decided to make buttons submit forms ???? 
+       WHY did it take me years to learn that type="button" existed ? */
+}
+
+.feed-create-form input[type="submit"] {
+    margin-top: 0px;
+}
+
+.add-attachment {
+    width: 27px;
+    height: 27px;
+    min-width: 27px;
+
+    color: rgb(158, 158, 158);
+
+    background: rgb(222, 222, 222);
+    border: 1px solid #a4a4a4;
+    float: unset;
+}
+
+.add-attachment:hover {
+    background: rgb(238, 238, 238);
+}
+
 .block {
     display: block !important;
 }
@@ -811,3 +838,16 @@ hr.wide {
 .followers-following-list .user-card:hover {
     background-color: rgb(236, 236, 236);
 }
+
+/* 
+      ____   
+     /___/\_                     
+    _\   \/_/\__                   
+  __\       \/_/\                    
+  \   __    __ \ \                
+ __\  \_\   \_\ \ \   __            
+/_/\\   __   __  \ \_/_/\         
+\_\/_\__\/\__\/\__\/_\_\/     
+   \_\/_/\       /_\_\/     
+      \_\/       \_\/           
+*/

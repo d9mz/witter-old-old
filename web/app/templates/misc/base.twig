@@ -6,12 +6,19 @@
             <meta property="og:title" content="{{ PageSettings.PageTitle|escape }}" />
             <meta property="og:description" content="{{ PageSettings.PageDescription|escape }}" />
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <meta http-equiv="Content-Security-Policy" content="default-src 'self' *.google.com *.googleapis.com *.cloudflare.com *.githack.com *.gstatic.com *.cloudflare.com; font-src 'self' *.jsdelivr.net *.githack.com *.cloudflare.com data: *.googleapis.com *.gstatic.com *.fontawesome.com ; img-src 'self' *.fastly.net data: wsrv.nl images.weserv.nl; style-src 'self' cdn.jsdelivr.net *.gstatic.com *.cloudflare.com;">
+
             <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>       
             <script src="/scripts/base.js"></script>
-            <link href="/styles/base.css" rel="stylesheet">
+            <script src="/scripts/alert.js"></script>
+            {% if isAdmin %}
+            <script src="/scripts/admin.js"></script>
+            {% endif %}
+
+            <link href="/styles/base.css" rel="stylesheet" />
+            <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" rel="stylesheet" />
             <link href="https://cdn.jsdelivr.net/gh/hung1001/font-awesome-pro@4cac1a6/css/all.css" rel="stylesheet" type="text/css" />
-            <meta http-equiv="Content-Security-Policy" content="default-src 'self' *.google.com *.googleapis.com *.cloudflare.com *.githack.com *.gstatic.com *.cloudflare.com; font-src 'self' *.jsdelivr.net *.githack.com *.cloudflare.com data: *.googleapis.com *.gstatic.com *.fontawesome.com ; img-src 'self' *.fastly.net data: wsrv.nl images.weserv.nl; style-src 'self' *.gstatic.com *.cloudflare.com;">
-            <style>/* Random header photo .header { background-image: url('{{HeaderPhoto}}'); } */</style>
         {% endblock %}
     </head>
     <body>

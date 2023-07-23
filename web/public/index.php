@@ -35,6 +35,7 @@ if(!isset($_SESSION['Handle'])) {
     $Router->Post('/user/register', "\Witter\Models\User@Register");
 } else {
     $Router->Get('/', "\Witter\Views\Homepage@Redirect");
+    $Router->Get('/sign_out', "\Witter\Models\Utility@SignOut");
 
     // [WEB] [API] Settings
     $Router->Get('/settings', "\Witter\Views\Settings@View");
@@ -78,7 +79,9 @@ if(!isset($_SESSION['Handle'])) {
     $Router->Get('/admin/', "\Witter\Views\Admin@View");
 
     // [API] Admin actions
- 
+    $Router->Post('/moderate/css/approve', "\Witter\Models\Admin@ApproveCSS");
+    $Router->Post('/moderate/css/disapprove', "\Witter\Models\Admin@DisapproveCSS");
+    
     // todo: create tos / privacy under /info/
 }
 

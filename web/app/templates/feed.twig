@@ -8,13 +8,14 @@
         </div>
     </div>
     <hr class="wide">
-    <div class="padding">
+    <div class="feed-create-form padding">
         <h3>create a weet</h3>
         <form class="form" method="post" action="/feed">
             <div class="input-group">
                 <textarea type="text" id="js_comment" class="full" required placeholder="today i ..." name="comment" aria-label="Weet">{{ Args.intent }}</textarea>
             </div>
             <span class="caption"><span id="js_char_remaining">200</span> characters left</span>
+            <button class="inline-block add-attachment" type="button"><i class="far fa-plus"></i></button>
             <input type="submit" value="post" id="js_submit" aria-label="Post">
         </form>
     </div>

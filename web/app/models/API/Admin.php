@@ -23,27 +23,22 @@ class Admin extends Model
         }
     }
 
-    public function ModerateCSS() {
-        $alert  = new \Witter\Models\Alert();
-        $user   = new \Witter\Models\User();
-        $user   = $user->GetUser($_SESSION['Handle']);
+    public function ApproveCSS() {
+        // Get the JSON payload from the POST request
+        $json = file_get_contents('php://input');
+        $userModel = new \Witter\Models\User();
 
-        if (!isset($_POST['description']) && !empty(trim($_POST['description']))) {
-            $alert->CreateAlert(Level::Error, "You did not enter a description.");
+        // Decode the JSON into a PHP object
+        $data = json_decode($json);
+
+        if(!is_int($data->target)) die();
+        $user = $userModel->GetUser($data->target, Type::ID);
+        
+        if(isset($user['id'])) {
+            
         }
 
-        if (strlen($_POST['description']) < 4 || strlen($_POST['description']) > 200) {
-            $alert->CreateAlert(Level::Error, "Your description must be longer than 3 characters and not longer than 200.");
-        }
-
-        $stmt = $this->Connection->prepare("UPDATE users SET description = ? WHERE id = ?");
-        $stmt->execute([
-            $_POST['description'],
-            $user['id'],
-        ]);
-        $stmt = null;
-
-        $alert->CreateAlert(Level::Success, "Successfully set your description.");
+        echo json_encode($data);
     }
 
     // Create a general all-purpose function for the enum

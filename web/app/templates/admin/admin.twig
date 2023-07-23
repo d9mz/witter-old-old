@@ -19,24 +19,27 @@
                             <a href="/user/{{ User.username }}?unmoderated">
                             <button 
                                 class="button left" 
-                                data-moderation-target="{{ User.id }}" 
                                 aria-label="Follow">
                                 view profile
                             </button>
+                            </a>
                             <button 
                                 class="button moderate left"
                                 data-moderation-type="css"
+                                data-moderation-action="disapprove"
                                 data-moderation-target="{{ User.id }}" 
                                 aria-label="Follow">
                                 disapprove
                             </button>
                             <button 
-                                class="button left" 
+                                class="button moderate left" 
+                                data-moderation-type="css"
                                 data-moderation-target="{{ User.id }}" 
+                                data-moderation-action="approve"
                                 aria-label="Follow">
                                 approve
                             </button>
-                            </a>
+                            
                         </div>
                     </div><br>
                 {% endif %}
