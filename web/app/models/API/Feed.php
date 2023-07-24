@@ -195,6 +195,53 @@ class Feed extends Model
         echo json_encode($response);
     }
 
+    public function DeletePost(string $id) { 
+        $id = (int)$id; // cast $id to integer
+
+        $userModel = new \Witter\Models\User();
+        $feedModel = new \Witter\Models\Feed();
+        $user = $userModel->GetUser($_SESSION['Handle'], Type::Username);
+
+        // Get the JSON payload from the POST request
+        $json = file_get_contents('php://input');
+
+        // Decode the JSON into a PHP object
+        $data = json_decode($json);
+        $comment_id = $data->weet_id;
+
+        $weet = $this->GetWeet($comment_id, false);
+
+        if($weet['user']['username'] == $_SESSION['Handle']) {
+            // if reweet, take away one from original reweet count
+            if(!empty(trim($weet['feed_embed']))) {
+                $reweet = $feedModel->GetWeet($weet['feed_embed'], false, false, true);
+                $reweets = $reweet['feed_reweets'] - 1;
+
+                $stmt = $this->Connection->prepare("UPDATE feed SET feed_reweets = ? WHERE feed_id = ?");
+                $stmt->execute([
+                    $reweets,
+                    $reweet['feed_id'],
+                ]);
+                $stmt = null;
+            }
+
+            $stmt = $this->Connection->prepare("DELETE FROM feed WHERE feed_id = ? AND feed_owner = ?");
+            $stmt->execute(
+                [
+                    $weet['feed_id'],
+                    $user['id']
+                ]
+            );
+
+            $response = array('status' => 'success', 'action' => 'deleted');
+        } else {
+            header('HTTP/1.0 403 Forbidden');
+            $response = array('status' => 'fail', 'action' => 'urgay');
+        }
+
+        echo json_encode($response);
+    }
+
     public function WeetExists(int $weet_id, bool $actual_id = false) : bool {
         if(!$actual_id) {
             $stmt = $this->Connection->prepare("SELECT id FROM feed WHERE feed_id = :id");

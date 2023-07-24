@@ -2,6 +2,30 @@ $(function() {
     // base.js
     // this is not good js
 
+    $('.delete-weet-action').on('click', function() {
+        console.log("fart");
+        let weetTarget = $(this).data('target');
+
+        $.ajax({
+            url: '/actions/post/' + weetTarget + '/delete',
+            type: 'POST',
+            data: JSON.stringify({weet_id: weetTarget}),
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function(result){
+                // Do something with the result
+                createAlert(4, `Successfully deleted your weet!`);
+                $(`.weet[data-weet-id="${weetTarget}"]`).fadeOut();
+                console.log("[comment action] ", result);
+            },
+            error: function(request, status, error){
+                // 403
+                createAlert(2, `Your weet could not be deleted due to an unknown error!!`);
+                console.error('[comment action] failed to delete! ' + error);
+            }
+        });        
+    });
+
     // Handles ALL comment likes site-wide
     // Could probably do this better. But it works
     $('.comment_like').on('click', function() {

@@ -24,7 +24,7 @@
         {% if not Weet.user.visible %}    
             {% for Weet in Feed %}
                 {% if Weet.id is defined and Weet.user.visible %}
-                    <div class="weet">
+                    <div class="weet" data-weet-id={{ Weet.feed_id}}>
                         <div class="inline-block padding top">
                             <img src="/cdn/{{ Weet.user.profile_picture }}" class="profile-picture">
                         </div>
@@ -37,7 +37,11 @@
                             <div class="dropdown inline-block float-right bottom">
                                 <div class="dropdown-show"></div>
                                 <div class="dropdown-content">
-                                    <a href="#" class="block-user-action" data-target="{{ Weet.user.id }}">block <b>@{{ Weet.user.username }}</b></a>
+                                    {% if Weet.user.username != Session.Handle %}
+                                        <a href="#" class="block-user-action" data-target="{{ Weet.user.id }}">block <b>@{{ Weet.user.username }}</b></a>
+                                    {% else %}
+                                        <span class="delete-weet-action" data-target="{{ Weet.feed_id }}">delete weet</span>
+                                    {% endif %}
                                 </div>
                             </div>
 

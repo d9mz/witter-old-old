@@ -68,7 +68,7 @@ if(!isset($_SESSION['Handle'])) {
     // [API] Actions for posts
     $Router->Post('/actions/post/{id}/like', "\Witter\Models\Feed@LikePost");
     $Router->Post('/actions/post/{id}/reply', "\Witter\Models\Feed@Reply");
-    $Router->Post('/actions/post/{id}/delete', "\Witter\Models\Feed@LikePost");
+    $Router->Post('/actions/post/{id}/delete', "\Witter\Models\Feed@DeletePost");
 
 
     // [API] Actions for user
