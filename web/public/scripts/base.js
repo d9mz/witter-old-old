@@ -26,6 +26,30 @@ $(function() {
         });        
     });
 
+    $('.block-user-action').on('click', function() {
+        console.log("fart");
+        let userTarget = $(this).data('target');
+
+        $.ajax({
+            url: '/actions/user/' + userTarget + '/block',
+            type: 'POST',
+            data: JSON.stringify({weet_id: userTarget}),
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function(result){
+                // Do something with the result
+                createAlert(4, `Successfully blocked this user!`);
+                console.log("[block action] ", result);
+            },
+            error: function(request, status, error){
+                // 403
+                createAlert(2, `This user could not be blocked due to an unknown error!!`);
+                console.error('[block action] failed to block! ' + error);
+            }
+        });        
+    });
+
+
     // Handles ALL comment likes site-wide
     // Could probably do this better. But it works
     $('.comment_like').on('click', function() {
