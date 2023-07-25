@@ -4,6 +4,13 @@ namespace Witter\Models;
 // Should this be used in the Utility class?
 // Not sure.
 class Cooldown extends Model {
+    // create database instance -- this shouldn't really be done here but it's
+    // a temporary solution to the infinite connection issue
+    public function __construct() {
+        $connection = new \Witter\Models\Connection();
+        $this->Connection = $connection->MakeConnection();
+    }
+    
     //TODO: POTTENTIALLY include __construct that passes the User array to reduce # of database queries?
 
     // TODO: Clean up this function... Looks pretty ugly

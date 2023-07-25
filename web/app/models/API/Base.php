@@ -6,14 +6,12 @@ class Model extends \Witter\Configurator {
     public $Configuration;
     public $Validator;
     public $Twig;
-    public $RCCServiceSOAP;
 
     function __construct() {
         parent::__construct();
-        $this->MakeConnection();
     }
 
-    function MakeConnection() {
+    public function MakeConnection() {
         try
         {
             $this->Connection = new \PDO("mysql:host=" . $this->Configuration->Database->DatabaseHost . ";dbname=" . $this->Configuration->Database->DatabaseName . ";charset=utf8mb4",

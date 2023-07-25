@@ -1,8 +1,8 @@
 <?php
 
 /*
-    View Autoloader
-    Fetches all Views from /Views/
+    Model Autoloader
+    Fetches all Views from /API/
 */
 
 $Models = preg_grep('/^([^.])/', scandir('../app/models/API/'));

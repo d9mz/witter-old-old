@@ -11,10 +11,10 @@ class Base extends Configurator {
         $this->MakeConnection();
     }
 
-    function MakeConnection() {
+    function MakeConnection() : \PDO {
         try
         {
-            $this->Connection = new \PDO("mysql:host=" . $this->Configuration->Database->DatabaseHost . ";dbname=" . $this->Configuration->Database->DatabaseName . ";charset=utf8mb4",
+            $Connection = new \PDO("mysql:host=" . $this->Configuration->Database->DatabaseHost . ";dbname=" . $this->Configuration->Database->DatabaseName . ";charset=utf8mb4",
                 $this->Configuration->Database->DatabaseUsername,
                 $this->Configuration->Database->DatabasePassword,
                 [
@@ -23,7 +23,7 @@ class Base extends Configurator {
                 ]
             );
 
-            $this->Connection->setAttribute(\PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, false);
+            $Connection->setAttribute(\PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, false);
         }
         catch(\PDOException $e)
         {
@@ -31,7 +31,7 @@ class Base extends Configurator {
         }
 
         if(isset($_SESSION['Handle'])) {
-            $stmt = $this->Connection->prepare("UPDATE users SET last_login = NOW() WHERE username = ?");
+            $stmt = $Connection->prepare("UPDATE users SET last_login = NOW() WHERE username = ?");
             $stmt->execute([
                 $_SESSION['Handle'],
             ]);
@@ -50,5 +50,7 @@ class Base extends Configurator {
         if(!isset($SessionIP)) {
             $SessionIP = "0.0.0.0";
         }
+
+        return $Connection;
     }
 }

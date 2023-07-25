@@ -8,6 +8,13 @@ enum ContentType: int {
 
 class CDN extends Model
 {
+    // create database instance -- this shouldn't really be done here but it's
+    // a temporary solution to the infinite connection issue
+    public function __construct() {
+        $connection = new \Witter\Models\Connection();
+        $this->Connection = $connection->MakeConnection();
+    }
+    
     // Not actually md5, just too lazy to change to base64
     public function GetCSS(string $md5) {
         $userModel = new \Witter\Models\User();

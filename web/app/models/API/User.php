@@ -9,6 +9,13 @@ enum Type: int {
 
 class User extends Model
 {
+    // create database instance -- this shouldn't really be done here but it's
+    // a temporary solution to the infinite connection issue
+    public function __construct() {
+        $connection = new \Witter\Models\Connection();
+        $this->Connection = $connection->MakeConnection();
+    }
+    
     public function showUnmoderatedCSS(string $user) : bool {
         $query = $this->Connection->prepare("SELECT hide_css FROM users WHERE username = :user");
         $query->bindParam(":user", $user);

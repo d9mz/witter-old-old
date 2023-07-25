@@ -7,7 +7,7 @@ use Witter\Models\Type;
 class Feed extends View {
     public function View() {
         $feedModel = new \Witter\Models\Feed();
-        $feed = $feedModel->GetFeed("everyone", 20);
+        $feed = $feedModel->GetFeed("everyone", 10);
         
         // UGLY.... Why do ?
         echo $this->Twig->render('feed.twig', array(

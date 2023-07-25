@@ -11,6 +11,13 @@ enum ModeratableTypes : string {
 
 class Admin extends Model
 {
+    // create database instance -- this shouldn't really be done here but it's
+    // a temporary solution to the infinite connection issue
+    public function __construct() {
+        $connection = new \Witter\Models\Connection();
+        $this->Connection = $connection->MakeConnection();
+    }
+
     public function checkIfAdminIfNotError() : void {
         $userModel = new \Witter\Models\User();
         if(!isset($_SESSION['Handle']) || !$userModel->isAdmin($_SESSION['Handle'])) {

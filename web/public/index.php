@@ -81,6 +81,9 @@ if(!isset($_SESSION['Handle'])) {
     // [API] Admin actions
     $Router->Post('/moderate/css/approve', "\Witter\Models\Admin@ApproveCSS");
     $Router->Post('/moderate/css/disapprove', "\Witter\Models\Admin@DisapproveCSS");
+
+    // [API] Public site API
+    $Router->Get('/v1/api/load_weets/{page}', "\Witter\Views\Scrolling@GetWeets");
     
     // todo: create tos / privacy under /info/
 }

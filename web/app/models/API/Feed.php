@@ -10,6 +10,13 @@ use \Godruoyi\Snowflake\Snowflake;
 
 class Feed extends Model
 {
+    // create database instance -- this shouldn't really be done here but it's
+    // a temporary solution to the infinite connection issue
+    public function __construct() {
+        $connection = new \Witter\Models\Connection();
+        $this->Connection = $connection->MakeConnection();
+    }
+    
     public function RemoveWitterLinkInWeet(string $weet, string $link) : string {
         $pos = strpos($weet, $link);
         if ($pos !== false) {
@@ -435,6 +442,23 @@ class Feed extends Model
         $Feed->execute();
 
         return $Feed->rowCount();
+    }
+
+    public function GetFeedScrolling(int $page, int $weetsToLoad) : array {
+        $weetsToSkip = $page * $weetsToLoad;
+
+        $feedModel = new \Witter\Models\Feed();
+
+        $Feed = $this->Connection->prepare("SELECT feed_id FROM feed WHERE feed_target = -1 ORDER BY id DESC LIMIT " . $weetsToLoad . " OFFSET " . $weetsToSkip);
+        $Feed->execute();
+
+        // Relation: get user info while fetching forum
+        while ($weet = $Feed->fetch(\PDO::FETCH_ASSOC)) {
+            $weet = $feedModel->GetWeet($weet['feed_id'], false);
+            $weets[] = $weet;
+        }
+        
+        return $weets;
     }
 
     // returns pdo loopabble thingy, can use while

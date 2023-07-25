@@ -5,6 +5,13 @@ use Intervention\Image\ImageManager;
 
 class Settings extends Model
 {
+    // create database instance -- this shouldn't really be done here but it's
+    // a temporary solution to the infinite connection issue
+    public function __construct() {
+        $connection = new \Witter\Models\Connection();
+        $this->Connection = $connection->MakeConnection();
+    }
+    
     public function Description() {
         $alert  = new \Witter\Models\Alert();
         $user   = new \Witter\Models\User();

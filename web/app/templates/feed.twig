@@ -1,4 +1,8 @@
 {% extends "misc/base.twig" %}
+{%- block Header -%}
+    {{ parent() }}
+    <script src="/scripts/scroll-init.js" defer></script>
+{% endblock %}
 {%- block Container -%}
     <div class="padding">
         <div class="tab-group">
@@ -20,7 +24,8 @@
         </form>
     </div>
     <hr>
-    <div class="padding overflow-unset no-padding-top">
+    {# WTF? https://stackoverflow.com/questions/12497130/how-to-escape-twig-delimiters-in-a-twig-template #}
+    <div class="weet-container padding overflow-unset no-padding-top">
         {% if not Weet.user.visible %}    
             {% for Weet in Feed %}
                 {% if Weet.id is defined and Weet.user.visible %}
