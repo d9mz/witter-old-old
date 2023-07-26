@@ -131,7 +131,7 @@ class Feed extends Model
             FROM followers AS flw
             INNER JOIN feed AS f ON flw.target = f.feed_owner
             WHERE flw.user = :user
-            ORDER BY f.feed_created DESC" 
+            ORDER BY f.feed_created DESC LIMIT 10" 
         );
     
         // Bind parameters
