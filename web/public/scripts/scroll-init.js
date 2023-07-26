@@ -2,7 +2,7 @@ let $container = $('.weet-container').infiniteScroll({
     // options
     path: '/v1/api/load_weets/{{#}}',
     append: false,
-    history: 'push',
+    history: false,
 });
 
 $container.on('load.infiniteScroll', function( event, response ) {
