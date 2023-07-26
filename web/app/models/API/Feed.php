@@ -446,15 +446,24 @@ class Feed extends Model
 
     public function GetFeedScrolling(int $page, int $weetsToLoad) : array {
         $weetsToSkip = $page * $weetsToLoad;
+        $cooldown = new \Witter\Models\Cooldown();
 
-        $feedModel = new \Witter\Models\Feed();
+        if(!$cooldown->GetCooldown("scroll_cooldown", $_SESSION['Handle'], 1)) {
+            die(json_encode((object)["response" => "cooldown"]));
+        } else {
+            $cooldown->SetCooldown("scroll_cooldown", $_SESSION['Handle']);
+        }
 
         $Feed = $this->Connection->prepare("SELECT feed_id FROM feed WHERE feed_target = -1 ORDER BY id DESC LIMIT " . $weetsToLoad . " OFFSET " . $weetsToSkip);
         $Feed->execute();
 
+        if($Feed->rowCount() == 0) {
+            die(json_encode((object)["response" => "No more pages to load!"]));
+        }
+
         // Relation: get user info while fetching forum
         while ($weet = $Feed->fetch(\PDO::FETCH_ASSOC)) {
-            $weet = $feedModel->GetWeet($weet['feed_id'], false);
+            $weet = $this->GetWeet($weet['feed_id'], false);
             $weets[] = $weet;
         }
         

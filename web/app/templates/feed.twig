@@ -24,7 +24,6 @@
         </form>
     </div>
     <hr>
-    {# WTF? https://stackoverflow.com/questions/12497130/how-to-escape-twig-delimiters-in-a-twig-template #}
     <div class="weet-container padding overflow-unset no-padding-top">
         {% if not Weet.user.visible %}    
             {% for Weet in Feed %}
@@ -90,5 +89,8 @@
                 {% endif %}
             </div>
         {% endif %}
+    </div>
+    <div class="loading-dynamic center display-none">
+        <span class="caption">Loading...</span>
     </div>
 {% endblock %}

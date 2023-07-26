@@ -839,6 +839,10 @@ hr.wide {
     display: inline-block;
 }
 
+.display-none {
+    display: none;
+}
+
 .dropdown-content {
     display: none;
     position: absolute;
