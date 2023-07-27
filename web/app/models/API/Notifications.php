@@ -37,15 +37,26 @@ class Notifications extends Model {
         return $stmt->rowCount();
     }
 
+    // incomplete
+    public function getUnreadNotifications(string $user) : int {
+        // take into account: last_modified as well
+        // createNotification will UPDATE an already existing targets [weet] & set last_modified
+        // to now()
+
+        return 0;
+    }
+
     public function NotificationTypeToString(array $notification) : array {
         $userModel = new \Witter\Models\User();
 
         // transform the ['type'] in a notification array to a string to be outputted by twig
 
-        if($notification['type'] == 0) { // user followed
+        if($notification['type'] == 0) { 
+            // user followed
             $recipient = $userModel->GetUser($notification['recipient'], Type::ID, true);
             $initiator = $userModel->GetUser($notification['initiator'], Type::ID, true);
 
+            // this is pretty long...
             $notification['type'] = sprintf("%s (<a href='/user/%s'>@%s</a>) has started to follow you.", $initiator['nickname'], $initiator['username'], $initiator['username']);
         }
 
