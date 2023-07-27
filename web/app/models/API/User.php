@@ -1,6 +1,8 @@
 <?php
 namespace Witter\Models;
 
+use Witter\Models\NotificationTypes;
+
 enum Type: int {
     case ID = 0;
     case Username = 1;
@@ -197,6 +199,7 @@ class User extends Model
     public function Follow(string $uid) {
         // Get the JSON payload from the POST request
         $json = file_get_contents('php://input');
+        $notificationsModel = new \Witter\Models\Notifications;
 
         // Decode the JSON into a PHP object
         $data = json_decode($json);
@@ -219,6 +222,9 @@ class User extends Model
 
             $response = array('status' => 'success', 'action' => 'follow');
         } else {
+            $notificationsModel->CreateNotification(NotificationTypes::UserFollowed, [], $user['id'], $target['id'], "user-plus");
+
+            // wtf? todo: unfinished code?
             if($target['private'] == "t") {
                 $stmt = $this->Connection->prepare(
                     "INSERT INTO followers

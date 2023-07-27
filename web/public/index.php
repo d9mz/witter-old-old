@@ -78,6 +78,9 @@ if(!isset($_SESSION['Handle'])) {
     // [WEB] Admin pages
     $Router->Get('/admin/', "\Witter\Views\Admin@View");
 
+    // [WEB] Notification pages
+    $Router->Get('/notifications/', "\Witter\Views\Notification@View");
+
     // [API] Admin actions
     $Router->Post('/moderate/css/approve', "\Witter\Models\Admin@ApproveCSS");
     $Router->Post('/moderate/css/disapprove', "\Witter\Models\Admin@DisapproveCSS");
