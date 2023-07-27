@@ -222,7 +222,7 @@ class User extends Model
 
             $response = array('status' => 'success', 'action' => 'follow');
         } else {
-            $notificationsModel->CreateNotification(NotificationTypes::UserFollowed, [], $user['id'], $target['id'], "user-plus");
+            $notificationsModel->CreateNotification(NotificationTypes::UserFollowed, [], $target['id'], $user['id'], "user-plus");
 
             // wtf? todo: unfinished code?
             if($target['private'] == "t") {

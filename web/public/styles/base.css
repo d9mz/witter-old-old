@@ -843,6 +843,16 @@ hr.wide {
     display: none;
 }
 
+.notification-alert {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    background-color: #6ca8e3;
+    border: 1px solid #4c81b5;
+    position: absolute;
+    right: -5px;
+}
+
 .dropdown-content {
     display: none;
     position: absolute;

@@ -12,16 +12,19 @@ class View extends \Witter\Configurator {
 
         if(isset($_SESSION['Handle'])) {
             $userModel = new \Witter\Models\User();
+            $notificationModel = new \Witter\Models\Notifications();
 
-            $css        = $userModel->showUnmoderatedCSS($_SESSION['Handle']);
-            $isAdmin    = $userModel->isAdmin($_SESSION['Handle']);
-            $dispCSS    = $userModel->isCSSUnapproved($_SESSION['Handle']);
-            $waitingCSS = $userModel->isCSSWaiting($_SESSION['Handle']);
+            $css          = $userModel->showUnmoderatedCSS($_SESSION['Handle']);
+            $isAdmin      = $userModel->isAdmin($_SESSION['Handle']);
+            $dispCSS      = $userModel->isCSSUnapproved($_SESSION['Handle']);
+            $waitingCSS   = $userModel->isCSSWaiting($_SESSION['Handle']);
+            $unreadNotifs = $notificationModel->getUnreadNotifCount($_SESSION['Handle']);
             
             $this->Twig->addGlobal('showUnmoderatedCSS', $css);
             $this->Twig->addGlobal('isAdmin', $isAdmin);
             $this->Twig->addGlobal('hasDisprovenCSS', $dispCSS);
             $this->Twig->addGlobal('waitingApprovalCSS', $waitingCSS);
+            $this->Twig->addGlobal('unreadNotifs', $unreadNotifs);
         }
     }
 

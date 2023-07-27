@@ -8,7 +8,14 @@
         <div class="navlink navlink-border"><div><a href="/">home</a></div></div>
         <div class="navlink"><div><a href="/user/{{ Session.Handle }}">profile</a></div></div>
         <div class="navlink"><div><a href="/settings/">settings</a></div></div>
-        <div class="navlink"><div><a href="/notifications/">notifications</a></div></div>
+        <div class="navlink">
+            <div>
+                <a href="/notifications/">
+                    {% if unreadNotifs > 0 %}<div class="notification-alert">{{ unreadNotifs }}</div>{% endif %}
+                    notifications
+                </a>
+            </div>
+        </div>
         <div class="navlink"><div><a href="/messages">messages</a></div></div>
         {% if isAdmin %}
         <div class="navlink"><div><a href="/admin/">admin</a></div></div>
