@@ -14,6 +14,40 @@ body, html {
     overflow-x: hidden;
 }
 
+.search-filter-options,
+.search-filter-option {
+    display: inline-block;
+}
+
+.tab-group-right-section {
+    display: inline-block;
+    float: right;
+    width: 205px;
+    margin-top: -42px;
+    position: relative;
+    top: 10px;
+    border-left: 1px solid #ccc;
+    padding-left: 5px;
+}
+
+.tab-group-right-section button {
+    min-width: 23px;
+    height: 23px;
+    font-size: 11px;
+    float: unset;
+}
+
+.notification .profile-picture {
+    width: 30px;
+    border: 1px solid #d3d3d3;
+}
+
+.notification i {
+    font-size: 35px;
+    padding-right: 10px;
+    color: #d5d5d5;
+}
+
 :root {
     --primary-text-color: #2874c5;
     --secondary-text-color: #2262a6;
@@ -475,6 +509,10 @@ input[type="password"] {
     text-align: left;
 }
 
+.align-center {
+    text-align: center;
+}
+
 .align-right {
     text-align: right;
 }
@@ -853,6 +891,10 @@ hr.wide {
     right: -5px;
 }
 
+.notification-text {
+    padding-top: 5px;
+}
+
 .dropdown-content {
     display: none;
     position: absolute;
@@ -891,6 +933,10 @@ hr.wide {
 
 .top {
     vertical-align: top;
+}
+
+.middle {
+    vertical-align: middle;
 }
 
 .bottom {

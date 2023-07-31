@@ -38,12 +38,29 @@ class Notifications extends Model {
     }
 
     // incomplete
-    public function getUnreadNotifications(string $user) : int {
+    public function getUnreadNotifications() : array {
         // take into account: last_modified as well
         // createNotification will UPDATE an already existing targets [weet] & set last_modified
         // to now()
 
-        return 0;
+        $userModel = new \Witter\Models\User;
+        $currentUser = $userModel->GetUser($_SESSION['Handle']);
+
+        $Notifs = $this->Connection->prepare("SELECT * FROM notifications WHERE recipient = :id");
+        $Notifs->bindParam(":id", $currentUser['id']);
+        $Notifs->execute();
+
+        $notifs = [];
+
+        // Relation: get user info while fetching forum
+        while ($notif = $Notifs->fetch(\PDO::FETCH_ASSOC)) {
+            $user = $userModel->GetUser($notif['initiator'], Type::ID);
+            $notif = $this->NotificationTypeToString($notif);
+            $notif["user"] = $user;
+            $notifs[] = $notif;
+        }
+
+        return @$notifs;
     }
 
     public function NotificationTypeToString(array $notification) : array {
@@ -57,7 +74,7 @@ class Notifications extends Model {
             $initiator = $userModel->GetUser($notification['initiator'], Type::ID, true);
 
             // this is pretty long...
-            $notification['type'] = sprintf("%s (<a href='/user/%s'>@%s</a>) has started to follow you.", $initiator['nickname'], $initiator['username'], $initiator['username']);
+            $notification['type'] = sprintf("<b>%s</b> (<a href='/user/%s'>@%s</a>) has started to follow you.", $initiator['nickname'], $initiator['username'], $initiator['username']);
         }
 
         return $notification;

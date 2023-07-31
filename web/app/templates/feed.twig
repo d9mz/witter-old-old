@@ -10,6 +10,21 @@
             <a href="/feed/following"><div class="tab {% if ActiveTab == 'following' %}primary{% endif %}">following</div></a>
             <a href="/feed/trending"><div class="tab {% if ActiveTab == 'trending' %}primary{% endif %}">trending</div></a>
         </div>
+
+        <div class="tab-group-right-section">
+            <form action="#" method="GET">
+                <input type="text" name="q" placeholder="search query ...">
+                <button><i class="far fa-search"></i></button>
+            </form>
+            <div class="search-filter-options">
+                <div class="search-filter-option">
+                    <input type="checkbox" name="weets"> <span class="inline-block top">weets</span>
+                </div>
+                <div class="search-filter-option">
+                    <input type="checkbox" name="weets"> <span class="inline-block top">users</span>
+                </div>
+            </div>
+        </div>
     </div>
     <hr class="wide">
     <div class="feed-create-form padding">
