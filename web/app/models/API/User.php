@@ -94,6 +94,8 @@ class User extends Model
         // assuming we're checking if oomf of current logged in user
         $currentUser = $this->GetUID($_SESSION['Handle']);
 
+        // echo "(" . $currentUser . ")-(" . $userID . ")<br>";
+
         $stmt = $this->Connection->prepare("SELECT id FROM followers WHERE user = :idA AND target = :idB");
         $stmt->bindParam(":idA", $userID);
         $stmt->bindParam(":idB", $currentUser);

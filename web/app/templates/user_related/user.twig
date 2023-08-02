@@ -90,6 +90,10 @@
         <div class="user-follow-metric">
             <span class="caption"><b><a class="keep-color" href="/user/followers/{{ User.username }}">{{ User.metrics.follower_count|number_format }}</b> follower(s), </a></span>
             <span class="caption"><b><a class="keep-color" href="/user/following/{{ User.username }}">{{ User.metrics.following_count|number_format }}</b> following</a></span>
+
+            {% if User.oomf %}
+            <span class="user-oomf">Follows you</span>
+            {% endif %}
         </div>
     </div>
     <hr>
