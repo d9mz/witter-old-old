@@ -159,6 +159,8 @@ class Feed extends Model
         $id = (int)$id; // cast $id to integer
 
         $userModel = new \Witter\Models\User();
+        $notifModel = new \Witter\Models\Notifications();
+
         $user = $userModel->GetUser($_SESSION['Handle'], Type::Username);
 
         // Get the JSON payload from the POST request
@@ -171,6 +173,8 @@ class Feed extends Model
         $weet = $this->GetWeet($comment_id, false);
 
         if($weet['user']['visible'] == true) {
+            $notifModel->CreateNotification(NotificationTypes::WeetLiked, [$weet['id']], $weet['user']['id'], $user['id'], "heart");
+
             if($this->PostLiked($comment_id, $_SESSION['Handle'])) {
                 $stmt = $this->Connection->prepare("DELETE FROM likes WHERE target = ? AND user = ?");
                 $stmt->execute(

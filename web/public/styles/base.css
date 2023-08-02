@@ -18,6 +18,10 @@ body, html {
     border-left: 1px solid var(--primary-border-color)
 }
 
+.rss-button {
+    width: 25px;
+}
+
 .user-oomf {
     background-color: #2874c580;
     color: white;
@@ -39,11 +43,10 @@ body, html {
 .tab-group-right-section {
     display: inline-block;
     float: right;
-    width: 205px;
+    width: 32px;
     margin-top: -42px;
     position: relative;
-    top: 10px;
-    border-left: 1px solid #ccc;
+    top: 22px;
     padding-left: 5px;
 }
 

@@ -90,7 +90,7 @@ class Notifications extends Model {
         // prevents end user from just spamming notifications
         $cooldownModel = new \Witter\Models\Cooldown();
 
-        if(!$cooldownModel->GetCooldown("notif_cooldown", $_SESSION['Handle'], 10)) {
+        if(!$cooldownModel->GetCooldown("notif_cooldown", $_SESSION['Handle'], 2)) {
             return;
         } else {
             $cooldownModel->SetCooldown("notif_cooldown", $_SESSION['Handle']);
@@ -102,10 +102,10 @@ class Notifications extends Model {
         // this function ASSUMES that $targets is of all int type
 
         // for simple one recipient, one initiator $targets can be just []
+        $targets = array_filter($targets);
+        $targets = implode(",", $targets);
 
         if($type == NotificationTypes::UserFollowed) {
-            $targets = implode(",", $targets);
-
             $stmt = $this->Connection->prepare(
                 "INSERT INTO notifications
                     (icon, recipient, initiator, type, targets) 
@@ -120,6 +120,39 @@ class Notifications extends Model {
                 0, // shouldn't be hardcoded but enums don't have __toString magic method
                 $targets,
             ]);
+        }
+
+        if($type == NotificationTypes::WeetLiked) {
+            $stmt = $this->Connection->prepare(
+                "SELECT * FROM notifications WHERE initiator = ? AND type = ? AND recipient = ?"
+            );
+    
+            $stmt->execute([$initiator, 0, $recipient]);
+            $existing_notification = $stmt->fetch();
+    
+            if($existing_notification) {
+                // Update the targets with the new liker
+                // this sucks but it's 3am and i can't muster
+                // up the brain power to not make this sucky
+                $targets = $existing_notification['targets'] . ',' . $targets;
+        
+                $stmt = $this->Connection->prepare(
+                    "UPDATE notifications
+                    SET targets = ?
+                    WHERE initiator = ? AND type = ? AND recipient = ?"
+                );
+    
+                $stmt->execute([$targets, $initiator, 0, $recipient]);
+            } else {
+                // No existing notification, create a new one
+                $stmt = $this->Connection->prepare(
+                    "INSERT INTO notifications
+                    (icon, recipient, initiator, type, targets)
+                    VALUES (?, ?, ?, ?, ?)"
+                );
+    
+                $stmt->execute([$icon, $recipient, $initiator, 0, $targets]);
+            }
         }
     }
 }
