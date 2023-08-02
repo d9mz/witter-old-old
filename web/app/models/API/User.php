@@ -92,11 +92,11 @@ class User extends Model
 
     public function isOomf(int $userID) : bool {
         // assuming we're checking if oomf of current logged in user
-        $currentUser = $this->GetUser($_SESSION['Handle']);
+        $currentUser = $this->GetUID($_SESSION['Handle']);
 
         $stmt = $this->Connection->prepare("SELECT id FROM followers WHERE user = :idA AND target = :idB");
         $stmt->bindParam(":idA", $userID);
-        $stmt->bindParam(":idB", $currentUser['id']);
+        $stmt->bindParam(":idB", $currentUser);
         $stmt->execute();
 
         return $stmt->rowCount() === 1;

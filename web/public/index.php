@@ -88,6 +88,9 @@ if(!isset($_SESSION['Handle'])) {
     // [API] Public site API
     $Router->Get('/v1/api/load_weets/{page}', "\Witter\Views\Scrolling@GetWeets");
     
+    // [TEST] Unit tests (getting user, outputting)
+    $Router->Get('/test/user/', "\Witter\Views\Test@User");    
+
     // todo: create tos / privacy under /info/
 }
 
