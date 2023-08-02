@@ -14,6 +14,10 @@ body, html {
     overflow-x: hidden;
 }
 
+.container-side-borders {
+    border-left: 1px solid var(--primary-border-color)
+}
+
 .search-filter-options,
 .search-filter-option {
     display: inline-block;

@@ -89,6 +89,18 @@ class User extends Model
         // If both queries return a result, then they are mutuals
         return $stmtA->rowCount() > 0 && $stmtB->rowCount() > 0;
     }
+
+    public function isOomf(int $userID) : bool {
+        // assuming we're checking if oomf of current logged in user
+        $currentUser = $this->GetUser($_SESSION['Handle']);
+
+        $stmt = $this->Connection->prepare("SELECT id FROM followers WHERE user = :idA AND target = :idB");
+        $stmt->bindParam(":idA", $userID);
+        $stmt->bindParam(":idB", $currentUser['id']);
+        $stmt->execute();
+
+        return $stmt->rowCount() === 1;
+    }
     
     public function GetFollowerFollowingCount(int $uid) : array {
         $followerStmt = $this->Connection->prepare("SELECT * FROM followers WHERE target = :id");
@@ -359,10 +371,15 @@ class User extends Model
             $user['visible'] = true;
 
             if(!$optimized) {
+                $user['oomf'] = false;
+                
                 if(isset($_SESSION['Handle'])) {
                     if(!$this->SafeFollowingUser($_SESSION['Handle'], $user['id']) && $user['private'] == "t") $user['visible'] = false;
                     if($this->SafeFollowingUser($_SESSION['Handle'], $user['id']) && $user['private'] == "t") $user['visible'] = true;
                     if($_SESSION['Handle'] == $user['username']) $user['visible'] = true;
+
+                    // oomf checking
+                    if($this->isOomf($user['id'])) $user['oomf'] = true;
                 }
 
                 // is the logged in user following this user?
