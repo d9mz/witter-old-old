@@ -123,26 +123,27 @@ class Notifications extends Model {
         }
 
         if($type == NotificationTypes::WeetLiked) {
+            // Check for existing notification with the same initiator, type, recipient, and targets
             $stmt = $this->Connection->prepare(
-                "SELECT * FROM notifications WHERE initiator = ? AND type = ? AND recipient = ?"
+                "SELECT * FROM notifications WHERE initiator = ? AND type = ? AND recipient = ? AND targets = ?"
             );
     
-            $stmt->execute([$initiator, 0, $recipient]);
+            $stmt->execute([$initiator, 0, $recipient, $targets]);
             $existing_notification = $stmt->fetch();
     
             if($existing_notification) {
                 // Update the targets with the new liker
-                // this sucks but it's 3am and i can't muster
-                // up the brain power to not make this sucky
                 $targets = $existing_notification['targets'] . ',' . $targets;
-        
+    
+                // Update the icon to reflect the new like count
+    
                 $stmt = $this->Connection->prepare(
                     "UPDATE notifications
                     SET targets = ?
-                    WHERE initiator = ? AND type = ? AND recipient = ?"
+                    WHERE initiator = ? AND type = ? AND recipient = ? AND targets = ?"
                 );
     
-                $stmt->execute([$targets, $initiator, 0, $recipient]);
+                $stmt->execute([$targets, $initiator, 0, $recipient, $targets]);
             } else {
                 // No existing notification, create a new one
                 $stmt = $this->Connection->prepare(
