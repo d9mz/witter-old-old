@@ -40,6 +40,8 @@ services:
             - mysql
         networks:
             - backend
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
 
     composer:
         image: composer
