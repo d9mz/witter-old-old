@@ -156,19 +156,46 @@ class User extends Model
         $userModel = new \Witter\Models\User();
 
         // TODO: UGLY!! Ugly as shit
-        if(is_int($target)) $userTarget = $userModel->GetUser($target, Type::ID);
-        if(!is_int($target)) $userTarget = $userModel->GetUser($target, Type::Username);
-        if(!isset($userTarget['id'])) return true; // THIS should not happen. Do not proceed at all
+        if(is_int($target)) $userTarget = $userModel->GetUID($target, Type::ID);
+        if(!is_int($target)) $userTarget = $userModel->GetUID($target, Type::Username);
+        if(!isset($userTarget)) return true; // THIS should not happen. Do not proceed at all
         
-        if(is_int($user)) $userData = $userModel->GetUser($user, Type::ID);
-        if(!is_int($user)) $userData = $userModel->GetUser($user, Type::Username);
-        if(!isset($userData['id'])) return true; // THIS should not happen. Do not proceed at all
+        if(is_int($user)) $userData = $userModel->GetUID($user, Type::ID);
+        if(!is_int($user)) $userData = $userModel->GetUID($user, Type::Username);
+        if(!isset($userData)) return true; // THIS should not happen. Do not proceed at all
 
-        if($userData['id'] == $userTarget['id']) return true; // No following yourself...
+        if($userData == $userTarget) return true; // No following yourself...
 
         $query = $this->Connection->prepare("SELECT * FROM followers WHERE user = :user AND target = :target");
-        $query->bindParam(":target", $userTarget['id']);
-        $query->bindParam(":user", $userData['id']);
+        $query->bindParam(":target", $userTarget);
+        $query->bindParam(":user", $userData);
+        $query->execute();
+        $follow = $query->fetch();
+
+        if (isset($follow['id'])) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function FollowingUser(string|int $target, string|int $user) : bool {
+        $userModel = new \Witter\Models\User();
+
+        // TODO: UGLY!! Ugly as shit
+        if(is_int($target)) $userTarget = $userModel->GetUID($target, Type::ID);
+        if(!is_int($target)) $userTarget = $userModel->GetUID($target, Type::Username);
+        if(!isset($userTarget)) return true; // THIS should not happen. Do not proceed at all
+        
+        if(is_int($user)) $userData = $userModel->GetUID($user, Type::ID);
+        if(!is_int($user)) $userData = $userModel->GetUID($user, Type::Username);
+        if(!isset($userData)) return true; // THIS should not happen. Do not proceed at all
+
+        if($userData == $userTarget) return true; // No following yourself...
+
+        $query = $this->Connection->prepare("SELECT * FROM followers WHERE user = :user AND target = :target");
+        $query->bindParam(":target", $userTarget);
+        $query->bindParam(":user", $userData);
         $query->execute();
         $follow = $query->fetch();
 
@@ -265,6 +292,67 @@ class User extends Model
                 ]);
     
                 $response = array('status' => 'requested', 'action' => 'unfollow');
+            }
+        }
+
+        echo json_encode($response);
+    }
+
+    public function Block(string $uid) {
+        // Get the JSON payload from the POST request
+        $json = file_get_contents('php://input');
+        $notificationsModel = new \Witter\Models\Notifications;
+
+        // Decode the JSON into a PHP object
+        $data = json_decode($json);
+
+        $user = $this->GetUser($_SESSION['Handle'], Type::Username);
+        if($this->UserExists($uid, Type::ID)) {
+            $target = $this->GetUser($uid, Type::ID);
+        } else {
+            $response = array('status' => 'fail', 'action' => 'user_nonexistant');
+        }
+
+        if($this->FollowingUser((int)$uid, $_SESSION['Handle'])) {
+            $stmt = $this->Connection->prepare("DELETE FROM followers WHERE target = ? AND user = ?");
+            $stmt->execute(
+                [
+                    $uid,
+                    $user['id'],
+                ]
+            );
+
+            $response = array('status' => 'success', 'action' => 'blocked');
+        } else {
+            $notificationsModel->CreateNotification(NotificationTypes::UserFollowed, [], $target['id'], $user['id'], "user-plus");
+
+            // wtf? todo: unfinished code?
+            if($target['private'] == "t") {
+                $stmt = $this->Connection->prepare(
+                    "INSERT INTO followers
+                        (target, user) 
+                    VALUES 
+                        (?, ?)"
+                );
+                $stmt->execute([
+                    $uid,
+                    $user['id'],
+                ]);
+    
+                $response = array('status' => 'requested', 'action' => 'unblocked');
+            } else {
+                $stmt = $this->Connection->prepare(
+                    "INSERT INTO followers
+                        (target, user) 
+                    VALUES 
+                        (?, ?)"
+                );
+                $stmt->execute([
+                    $uid,
+                    $user['id'],
+                ]);
+    
+                $response = array('status' => 'requested', 'action' => 'unblocked');
             }
         }
 
