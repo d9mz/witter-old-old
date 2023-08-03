@@ -11,6 +11,10 @@ RUN apk add --no-cache ${PHPIZE_DEPS} imagemagick imagemagick-dev libgomp
 RUN pecl install -o -f imagick \
     &&  docker-php-ext-enable imagick
 
+RUN apk add --update linux-headers
+RUN pecl install xdebug
+COPY xdebug.ini  $PHP_INI_DIR/conf.d/
+
 # Install xdebug according to the Docker image you're using
 # RUN pecl install xdebug && 
 

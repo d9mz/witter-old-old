@@ -7,7 +7,7 @@
             "request": "launch",
             "port": 5902,
             "pathMappings": {
-                "/var/www/my-app": "${workspaceFolder}"
+                "/var/www/app": "${workspaceFolder}"
             },
             "hostname": "localhost"
         },
