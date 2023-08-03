@@ -2,136 +2,6 @@ $(function() {
     // base.js
     // this is not good js
 
-    $('.delete-weet-action').on('click', function() {
-        console.log("fart");
-        let weetTarget = $(this).data('target');
-
-        $.ajax({
-            url: '/actions/post/' + weetTarget + '/delete',
-            type: 'POST',
-            data: JSON.stringify({weet_id: weetTarget}),
-            contentType: 'application/json; charset=utf-8',
-            dataType: 'json',
-            success: function(result){
-                // Do something with the result
-                createAlert(4, `Successfully deleted your weet!`);
-                $(`.weet[data-weet-id="${weetTarget}"]`).fadeOut();
-                console.log("[comment action] ", result);
-            },
-            error: function(request, status, error){
-                // 403
-                createAlert(2, `Your weet could not be deleted due to an unknown error!!`);
-                console.error('[comment action] failed to delete! ' + error);
-            }
-        });        
-    });
-
-    $('.block-user-action').on('click', function() {
-        console.log("fart");
-        let userTarget = $(this).data('target');
-
-        $.ajax({
-            url: '/actions/user/' + userTarget + '/block',
-            type: 'POST',
-            data: JSON.stringify({weet_id: userTarget}),
-            contentType: 'application/json; charset=utf-8',
-            dataType: 'json',
-            success: function(result){
-                // Do something with the result
-                createAlert(4, `Successfully blocked this user!`);
-                console.log("[block action] ", result);
-            },
-            error: function(request, status, error){
-                // 403
-                createAlert(2, `This user could not be blocked due to an unknown error!!`);
-                console.error('[block action] failed to block! ' + error);
-            }
-        });        
-    });
-
-
-    // Handles ALL comment likes site-wide
-    // Could probably do this better. But it works
-    $('.comment_like').on('click', function() {
-        let commentID = $(this).data('comment-id'); // Get the data attribute value
-        let commentLabel = $(this).find('.comment-action-text');
-
-        console.info("[comment action] like #" + commentID);
-
-        $(this).toggleClass("active");
-        if($(this).hasClass("active")) {
-            // LIKE!!!
-
-            let commentLikes = parseInt(commentLabel.text()) + 1;
-            commentLabel.text(commentLikes);
-        } else {
-            // REMOVE LIKE!!!
-
-            let commentLikes = parseInt(commentLabel.text()) - 1;
-            commentLabel.text(commentLikes);
-        }
-
-        // Regardless, send POST request
-        $.ajax({
-            url: '/actions/post/' + commentID + '/like',
-            type: 'POST',
-            data: JSON.stringify({weet_id: commentID}),
-            contentType: 'application/json; charset=utf-8',
-            dataType: 'json',
-            success: function(result){
-                // Do something with the result
-                console.log("[comment action] ", result);
-            },
-            error: function(request, status, error){
-                // Handle errors
-                console.error('[comment action] failed to like/dislike! ' + error);
-            }
-        });        
-    });
-
-    $('.comment_like_reply').on('click', function() {
-        let commentID = $(this).data('comment-id'); // Get the data attribute value
-        let commentLabel = $(this).find('.comment-action-text');
-
-        console.info("[reply action] like #" + commentID);
-
-        $(this).toggleClass("active");
-        if($(this).hasClass("active")) {
-            // LIKE!!!
-
-            let commentLikes = parseInt(commentLabel.text()) + 1;
-            commentLabel.text(commentLikes);
-        } else {
-            // REMOVE LIKE!!!
-
-            let commentLikes = parseInt(commentLabel.text()) - 1;
-            commentLabel.text(commentLikes);
-        }
-
-        // Regardless, send POST request
-        $.ajax({
-            url: '/actions/reply/' + commentID + '/like',
-            type: 'POST',
-            data: JSON.stringify({weet_id: commentID}),
-            contentType: 'application/json; charset=utf-8',
-            dataType: 'json',
-            success: function(result){
-                // Do something with the result
-                console.log("[reply action] ", result);
-            },
-            error: function(request, status, error){
-                // Handle errors
-                console.error('[reply action] failed to like/dislike! ' + error);
-            }
-        });        
-    });
-
-    $('.reweet, .followers-following-list .user-card.wide').on('click', function() {
-        window.location.replace(
-            $(this).data('target-url')
-        );
-    });
-
     $('.follow_button').on('click', function() {
         event.stopPropagation();
         event.preventDefault();
@@ -188,10 +58,141 @@ $(function() {
         }
     });
 
-    $(".dropdown-show").on("click", function() {
-        // this STINKS!
 
-        console.log($(this).parent())
-        $(this).parent().find(".dropdown-content").toggleClass("block");
-    });
+});
+
+// for dynamic bullshit
+$(document).on('click', '.dropdown-show', function() {
+    console.log($(this).parent())
+    $(this).parent().find(".dropdown-content").toggleClass("block");
+});
+
+$(document).on('click', '.delete-weet-action', function() {
+    console.log("fart");
+    let weetTarget = $(this).data('target');
+
+    $.ajax({
+        url: '/actions/post/' + weetTarget + '/delete',
+        type: 'POST',
+        data: JSON.stringify({weet_id: weetTarget}),
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        success: function(result){
+            // Do something with the result
+            createAlert(4, `Successfully deleted your weet!`);
+            $(`.weet[data-weet-id="${weetTarget}"]`).fadeOut();
+            console.log("[comment action] ", result);
+        },
+        error: function(request, status, error){
+            // 403
+            createAlert(2, `Your weet could not be deleted due to an unknown error!!`);
+            console.error('[comment action] failed to delete! ' + error);
+        }
+    });        
+});
+
+$(document).on('click', '.block-user-action', function() {
+    console.log("fart");
+    let userTarget = $(this).data('target');
+
+    $.ajax({
+        url: '/actions/user/' + userTarget + '/block',
+        type: 'POST',
+        data: JSON.stringify({weet_id: userTarget}),
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        success: function(result){
+            // Do something with the result
+            createAlert(4, `Successfully blocked this user!`);
+            console.log("[block action] ", result);
+        },
+        error: function(request, status, error){
+            // 403
+            createAlert(2, `This user could not be blocked due to an unknown error!!`);
+            console.error('[block action] failed to block! ' + error);
+        }
+    });        
+});
+
+
+// Handles ALL comment likes site-wide
+// Could probably do this better. But it works
+$(document).on('click', '.comment_like', function() {
+    let commentID = $(this).data('comment-id'); // Get the data attribute value
+    let commentLabel = $(this).find('.comment-action-text');
+
+    console.info("[comment action] like #" + commentID);
+
+    $(this).toggleClass("active");
+    if($(this).hasClass("active")) {
+        // LIKE!!!
+
+        let commentLikes = parseInt(commentLabel.text()) + 1;
+        commentLabel.text(commentLikes);
+    } else {
+        // REMOVE LIKE!!!
+
+        let commentLikes = parseInt(commentLabel.text()) - 1;
+        commentLabel.text(commentLikes);
+    }
+
+    // Regardless, send POST request
+    $.ajax({
+        url: '/actions/post/' + commentID + '/like',
+        type: 'POST',
+        data: JSON.stringify({weet_id: commentID}),
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        success: function(result){
+            // Do something with the result
+            console.log("[comment action] ", result);
+        },
+        error: function(request, status, error){
+            // Handle errors
+            console.error('[comment action] failed to like/dislike! ' + error);
+        }
+    });        
+});
+
+$(document).on('click', '.comment_like_reply', function() {
+    let commentID = $(this).data('comment-id'); // Get the data attribute value
+    let commentLabel = $(this).find('.comment-action-text');
+
+    console.info("[reply action] like #" + commentID);
+
+    $(this).toggleClass("active");
+    if($(this).hasClass("active")) {
+        // LIKE!!!
+
+        let commentLikes = parseInt(commentLabel.text()) + 1;
+        commentLabel.text(commentLikes);
+    } else {
+        // REMOVE LIKE!!!
+
+        let commentLikes = parseInt(commentLabel.text()) - 1;
+        commentLabel.text(commentLikes);
+    }
+
+    // Regardless, send POST request
+    $.ajax({
+        url: '/actions/reply/' + commentID + '/like',
+        type: 'POST',
+        data: JSON.stringify({weet_id: commentID}),
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        success: function(result){
+            // Do something with the result
+            console.log("[reply action] ", result);
+        },
+        error: function(request, status, error){
+            // Handle errors
+            console.error('[reply action] failed to like/dislike! ' + error);
+        }
+    });        
+});
+
+$(document).on('click', '.reweet, .followers-following-list .user-card.wide', function() {
+    window.location.replace(
+        $(this).data('target-url')
+    );
 });
