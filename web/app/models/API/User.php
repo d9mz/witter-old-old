@@ -179,7 +179,7 @@ class User extends Model
         }
     }
 
-    public function FollowingUser(string|int $target, string|int $user) : bool {
+    public function BlockingUser(string|int $target, string|int $user) : bool {
         $userModel = new \Witter\Models\User();
 
         // TODO: UGLY!! Ugly as shit
