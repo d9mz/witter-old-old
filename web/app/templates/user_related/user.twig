@@ -98,7 +98,11 @@
     </div>
     <hr>
     <div class="padding">
-        {% if User.visible %}
+        {% if User.blocked_you %}
+            <div class="center caption padding-top padding-bottom">
+                This user has blocked your account. Their Weets are not visible to you.
+            </div>
+        {% elseif User.visible %}
             {% for Weet in Feed %}
                 {% if Weet.id is defined %}
                     <div class="weet">

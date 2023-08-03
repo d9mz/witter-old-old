@@ -9,8 +9,8 @@ class Test extends View {
         // testing functionality
 
         $userModel = new \Witter\Models\User();
-        $userA = $userModel->getUser(2, Type::ID);
-        $userB = $userModel->getUser(5, Type::ID);
+        $userA = $userModel->getUser(7, Type::ID);
+        $userB = $userModel->getUser(6, Type::ID);
 
         // ugly? 
         // - yes, very

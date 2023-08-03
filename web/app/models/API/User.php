@@ -103,6 +103,34 @@ class User extends Model
 
         return $stmt->rowCount() === 1;
     }
+
+    public function isBlockingYou(int $userID) : bool {
+        // assuming we're checking if oomf of current logged in user
+        $currentUser = $this->GetUID($_SESSION['Handle']);
+
+        // echo "(" . $currentUser . ")-(" . $userID . ")<br>";
+
+        $stmt = $this->Connection->prepare("SELECT id FROM blocks WHERE user = :idA AND target = :idB");
+        $stmt->bindParam(":idA", $userID);
+        $stmt->bindParam(":idB", $currentUser);
+        $stmt->execute();
+
+        return $stmt->rowCount() === 1;
+    }
+
+    public function isBlockingThem(int $userID) : bool {
+        // assuming we're checking if oomf of current logged in user
+        $currentUser = $this->GetUID($_SESSION['Handle']);
+
+        // echo "(" . $currentUser . ")-(" . $userID . ")<br>";
+
+        $stmt = $this->Connection->prepare("SELECT id FROM blocks WHERE target = :idA AND user = :idB");
+        $stmt->bindParam(":idA", $userID);
+        $stmt->bindParam(":idB", $currentUser);
+        $stmt->execute();
+
+        return $stmt->rowCount() === 1;
+    }
     
     public function GetFollowerFollowingCount(int $uid) : array {
         $followerStmt = $this->Connection->prepare("SELECT * FROM followers WHERE target = :id");
@@ -193,7 +221,7 @@ class User extends Model
 
         if($userData == $userTarget) return true; // No following yourself...
 
-        $query = $this->Connection->prepare("SELECT * FROM followers WHERE user = :user AND target = :target");
+        $query = $this->Connection->prepare("SELECT * FROM blocks WHERE user = :user AND target = :target");
         $query->bindParam(":target", $userTarget);
         $query->bindParam(":user", $userData);
         $query->execute();
@@ -265,13 +293,13 @@ class User extends Model
         } else {
             $notificationsModel->CreateNotification(NotificationTypes::UserFollowed, [], $target['id'], $user['id'], "user-plus");
 
-            // wtf? todo: unfinished code?
             if($target['private'] == "t") {
+                // request a follow
                 $stmt = $this->Connection->prepare(
                     "INSERT INTO followers
-                        (target, user) 
+                        (target, user, accepted) 
                     VALUES 
-                        (?, ?)"
+                        (?, ?, 'f')"
                 );
                 $stmt->execute([
                     $uid,
@@ -313,8 +341,8 @@ class User extends Model
             $response = array('status' => 'fail', 'action' => 'user_nonexistant');
         }
 
-        if($this->FollowingUser((int)$uid, $_SESSION['Handle'])) {
-            $stmt = $this->Connection->prepare("DELETE FROM followers WHERE target = ? AND user = ?");
+        if($this->BlockingUser((int)$uid, $_SESSION['Handle'])) {
+            $stmt = $this->Connection->prepare("DELETE FROM blocks WHERE target = ? AND user = ?");
             $stmt->execute(
                 [
                     $uid,
@@ -324,36 +352,38 @@ class User extends Model
 
             $response = array('status' => 'success', 'action' => 'blocked');
         } else {
-            $notificationsModel->CreateNotification(NotificationTypes::UserFollowed, [], $target['id'], $user['id'], "user-plus");
+            // target unnfollows you
 
-            // wtf? todo: unfinished code?
-            if($target['private'] == "t") {
-                $stmt = $this->Connection->prepare(
-                    "INSERT INTO followers
-                        (target, user) 
-                    VALUES 
-                        (?, ?)"
-                );
-                $stmt->execute([
+            $stmt = $this->Connection->prepare("DELETE FROM followers WHERE user = ? AND target = ?");
+            $stmt->execute(
+                [
                     $uid,
                     $user['id'],
-                ]);
-    
-                $response = array('status' => 'requested', 'action' => 'unblocked');
-            } else {
-                $stmt = $this->Connection->prepare(
-                    "INSERT INTO followers
-                        (target, user) 
-                    VALUES 
-                        (?, ?)"
-                );
-                $stmt->execute([
+                ]
+            );
+
+            // you unfollow target
+
+            $stmt = $this->Connection->prepare("DELETE FROM followers WHERE target = ? AND user = ?");
+            $stmt->execute(
+                [
                     $uid,
                     $user['id'],
-                ]);
-    
-                $response = array('status' => 'requested', 'action' => 'unblocked');
-            }
+                ]
+            );
+
+            $stmt = $this->Connection->prepare(
+                "INSERT INTO blocks
+                    (target, user) 
+                VALUES 
+                    (?, ?)"
+            );
+            $stmt->execute([
+                $uid,
+                $user['id'],
+            ]);
+
+            $response = array('status' => 'requested', 'action' => 'unblocked');
         }
 
         echo json_encode($response);
@@ -462,6 +492,8 @@ class User extends Model
 
             if(!$optimized) {
                 $user['oomf'] = false;
+                $user['blocked_you'] = false;
+                $user['you_blocked'] = false;
                 
                 if(isset($_SESSION['Handle'])) {
                     if(!$this->SafeFollowingUser($_SESSION['Handle'], $user['id']) && $user['private'] == "t") $user['visible'] = false;
@@ -470,6 +502,10 @@ class User extends Model
 
                     // oomf checking
                     if($this->isOomf($user['id'])) $user['oomf'] = true;
+                    if($this->isBlockingYou($user['id'])) $user['blocked_you'] = true;
+                    if($this->isBlockingThem($user['id'])) $user['you_blocked'] = true;
+
+                    if($user['blocked_you'] || $user['you_blocked']) $user['visible'] = false;
                 }
 
                 // is the logged in user following this user?
