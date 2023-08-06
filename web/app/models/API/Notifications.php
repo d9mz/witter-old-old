@@ -88,6 +88,40 @@ class Notifications extends Model {
             $notification['weet'] = $weet;
         }
 
+        if($notification['type'] == 1) { 
+            $targets = explode(",", $notification['targets']);
+            $targets = array_filter($targets);
+
+            // user followed
+            $recipient = $userModel->GetUser($notification['recipient'], Type::ID, true);
+            $initiator = $userModel->GetUser($notification['initiator'], Type::ID, true);
+            $weet      = $weetModel->GetWeet($targets[0], false);
+
+            // weet referenced got deleted, bye bye!
+            if(!isset($weet['id'])) return [];
+
+            // this is pretty long...
+            $notification['type'] = sprintf("<b>%s</b> (<a href='/user/%s'>@%s</a>) replied to your weet: .", $initiator['nickname'], $initiator['username'], $initiator['username']);
+            $notification['weet'] = $weet;
+        }
+
+        if($notification['type'] == 3) { 
+            $targets = explode(",", $notification['targets']);
+            $targets = array_filter($targets);
+
+            // user followed
+            $recipient = $userModel->GetUser($notification['recipient'], Type::ID, true);
+            $initiator = $userModel->GetUser($notification['initiator'], Type::ID, true);
+            $weet      = $weetModel->GetWeet($targets[0], false);
+
+            // weet referenced got deleted, bye bye!
+            if(!isset($weet['id'])) return [];
+
+            // this is pretty long...
+            $notification['type'] = sprintf("<b>%s</b> (<a href='/user/%s'>@%s</a>) reposted your weet: .", $initiator['nickname'], $initiator['username'], $initiator['username']);
+            $notification['weet'] = $weet;
+        }
+
         if($notification['type'] == 0) { 
             // user followed
             $recipient = $userModel->GetUser($notification['recipient'], Type::ID, true);
@@ -141,6 +175,41 @@ class Notifications extends Model {
                 $targets,
             ]);
         }
+
+        if($type == NotificationTypes::WeetRepliedTo) {
+            $stmt = $this->Connection->prepare(
+                "INSERT INTO notifications
+                    (icon, recipient, initiator, type, targets) 
+                VALUES 
+                    (?, ?, ?, ?, ?)"
+            );
+
+            $stmt->execute([
+                $icon,
+                $recipient,
+                $initiator,
+                1, // shouldn't be hardcoded but enums don't have __toString magic method
+                $targets,
+            ]);
+        }
+
+        if($type == NotificationTypes::WeetReweeted) {
+            $stmt = $this->Connection->prepare(
+                "INSERT INTO notifications
+                    (icon, recipient, initiator, type, targets) 
+                VALUES 
+                    (?, ?, ?, ?, ?)"
+            );
+
+            $stmt->execute([
+                $icon,
+                $recipient,
+                $initiator,
+                3, // shouldn't be hardcoded but enums don't have __toString magic method
+                $targets,
+            ]);
+        }
+
 
         if($type == NotificationTypes::WeetLiked) {
             // Check for existing notification with the same initiator, type, recipient, and targets

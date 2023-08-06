@@ -558,6 +558,7 @@ class Feed extends Model
         $cooldown = new \Witter\Models\Cooldown();
         $weet     = new \Witter\Models\Feed();
         $alert    = new \Witter\Models\Alert();
+        $notifModel = new \Witter\Models\Notifications();
 
         if(!filter_var($weet_id, FILTER_VALIDATE_INT)) $alert->CreateAlert(Level::Error, "Invalid Weet ID");
         if(!$weet->WeetExists((int)$weet_id)) $alert->CreateAlert(Level::Error, "This weet does not exist.");
@@ -571,19 +572,21 @@ class Feed extends Model
             $alert->CreateAlert(Level::Error, "Your reply must be longer than 3 characters and not longer than 20.");
         }
 
-        /*
         if(!$cooldown->GetCooldown("weet_cooldown", $_SESSION['Handle'], 10)) {
             $alert->CreateAlert(Level::Error, "Please wait 10 seconds before replying to a Weet.");
         } else {
             $cooldown->SetCooldown("weet_cooldown", $_SESSION['Handle']);
         }
-        */
 
         $user = $user->GetUser($_SESSION['Handle']);
+        $reply = $weet->GetWeet($weet_id, false);
 
         $stmt = $this->Connection->prepare("INSERT INTO feed (feed_id, feed_owner, feed_text, feed_target) VALUES (:snowflake, :id, :comment, :target)");
 
         $id = $this->GenerateID();
+
+        $notifModel->CreateNotification(NotificationTypes::WeetRepliedTo, [$id], $reply['user']['id'], $user['id'], "comment");
+
         $stmt->bindParam(":snowflake", $id);
         $stmt->bindParam(":id", $user['id']);
         $stmt->bindParam(":comment", $_POST['comment']);
@@ -599,6 +602,7 @@ class Feed extends Model
         $cooldown = new \Witter\Models\Cooldown();
         $weet     = new \Witter\Models\Feed();
         $alert    = new \Witter\Models\Alert();
+        $notifModel = new \Witter\Models\Notifications();
 
         if(!filter_var($weet_id, FILTER_VALIDATE_INT)) $alert->CreateAlert(Level::Error, "Invalid Weet ID");
         if(!$weet->WeetExists((int)$weet_id)) $alert->CreateAlert(Level::Error, "This weet does not exist.");
@@ -619,10 +623,14 @@ class Feed extends Model
         }
 
         $user = $user->GetUser($_SESSION['Handle']);
-
+        $reply = $weet->GetWeet($weet_id, false);
+        
         $stmt = $this->Connection->prepare("INSERT INTO feed (feed_id, feed_owner, feed_text, feed_target) VALUES (:snowflake, :id, :comment, :target)");
 
         $id = $this->GenerateID();
+
+        $notifModel->CreateNotification(NotificationTypes::WeetRepliedTo, [$id], $reply['user']['id'], $user['id'], "comment");
+
         $stmt->bindParam(":snowflake", $id);
         $stmt->bindParam(":id", $user['id']);
         $stmt->bindParam(":comment", $_POST['comment']);
@@ -638,6 +646,7 @@ class Feed extends Model
         $userModel = new \Witter\Models\User();
         $weetModel = new \Witter\Models\Feed();
         $cooldown  = new \Witter\Models\Cooldown();
+        $notifModel = new \Witter\Models\Notifications();
 
         // comment validation
         if (!isset($_POST['comment']) || empty(trim($_POST['comment']))) {
@@ -682,6 +691,9 @@ class Feed extends Model
                     ]);
                     $stmt = null;
                     
+                    // send out notif
+                    $notifModel->CreateNotification(NotificationTypes::WeetReweeted, [$reweet[1]], $reweetUser['id'], $user['id'], "retweet");
+
                     // insert into feed w/ metadata
                     $stmt = $this->Connection->prepare("INSERT INTO feed (feed_id, feed_owner, feed_text, feed_embed) VALUES (:snowflake, :id, :comment, :embed)");
 
