@@ -69,6 +69,25 @@ class Notifications extends Model {
 
         // transform the ['type'] in a notification array to a string to be outputted by twig
 
+        if(!isset($notification['type'])) return $notification;
+
+        if($notification['type'] == 2) { 
+            $targets = explode(",", $notification['targets']);
+            $targets = array_filter($targets);
+
+            // user followed
+            $recipient = $userModel->GetUser($notification['recipient'], Type::ID, true);
+            $initiator = $userModel->GetUser($notification['initiator'], Type::ID, true);
+            $weet      = $weetModel->GetWeet($targets[0], true);
+
+            // weet referenced got deleted, bye bye!
+            if(!isset($weet['id'])) return [];
+
+            // this is pretty long...
+            $notification['type'] = sprintf("<b>%s</b> (<a href='/user/%s'>@%s</a>) liked your weet: .", $initiator['nickname'], $initiator['username'], $initiator['username']);
+            $notification['weet'] = $weet;
+        }
+
         if($notification['type'] == 0) { 
             // user followed
             $recipient = $userModel->GetUser($notification['recipient'], Type::ID, true);
@@ -76,17 +95,6 @@ class Notifications extends Model {
 
             // this is pretty long...
             $notification['type'] = sprintf("<b>%s</b> (<a href='/user/%s'>@%s</a>) has started to follow you.", $initiator['nickname'], $initiator['username'], $initiator['username']);
-        }
-
-        if($notification['type'] == 2) { 
-            // user followed
-            $recipient = $userModel->GetUser($notification['recipient'], Type::ID, true);
-            $initiator = $userModel->GetUser($notification['initiator'], Type::ID, true);
-            $weet      = $weetModel->GetWeet();
-
-
-            // this is pretty long...
-            $notification['type'] = sprintf("<b>%s</b> (<a href='/user/%s'>@%s</a>) liked your weet: .", $initiator['nickname'], $initiator['username'], $initiator['username']);
         }
 
         return $notification;
@@ -164,7 +172,7 @@ class Notifications extends Model {
                     VALUES (?, ?, ?, ?, ?)"
                 );
     
-                $stmt->execute([$icon, $recipient, $initiator, 0, $targets]);
+                $stmt->execute([$icon, $recipient, $initiator, 2, $targets]);
             }
         }
     }

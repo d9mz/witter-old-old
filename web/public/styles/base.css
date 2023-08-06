@@ -351,6 +351,10 @@ h1, h2, h3, h4, h5 ,h6 {
     line-height: 30px;
 }
 
+.full-width-reweet-notif {
+    width: 600px;
+}
+
 .user-header .header-items {
     position: relative;
     bottom: 80px;
