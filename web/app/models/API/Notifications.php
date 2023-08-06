@@ -141,6 +141,9 @@ class Notifications extends Model {
         int $initiator, 
         string $icon
     ) : void {
+        // prevent self notification giving
+        if($recipient == $initiator) return;
+
         // prevents end user from just spamming notifications
         $cooldownModel = new \Witter\Models\Cooldown();
 
