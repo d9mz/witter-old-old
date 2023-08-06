@@ -1,7 +1,8 @@
 {% extends "misc/base.twig" %}
 {%- block Container -%}
     <div class="padding no-padding-top">
-        <h3>your notifications</h3><br>
+        <h3><i class="fas fa-bell middle fontawesome-padding"></i> your notifications</h3>
+        <span class="caption">all of your notifications from the past week will show up here.</span>
     </div>
     <hr>
     <div class="padding">
@@ -12,6 +13,7 @@
                     <div class="notification-content padding-left inline-block top">
                         <img src="/cdn/{{ Notification.user.profile_picture }}" class="profile-picture">
                         <div class="notification-text">
+                            <span class="caption padding-bottom-5 inline-block">{{ Notification.last_modified|timeago }}</span><br>
                             {{ Notification.type|raw }}
                             {% if Notification.weet is defined %}
                                 <div class="reweet padding full-width-reweet-notif" data-target-url="/user/{{Notification.weet.user.username }}/{{ Notification.weet.feed_id }}">

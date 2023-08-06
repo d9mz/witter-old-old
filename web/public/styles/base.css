@@ -399,6 +399,14 @@ h1, h2, h3, h4, h5 ,h6 {
     padding-right: 10px;
 }
 
+.fontawesome-padding {
+    padding-right: 5px;
+}
+
+.padding-bottom-5 {
+    padding-bottom: 5px;
+}
+
 .padding-bottom {
     padding-bottom: 10px;
 }
