@@ -37,6 +37,20 @@ class Notifications extends Model {
         return $stmt->rowCount();
     }
 
+    public function SetReadAllNotifications() : void {
+        // this will apply to the current logged in user
+        $userModel = new \Witter\Models\User();
+        $userID = $userModel->GetUID($_SESSION['Handle']);
+
+        $stmt = $this->Connection->prepare(
+            "UPDATE notifications
+            SET read_notif = 'y'
+            WHERE recipient = ? AND read_notif = 'n'"
+        );
+
+        $stmt->execute([$userID]);
+    }
+
     // incomplete
     public function getUnreadNotifications() : array {
         // take into account: last_modified as well
