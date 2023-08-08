@@ -97,7 +97,7 @@
         </div>
     </div>
     <hr>
-    <div class="padding">
+    <div class="padding-no-overflow">
         {% if User.blocked_you %}
             <div class="center caption padding-top padding-bottom">
                 This user has blocked your account. Their Weets are not visible to you.
@@ -109,11 +109,23 @@
                         <div class="inline-block padding top">
                             <img src="/cdn/{{ Weet.user.profile_picture }}" class="profile-picture">
                         </div>
-                        <div class="comment-body inline-block padding">
+                        <div class="comment-body inline-block padding overflow-unset">
                             <span class="comment-info inline-block">
                                 <a href="/user/{{ Weet.user.username }}"><b class="comment-author">{{ Weet.user.nickname }}</b> @{{ Weet.user.username }}</a> {% if Weet.user.private == 't' %}<i class="far fa-lock"></i>{% endif %}
                                 <span class="caption">{{ Weet.feed_created|timeago }}</span>
                             </span>
+
+                            <div class="dropdown inline-block float-right bottom">
+                                <div class="dropdown-show"></div>
+                                <div class="dropdown-content">
+                                    {% if Weet.user.username != Session.Handle %}
+                                        <span class="block-user-action" data-target="{{ Weet.user.id }}">block <b>@{{ Weet.user.username }}</b></span>
+                                    {% else %}
+                                        <span class="delete-weet-action" data-target="{{ Weet.feed_id }}">delete weet</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+
                             <span class="comment-text inline-block">{{ Weet.feed_text|escape|linkify|mentionify|raw|nl2br }}</span>
                             {% if Weet.reweet is defined %}
                                 <div class="reweet padding" data-target-url="/user/{{Weet.reweet.user.username }}/{{ Weet.reweet.feed_id }}">

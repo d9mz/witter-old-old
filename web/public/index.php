@@ -23,6 +23,7 @@ $Router         = new \Bramus\Router\Router();
  */
 
 // jacksden.com
+//Replace "../" with "https://kit-pro.fontawesome.com/releases/v6.4.2/"
 
 // witter.jacksden.com
 
@@ -84,6 +85,9 @@ if(!isset($_SESSION['Handle'])) {
     // [API] Admin actions
     $Router->Post('/moderate/css/approve', "\Witter\Models\Admin@ApproveCSS");
     $Router->Post('/moderate/css/disapprove', "\Witter\Models\Admin@DisapproveCSS");
+
+    $Router->Post('/moderate/user/reset', "\Witter\Models\Admin@ResetUser");
+    $Router->Post('/moderate/user/ban', "\Witter\Models\Admin@BanUser");
 
     // [API] Public site API
     $Router->Get('/v1/api/load_weets/{page}', "\Witter\Views\Scrolling@GetWeets");

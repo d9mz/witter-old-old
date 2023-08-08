@@ -30,48 +30,110 @@ class Admin extends Model
         }
     }
 
+    public function ResetUser() {
+        $alert  = new \Witter\Models\Alert();
+        $user   = new \Witter\Models\User();
+        $userModel = new \Witter\Models\User();
+        $cdnModel = new \Witter\Models\CDN();
+        $user   = $user->GetUser($_POST['username']);
+
+        if(isset($_SESSION['Handle']) || $userModel->isAdmin($_SESSION['Handle'])) {
+            $stmt = $this->Connection->prepare("UPDATE users SET css = '', moderated_css = 'f' WHERE username = ?");
+            $stmt->execute([
+                $_POST['username'],
+            ]);
+            $stmt = null;
+
+            $stmt = $this->Connection->prepare("UPDATE users SET description = '' WHERE username = ?");
+            $stmt->execute([
+                $_POST['username'],
+            ]);
+            $stmt = null;
+
+            $stmt = $this->Connection->prepare("UPDATE users SET nickname = ? WHERE username = ?");
+            $stmt->execute([
+                $_POST['username'],
+                $_POST['username'],
+            ]);
+            $stmt = null;
+            
+            // delete pfp
+            $cachePfp = $cdnModel->GetCacheByOwner($user['id']);
+            if(isset($cachePfp['id'])) {
+                $cachePfp['data'] = json_decode($cachePfp['data']);
+
+                $stmt = $this->Connection->prepare("DELETE FROM cache WHERE id = ?");
+                $stmt->execute([
+                    $cachePfp['id'],
+                ]);
+                $stmt = null;
+
+                unlink("/var/www/volumes/profile_picture/" . $cachePfp['data']->file_name);
+            }
+
+            // delete banner
+            $cachePfp = $cdnModel->GetCacheByOwner($user['id'], ContentType::Banner);
+            if(isset($cachePfp['id'])) {
+                $cachePfp['data'] = json_decode($cachePfp['data']);
+
+                $stmt = $this->Connection->prepare("DELETE FROM cache WHERE id = ?");
+                $stmt->execute([
+                    $cachePfp['id'],
+                ]);
+                $stmt = null;
+
+                unlink("/var/www/volumes/banner/" . $cachePfp['data']->file_name);
+            }
+
+            $alert->CreateAlert(Level::Success, "Successfully reset " . $_POST['username'] . "'s profile");
+        }
+    }
+
     public function ApproveCSS() {
         // Get the JSON payload from the POST request
         $json = file_get_contents('php://input');
         $userModel = new \Witter\Models\User();
 
-        // Decode the JSON into a PHP object
-        $data = json_decode($json);
+        if(isset($_SESSION['Handle']) || $userModel->isAdmin($_SESSION['Handle'])) {
+            // Decode the JSON into a PHP object
+            $data = json_decode($json);
 
-        if(!is_numeric($data->target)) die();
-        $user = $userModel->GetUser($data->target, Type::ID);
-        
-        if(isset($user['id'])) {
-            $stmt = $this->Connection->prepare("UPDATE users SET moderated_css = 't' WHERE id = ?");
-            $stmt->execute([
-                $user['id'],
-            ]);
-            $stmt = null;
+            if(!is_numeric($data->target)) die();
+            $user = $userModel->GetUser($data->target, Type::ID);
+            
+            if(isset($user['id'])) {
+                $stmt = $this->Connection->prepare("UPDATE users SET moderated_css = 't' WHERE id = ?");
+                $stmt->execute([
+                    $user['id'],
+                ]);
+                $stmt = null;
+            }
+
+            echo json_encode($data);
         }
-
-        echo json_encode($data);
     }
 
     public function DisapproveCSS() {
         // Get the JSON payload from the POST request
         $json = file_get_contents('php://input');
         $userModel = new \Witter\Models\User();
+        if(isset($_SESSION['Handle']) || $userModel->isAdmin($_SESSION['Handle'])) {
+            // Decode the JSON into a PHP object
+            $data = json_decode($json);
 
-        // Decode the JSON into a PHP object
-        $data = json_decode($json);
+            if(!is_numeric($data->target)) die();
+            $user = $userModel->GetUser($data->target, Type::ID);
+            
+            if(isset($user['id'])) {
+                $stmt = $this->Connection->prepare("UPDATE users SET moderated_css = 'd' WHERE id = ?");
+                $stmt->execute([
+                    $user['id'],
+                ]);
+                $stmt = null;
+            }
 
-        if(!is_numeric($data->target)) die();
-        $user = $userModel->GetUser($data->target, Type::ID);
-        
-        if(isset($user['id'])) {
-            $stmt = $this->Connection->prepare("UPDATE users SET moderated_css = 'd' WHERE id = ?");
-            $stmt->execute([
-                $user['id'],
-            ]);
-            $stmt = null;
+            echo json_encode($data);
         }
-
-        echo json_encode($data);
     }
 
     // Create a general all-purpose function for the enum
