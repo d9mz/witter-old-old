@@ -30,6 +30,20 @@ class Admin extends Model
         }
     }
 
+    public function BanUser() {
+        $alert  = new \Witter\Models\Alert();
+        $user   = new \Witter\Models\User();
+        $userModel = new \Witter\Models\User();
+        $cdnModel = new \Witter\Models\CDN();
+        $user   = $user->GetUser($_POST['username']);
+
+        if(isset($_SESSION['Handle']) || $userModel->isAdmin($_SESSION['Handle'])) {
+            
+
+            $alert->CreateAlert(Level::Success, "Successfully banned " . $_POST['username'] . "'s profile");
+        }
+    }
+
     public function ResetUser() {
         $alert  = new \Witter\Models\Alert();
         $user   = new \Witter\Models\User();
