@@ -29,7 +29,7 @@ class View extends \Witter\Configurator {
 
             if($userModel->isBanned()) {
                 // redirect ... 
-                if($_SERVER["REQUEST_URI"] != "/user_banned") {
+                if($_SERVER["REQUEST_URI"] != "/user_banned" && $_SERVER["REQUEST_URI"] != "/sign_out") {
                     header("Location: /user_banned");
                 }
             }
