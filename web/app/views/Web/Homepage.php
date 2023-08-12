@@ -2,6 +2,25 @@
 namespace Witter\Views;
 
 class Homepage extends View {
+    public function Banned() {
+        $userModel = new \Witter\Models\User();
+
+        if(!$userModel->isBanned()) {
+            header("Location: /");
+        }
+
+        $uid = $userModel->GetUID($_SESSION['Handle']);
+        $user = $userModel->GetUser($_SESSION['Handle']);
+        $ban = $userModel->GetBan($uid);
+
+        echo $this->Twig->render('admin/banned.twig', array(
+            "PageSettings" => $this->PageSettings(),
+            "User" => $user,
+            "Ban" => $ban,
+            "isAppealable" => $userModel->isAppealable($uid),
+        ));
+    }
+
     public function View() {
         echo $this->Twig->render('homepage.twig', array(
             "PageSettings" => $this->PageSettings(),

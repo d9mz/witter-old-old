@@ -46,6 +46,7 @@ class Feed extends View {
         $userModel  = new \Witter\Models\User();
         $alert = new \Witter\Models\Alert();
         $feed = new \Witter\Models\Feed();
+        
         if(!filter_var($weet_id, FILTER_VALIDATE_INT)) $alert->CreateAlert(Level::Error, "Invalid Weet ID");
         if(!$weetModel->WeetExists((int)$weet_id)) $alert->CreateAlert(Level::Error, "This weet does not exist.");
 

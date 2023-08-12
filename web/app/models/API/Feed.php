@@ -32,6 +32,10 @@ class Feed extends Model
         preg_match($pattern, $weet, $matches);
 
         // This looks really weird
+        // 0: username
+        // 1: id
+        // 2: full url
+        
         if(isset($matches[1])) return [$matches[1], $matches[2], $matches[0]];
         else                   return [];
     }

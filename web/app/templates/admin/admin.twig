@@ -62,11 +62,15 @@
             <form class="form" method="post" action="/moderate/user/ban">
                 <div class="input-group">
                     <label for="username">username</label>
-                    <input type="text" id="username" required name="username" aria-label="username">
+                    <input type="text" id="username" placeholder="witter" required name="username" aria-label="username">
                 </div>
                 <div class="input-group">
                     <label for="reason">reason</label>
-                    <input type="text" id="reason" required name="reason" aria-label="reason">
+                    <input type="text" id="reason" placeholder="gay" required name="reason" aria-label="reason">
+                </div>
+                <div class="input-group">
+                    <label for="content">offending content (space delimited)</label>
+                    <input type="text" placeholder="weet url (not required)" id="content" name="content" aria-label="content">
                 </div>
                 <div class="input-group">
                     <label for="until">ban until</label>

@@ -32,6 +32,7 @@ class Admin extends Model
 
     public function BanUser() {
         $alert  = new \Witter\Models\Alert();
+        $weetModel = new \Witter\Models\Feed();
         $userModel = new \Witter\Models\User();
         $loggedInUser = $userModel->GetUID($_SESSION['Handle']);
         $user   = $userModel->GetUser($_POST['username']);
@@ -39,6 +40,10 @@ class Admin extends Model
         if(isset($_SESSION['Handle']) || $userModel->isAdmin($_SESSION['Handle'])) {
             if($user['admin'] != "f") {
                 $alert->CreateAlert(Level::Error, "Are you trying to ban an admin?");
+            }
+
+            if($userModel->isBannedTarget($user['id'])) {
+                $alert->CreateAlert(Level::Error, "This user is already banned! Unban them first.");
             }
 
             $stmt = $this->Connection->prepare("INSERT INTO bans (reason, target, until, moderator) VALUES (:reason, :target, :until, :moderator)");
@@ -49,6 +54,27 @@ class Admin extends Model
             $stmt->bindParam(":moderator", $loggedInUser);
     
             $stmt->execute();
+
+            if(isset($_POST['content']) && !empty(trim($_POST['content']))) {
+                $content = explode(" ", $_POST['content']);
+                $contents = [];
+
+                foreach($content as $link) {
+                    $link = $weetModel->GetWitterLinksInWeet($link);
+                    if(isset($link[0])) {
+                        array_push($contents, $link[1]);
+                    }
+                }
+
+                $content = implode(" ", $contents);
+        
+                $stmt = $this->Connection->prepare("UPDATE bans SET offending_content = ? WHERE target = ?");
+                $stmt->execute([
+                    $weet['feed_id'],
+                    $user['id'],
+                ]);
+                $stmt = null;
+            }
 
             $alert->InternalLog(Level::Info, "banned @" . $user['username'] . " until " . $_POST['until']. "\nreason: " . $_POST['reason']);
             $alert->CreateAlert(Level::Success, "Successfully banned " . $_POST['username'] . "'s profile");

@@ -25,6 +25,14 @@ class View extends \Witter\Configurator {
             $this->Twig->addGlobal('hasDisprovenCSS', $dispCSS);
             $this->Twig->addGlobal('waitingApprovalCSS', $waitingCSS);
             $this->Twig->addGlobal('unreadNotifs', $unreadNotifs);
+            $this->Twig->addGlobal('discordURL', getenv("DISCORD_URL"));
+
+            if($userModel->isBanned()) {
+                // redirect ... 
+                if($_SERVER["REQUEST_URI"] != "/user_banned") {
+                    header("Location: /user_banned");
+                }
+            }
         }
     }
 

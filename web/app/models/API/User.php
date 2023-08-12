@@ -437,6 +437,45 @@ class User extends Model
         }
     }
 
+    public function GetBan(int $target) : array {
+        $weetModel = new \Witter\Models\Feed();
+
+        $query = "SELECT * FROM bans WHERE target = :find";
+        $stmt = $this->Connection->prepare($query);
+        $stmt->bindParam(":find", $target);
+        $stmt->execute();
+
+        $ban = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+        if(!empty(trim($ban['offending_content']))) {
+            foreach()
+            $retweet = $weetModel->GetWitterLinksInWeet($ban['feed_text']);
+            $user_exists = $userModel->UserExists($retweet[0]);
+            $weet_exists = $this->GetWeet($retweet[1], false);
+
+            if($user_exists && $weet_exists) {
+                $weet["reweet"] = $this->GetWeet($retweet[1], false, false, true);
+                $weet["feed_text"] = $this->RemoveWitterLinkInWeet($weet["feed_text"], $retweet[2]);
+            }
+        }
+
+        return $stmt->rowCount() === 0 ? 0 : $ban;
+    }
+
+    public function isAppealable(int $target) : bool {
+        $query = "SELECT id FROM bans WHERE target = :user AND until < NOW()";
+        $stmt = $this->Connection->prepare($query);
+        $stmt->bindParam(":user", $target);
+        $stmt->execute();
+        $ban = $stmt->fetch();
+
+        if(isset($ban['id'])) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     // vvv Type type = Type ??? Looks weird but whatever
     public function GetUser($user, Type $type = Type::Username, bool $optimized = false) : array {
         $type = match ($type) {
@@ -617,6 +656,14 @@ class User extends Model
 
         $stmt = $this->Connection->prepare("SELECT id FROM bans WHERE target = :id");
         $stmt->bindParam(":id", $uid);
+        $stmt->execute();
+
+        return $stmt->rowCount() === 1;
+    }
+
+    public function isBannedTarget(int $target) : bool {
+        $stmt = $this->Connection->prepare("SELECT id FROM bans WHERE target = :id");
+        $stmt->bindParam(":id", $target);
         $stmt->execute();
 
         return $stmt->rowCount() === 1;

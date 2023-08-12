@@ -1,0 +1,21 @@
+{% extends "misc/base.twig" %}
+{%- block Container -%}
+    <div class="padding no-padding-bottom no-padding-top">
+        <h3>your account has been banned</h3>
+        <div class="padding-bottom caption inline-block">expires: {{ Ban.until }} </div>
+    </div>
+    <hr>
+    <div class="padding">
+        reason: <code class="inline-block padding-top">{{ Ban.reason }}</code>
+    </div>
+    <hr>
+    <div class="padding">
+        {% if isAppealable %}
+            <a href="/actions/user/request_unban">
+                reactivate your account
+            </a> | <a href="{{ discordURL }}">appeal</a>
+        {% else %}
+            <div class="caption">you still cannot reactivate your account</div>
+        {% endif %}
+    </div>
+{% endblock %}

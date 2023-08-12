@@ -36,6 +36,7 @@ if(!isset($_SESSION['Handle'])) {
     $Router->Post('/user/register', "\Witter\Models\User@Register");
 } else {
     $Router->Get('/', "\Witter\Views\Homepage@Redirect");
+    $Router->Get('/user_banned', "\Witter\Views\Homepage@Banned");
     $Router->Get('/sign_out', "\Witter\Models\Utility@SignOut");
 
     // [WEB] [API] Settings
@@ -75,6 +76,7 @@ if(!isset($_SESSION['Handle'])) {
     // [API] Actions for user
     $Router->Post('/actions/user/{id}/follow', "\Witter\Models\User@Follow");
     $Router->Post('/actions/user/{id}/block', "\Witter\Models\User@Block");
+    $Router->Get('/actions/user/request_unban', "\Witter\Models\User@RequestUnban");
 
     // [WEB] Admin pages
     $Router->Get('/admin/', "\Witter\Views\Admin@View");
