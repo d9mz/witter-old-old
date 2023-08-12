@@ -48,7 +48,7 @@ class Alert extends Model {
             */
 
             $message = sprintf(
-                "```diff\n+ [%s] (%s %s)\n%s [%s] %s```",
+                "```diff\n+ [@%s] (%s %s)\n%s [%s] %s```",
                 $_SESSION['Handle'],
                 $_SERVER['REQUEST_METHOD'], 
                 $_SERVER['REQUEST_URI'], 
@@ -57,7 +57,22 @@ class Alert extends Model {
                 $message
             );
         } else {
+            /*
+                end result vvvv 
 
+                + [witter] (/user/login/)
+                + [success] Successfully logged in.
+            */
+
+            $message = sprintf(
+                "```diff\n+ [%s] (%s %s)\n%s [%s] %s```",
+                "(no session)",
+                $_SERVER['REQUEST_METHOD'], 
+                $_SERVER['REQUEST_URI'], 
+                $prefix, 
+                $level, 
+                $message
+            );
         }
 
         if($webhookurl != "your_url_here") {

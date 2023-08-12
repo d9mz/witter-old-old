@@ -610,7 +610,19 @@ class User extends Model
         return true;
     }
 
-    public function Register(): void {
+    public function isBanned() : bool {
+        if(!isset($_SESSION['Handle'])) return false;
+
+        $uid = $this->GetUID($_SESSION['Handle']);
+
+        $stmt = $this->Connection->prepare("SELECT id FROM bans WHERE target = :id");
+        $stmt->bindParam(":id", $uid);
+        $stmt->execute();
+
+        return $stmt->rowCount() === 1;
+    }
+
+    public function Register() : void {
         $alert = new Alert();
 
         // Pretty ugly -- TODO: use match() ? New PHP8 feature...

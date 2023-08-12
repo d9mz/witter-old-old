@@ -41,15 +41,16 @@ class Admin extends Model
                 $alert->CreateAlert(Level::Error, "Are you trying to ban an admin?");
             }
 
-            $stmt = $this->Connection->prepare("INSERT INTO bans (reason, feed_owner, feed_text, feed_embed) VALUES (:reason, :id, :comment, :embed)");
+            $stmt = $this->Connection->prepare("INSERT INTO bans (reason, target, until, moderator) VALUES (:reason, :target, :until, :moderator)");
 
             $stmt->bindParam(":reason", $_POST['reason']);
             $stmt->bindParam(":target", $user['id']);
             $stmt->bindParam(":until", $_POST['until']);
             $stmt->bindParam(":moderator", $loggedInUser);
     
-            $stmt->execute();     
+            $stmt->execute();
 
+            $alert->InternalLog(Level::Info, "banned @" . $user['username'] . " until " . $_POST['until']. "\nreason: " . $_POST['reason']);
             $alert->CreateAlert(Level::Success, "Successfully banned " . $_POST['username'] . "'s profile");
         }
     }
