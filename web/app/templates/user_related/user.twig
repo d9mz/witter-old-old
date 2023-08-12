@@ -53,6 +53,12 @@
     <div class="padding user-panel">
         <div class="user-card wide">
             <img class="profile-picture" src="/cdn/{{ User.profile_picture }}">
+            <div class="dropdown inline-block float-right bottom">
+                <div class="dropdown-show"></div>
+                <div class="dropdown-content">
+                    <span class="block-user-action" data-target="{{ User.id }}">block <b>@{{ User.username }}</b></span>
+                </div>
+            </div>
             <div class="user-metadata inline-block top">
                 <b>{% if User.private == 't' %}<i class="far fa-lock"></i>{% endif %} {{ User.nickname }}</b>
                 <span class="caption inline-block">@{{ User.username }}</span><br>

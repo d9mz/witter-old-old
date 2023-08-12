@@ -8,6 +8,12 @@
     src: url("/styles/pgothic.ttf") format("opentype");
 }
 
+.user-card .dropdown-show {
+    display: inline-block;
+    position: absolute;
+    right: 0;
+}
+
 body, html {
     padding: 0px;
     margin: 0px;
