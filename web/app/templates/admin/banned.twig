@@ -1,13 +1,17 @@
 {% extends "misc/base.twig" %}
+{%- block Header -%}
+    {{ parent() }}
+    <script src="/scripts/no-header-d.js"></script>
+{% endblock %}
 {%- block Container -%}
     <div class="padding no-padding-bottom no-padding-top">
-        <h3>your account has been banned</h3>
+        <h1 class="bold inline-block padding-top">witter</h1><br>
+        <h3 class="inline-block padding-top padding-bottom-5">your account has been banned</h3><br>
         <div class="padding-bottom caption inline-block">expires: {{ Ban.until }} </div>
     </div>
     <hr>
     <div class="padding">
-        <b>reason:</b> <pre>{{ Ban.reason }}</pre>
-
+        <b class="inline-block padding-bottom-5">reason:</b><div>{{ Ban.reason }}</div><br>
         <b>offending content: </b>
         {% for Weet in Ban.weets %}
             <div class="reweet padding" data-target-url="/user/{{Weet.user.username }}/{{ Weet.feed_id }}">
@@ -23,8 +27,8 @@
                 reactivate your account
             </a>
         {% else %}
-            <a href="{{ discordURL }}">appeal your ban</a>
-            <div class="caption">you still cannot reactivate your account at this time</div>
+            <a href="{{ discordURL }}">appeal your ban</a> or <a href="/sign_out">log out</a> <br>
+            <div class="caption inline-block padding-top">you still cannot reactivate your account at this time</div>
         {% endif %}
     </div>
 {% endblock %}
