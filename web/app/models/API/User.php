@@ -448,14 +448,10 @@ class User extends Model
         $ban = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         if(!empty(trim($ban['offending_content']))) {
-            foreach()
-            $retweet = $weetModel->GetWitterLinksInWeet($ban['feed_text']);
-            $user_exists = $userModel->UserExists($retweet[0]);
-            $weet_exists = $this->GetWeet($retweet[1], false);
+            $posts = explode(" ", $ban['offending_content']);
 
-            if($user_exists && $weet_exists) {
-                $weet["reweet"] = $this->GetWeet($retweet[1], false, false, true);
-                $weet["feed_text"] = $this->RemoveWitterLinkInWeet($weet["feed_text"], $retweet[2]);
+            foreach($posts as $post) {
+                $ban["weets"][] = $weetModel->GetWeet($post, false, false, true);
             }
         }
 

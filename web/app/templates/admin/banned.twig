@@ -6,16 +6,25 @@
     </div>
     <hr>
     <div class="padding">
-        reason: <code class="inline-block padding-top">{{ Ban.reason }}</code>
+        <b>reason:</b> <pre>{{ Ban.reason }}</pre>
+
+        <b>offending content: </b>
+        {% for Weet in Ban.weets %}
+            <div class="reweet padding" data-target-url="/user/{{Weet.user.username }}/{{ Weet.feed_id }}">
+                <b class="comment-author">{{ Weet.user.nickname }}</b> <span class="fake-link">@{{ Weet.user.username }}</span><br>
+                <span class="comment-text inline-block">{{ Weet.feed_text|escape|linkify|mentionify|raw|nl2br }}</span>
+            </div>
+        {% endfor %}
     </div>
     <hr>
     <div class="padding">
         {% if isAppealable %}
             <a href="/actions/user/request_unban">
                 reactivate your account
-            </a> | <a href="{{ discordURL }}">appeal</a>
+            </a>
         {% else %}
-            <div class="caption">you still cannot reactivate your account</div>
+            <a href="{{ discordURL }}">appeal your ban</a>
+            <div class="caption">you still cannot reactivate your account at this time</div>
         {% endif %}
     </div>
 {% endblock %}

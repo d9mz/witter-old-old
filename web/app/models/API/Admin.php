@@ -70,7 +70,7 @@ class Admin extends Model
         
                 $stmt = $this->Connection->prepare("UPDATE bans SET offending_content = ? WHERE target = ?");
                 $stmt->execute([
-                    $weet['feed_id'],
+                    $content,
                     $user['id'],
                 ]);
                 $stmt = null;
