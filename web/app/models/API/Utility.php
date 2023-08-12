@@ -1,12 +1,30 @@
 <?php
 namespace Witter\Models;
 
+use Witter\Models\Level;
+use Witter\Models\Type;
+
 class Utility extends Model {
     public function SignOut() : void {
-        $_SESSION = [];
-        session_destroy(); // DESTROY... EVERYTHIIING!
+        // create secret session to track malicious actors
+        $track = base64_encode(time() . rand(1,10));
 
         $alertModel = new \Witter\Models\Alert();
+        $alertModel->CreateAlert(Level::Success, "Successfully logged out!", false, false);
+        $alertModel->InternalLog(Level::Info, $_SESSION['Handle'] . " logged out; track_tag " . $track);
+
+        // this is UGLY AS SHIT
+        if(isset($_SESSION['Handle'])) {
+            // 2 piece - one session stores actual key of the storing thing - hardcoded key
+            $username = $_SESSION['Handle']; // first - to prevent erroring
+        } 
+        $_SESSION = []; // empty out session var
+
+        if(isset($username)) { 
+            // set the tracking tag
+            $_SESSION['Token'] = $track;
+            $_SESSION[$track] = base64_encode($username); 
+        }
 
         header("Location: /");
     }

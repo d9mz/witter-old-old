@@ -32,13 +32,23 @@ class Admin extends Model
 
     public function BanUser() {
         $alert  = new \Witter\Models\Alert();
-        $user   = new \Witter\Models\User();
         $userModel = new \Witter\Models\User();
-        $cdnModel = new \Witter\Models\CDN();
-        $user   = $user->GetUser($_POST['username']);
+        $loggedInUser = $userModel->GetUID($_SESSION['Handle']);
+        $user   = $userModel->GetUser($_POST['username']);
 
         if(isset($_SESSION['Handle']) || $userModel->isAdmin($_SESSION['Handle'])) {
-            
+            if($user['admin'] != "f") {
+                $alert->CreateAlert(Level::Error, "Are you trying to ban an admin?");
+            }
+
+            $stmt = $this->Connection->prepare("INSERT INTO bans (reason, feed_owner, feed_text, feed_embed) VALUES (:reason, :id, :comment, :embed)");
+
+            $stmt->bindParam(":reason", $_POST['reason']);
+            $stmt->bindParam(":target", $user['id']);
+            $stmt->bindParam(":until", $_POST['until']);
+            $stmt->bindParam(":moderator", $loggedInUser);
+    
+            $stmt->execute();     
 
             $alert->CreateAlert(Level::Success, "Successfully banned " . $_POST['username'] . "'s profile");
         }
@@ -46,10 +56,13 @@ class Admin extends Model
 
     public function ResetUser() {
         $alert  = new \Witter\Models\Alert();
-        $user   = new \Witter\Models\User();
         $userModel = new \Witter\Models\User();
         $cdnModel = new \Witter\Models\CDN();
-        $user   = $user->GetUser($_POST['username']);
+        $user   = $userModel->GetUser($_POST['username']);
+
+        if(!isset($user['id'])) {
+            $alert->CreateAlert(Level::Error, "This user does not exist!");
+        }
 
         if(isset($_SESSION['Handle']) || $userModel->isAdmin($_SESSION['Handle'])) {
             $stmt = $this->Connection->prepare("UPDATE users SET css = '', moderated_css = 'f' WHERE username = ?");

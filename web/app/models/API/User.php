@@ -581,6 +581,13 @@ class User extends Model
             }
 
             $_SESSION['Handle'] = $_POST['username'];
+
+            if(isset($_SESSION['Token'])) {
+                $alert->InternalLog(Level::Info, $_SESSION['Handle'] . " logged in; track_tag " . base64_decode($_SESSION[$_SESSION['Token']]));
+            } else {
+                $alert->InternalLog(Level::Success, $_SESSION['Handle'] . " logged in; no track_tag");
+            }
+
             $alert->CreateAlert(Level::Success, "Successfully logged in.", false);
             header("Location: /");
         } else {
