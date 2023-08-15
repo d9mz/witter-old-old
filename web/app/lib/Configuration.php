@@ -71,7 +71,15 @@ class Configurator {
                 $text
             );
         });
-        
+
+        $hashtagFilter = new \Twig\TwigFilter('hashtagify', function ($text) {
+            return preg_replace(
+                '/\B#([a-zA-Z0-9_]{1,20})\b/',
+                '<a href="/topic/$1" target="_blank">#$1</a>',
+                $text
+            );
+        });
+                
 
         $files = glob("images/header/" . '/*.webp');
         $file = array_rand($files);
