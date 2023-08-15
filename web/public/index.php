@@ -90,6 +90,7 @@ if(!isset($_SESSION['Handle'])) {
 
     $Router->Post('/moderate/user/reset', "\Witter\Models\Admin@ResetUser");
     $Router->Post('/moderate/user/ban', "\Witter\Models\Admin@BanUser");
+    $Router->Post('/moderate/user/unban', "\Witter\Models\Admin@UnbanUser");
 
     // [API] Public site API
     $Router->Get('/v1/api/load_weets/{page}', "\Witter\Views\Scrolling@GetWeets");

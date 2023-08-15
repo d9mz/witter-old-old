@@ -331,6 +331,13 @@ class Feed extends Model
                 }
             }
 
+            if($user_fetch->isBannedTarget($user['id'])) {
+                $weet["feed_text"] = "This user's account has been suspended.";
+                $weet["reweet"]["feed_created"] = "2021-09-10 01:23:45";
+                $weet["feed_target"] = -1;
+                $weet["feed_id"] = 0;
+            }
+
             if(!$weet['user']['visible']) {
                 $weet["feed_text"] = "The post owner limits who can see their posts.";
             }

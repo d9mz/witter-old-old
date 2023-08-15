@@ -19,6 +19,12 @@
                 <span class="comment-text inline-block">{{ Weet.feed_text|escape|linkify|mentionify|raw|nl2br }}</span>
             </div>
         {% endfor %}
+
+        {% if Ban.weets|length == 0 %}
+            <div>
+            currently unavailable.
+            </div>
+        {% endif %}
     </div>
     <hr>
     <div class="padding">

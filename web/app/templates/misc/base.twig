@@ -40,6 +40,14 @@
             </div>
         {% endif %}
 
+        {% if Ban is defined and Ban.id is defined and currentPath != "/user_banned" %}
+            <div class="container alert-error" id="js_alert">
+                <span class="padding inline-block">
+                    This user's account has been suspended.
+                </span>
+            </div>
+        {% endif %}
+
         {% if Session.Alert is defined %}
             {% for Alert in Session.Alert %}
                 <div class="container alert-{{ Alert.Type }}" id="js_alert">

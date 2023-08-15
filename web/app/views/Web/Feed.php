@@ -68,6 +68,8 @@ class Feed extends View {
             $user = $userModel->GetUser($weet['feed_owner'], Type::ID);
             $user['following'] = $userModel->FollowingUser($user['id'], $_SESSION['Handle']); // Why the hell do I have to do this?
     
+            if($userModel->isBannedTarget($user['id'])) $ban = $userModel->GetBan($user['id']);
+
             echo $this->Twig->render('user_related/thread.twig', array(
                 "PageSettings" => $this->PageSettings($user['nickname'] . " (@" . $user['username'] . ")", $user['description']),
                 "Weet" => @$weet,
@@ -76,6 +78,7 @@ class Feed extends View {
                 "FullThread" => @$thread,
                 "User" => @$user,
                 "Reply" => true,
+                "Ban" => @$ban,
             ));
         } else {
             if(!$userModel->UserExists($weet['feed_owner'], Type::ID)) $alert->CreateAlert(Level::Error, "This weet does not exist.");
@@ -87,6 +90,8 @@ class Feed extends View {
             // does the owner of that weet actually exist?
             if(@$user['id'] != $weet['feed_owner']) $alert->CreateAlert(Level::Error, "This weet does not exist.");
 
+            if($userModel->isBannedTarget($user['id'])) $ban = $userModel->GetBan($user['id']);
+
             $weets = $feed->GetReplies((int)$weet_id);
             echo $this->Twig->render('user_related/thread.twig', array(
                 "PageSettings" => $this->PageSettings($user['nickname'] . " (@" . $user['username'] . ")", $user['description']),
@@ -94,6 +99,7 @@ class Feed extends View {
                 "Thread" => @$weets,
                 "User" => @$user,
                 "Reply" => false,
+                "Ban" => @$ban,
             )); 
         }
     }

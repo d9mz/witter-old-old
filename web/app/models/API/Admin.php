@@ -30,6 +30,30 @@ class Admin extends Model
         }
     }
 
+    public function UnbanUser() {
+        $alert  = new \Witter\Models\Alert();
+        $weetModel = new \Witter\Models\Feed();
+        $userModel = new \Witter\Models\User();
+        $loggedInUser = $userModel->GetUID($_SESSION['Handle']);
+        $user   = $userModel->GetUser($_POST['username']);
+
+        if(isset($_SESSION['Handle']) || $userModel->isAdmin($_SESSION['Handle'])) {
+            if(!$userModel->isBannedTarget($user['id'])) {
+                $alert->CreateAlert(Level::Error, "This user is currently not banned.");
+            }
+
+            $stmt = $this->Connection->prepare("DELETE FROM bans WHERE target = ?");
+            $stmt->execute(
+                [
+                    $user['id'],
+                ]
+            );
+
+            $alert->InternalLog(Level::Info, "unbanned @" . $user['username']);
+            $alert->CreateAlert(Level::Success, "Successfully unbanned " . $_POST['username'] . "'s profile");
+        }
+    }
+
     public function BanUser() {
         $alert  = new \Witter\Models\Alert();
         $weetModel = new \Witter\Models\Feed();

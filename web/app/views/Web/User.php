@@ -11,6 +11,8 @@ class User extends View {
         $user = $userclass->GetUser($user);
 
         if($userclass->UserExists($handle)) {
+            if($userclass->isBannedTarget($user['id'])) $ban = $userclass->GetBan($user['id']);
+
             $followers = $userclass->GetUserMetricFollow($handle);
 
             echo $this->Twig->render('user_related/user_follower_following.twig', array(
@@ -18,6 +20,7 @@ class User extends View {
                 "User" => $user,
                 "Followers" => @$followers,
                 "ActiveTab" => "followers",
+                "Ban" => @$ban,
             ));
         } else {
             $alert = new \Witter\Models\Alert();
@@ -31,6 +34,8 @@ class User extends View {
         $user = $userclass->GetUser($user);
 
         if($userclass->UserExists($handle)) {
+            if($userclass->isBannedTarget($user['id'])) $ban = $userclass->GetBan($user['id']);
+
             $following = $userclass->GetUserMetricFollow($handle, false);
 
             echo $this->Twig->render('user_related/user_follower_following.twig', array(
@@ -38,6 +43,7 @@ class User extends View {
                 "User" => $user,
                 "Following" => @$following,
                 "ActiveTab" => "following",
+                "Ban" => @$ban,
             ));
         } else {
             $alert = new \Witter\Models\Alert();
@@ -51,6 +57,8 @@ class User extends View {
         $user = $userclass->GetUser($user);
 
         if($userclass->UserExists($handle)) {
+            if($userclass->isBannedTarget($user['id'])) $ban = $userclass->GetBan($user['id']);
+
             $feed = new \Witter\Models\Feed();
             $feed = $feed->GetFeed($handle, 20);
             $user = $userclass->GetUser($handle);
@@ -68,6 +76,7 @@ class User extends View {
                 "User" => $user,
                 "Feed" => $feed,
                 "ActiveTab" => "all",
+                "Ban" => @$ban,
             ));
         } else {
             $alert = new \Witter\Models\Alert();
@@ -81,6 +90,8 @@ class User extends View {
         $user = $userclass->GetUser($user);
 
         if($userclass->UserExists($handle)) {
+            if($userclass->isBannedTarget($user['id'])) $ban = $userclass->GetBan($user['id']);
+
             $feed = new \Witter\Models\Feed();
             $feed = $feed->GetLikedPostsByUser($handle, 20);
             $user = $userclass->GetUser($handle);
@@ -98,6 +109,7 @@ class User extends View {
                 "User" => $user,
                 "Feed" => $feed,
                 "ActiveTab" => "likes",
+                "Ban" => @$ban,
             ));
         } else {
             $alert = new \Witter\Models\Alert();

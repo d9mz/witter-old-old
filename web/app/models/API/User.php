@@ -472,6 +472,26 @@ class User extends Model
         }
     }
 
+    public function RequestUnban() {
+        $alert  = new \Witter\Models\Alert();
+        $user = $this->GetUser($_SESSION['Handle']);
+
+        if(isset($user['id'])) {
+            if($this->isAppealable($user['id'])) {
+                $stmt = $this->Connection->prepare("DELETE FROM bans WHERE target = ?");
+                $stmt->execute(
+                    [
+                        $user['id'],
+                    ]
+                );
+
+                $alert->CreateAlert(Level::Success, "Successfully appealed your ban!");
+            } else {
+                $alert->CreateAlert(Level::Error, "Your ban is still not appealable.");
+            }
+        }
+    }
+
     // vvv Type type = Type ??? Looks weird but whatever
     public function GetUser($user, Type $type = Type::Username, bool $optimized = false) : array {
         $type = match ($type) {
@@ -541,6 +561,10 @@ class User extends Model
                     if($this->isBlockingThem($user['id'])) $user['you_blocked'] = true;
 
                     if($user['blocked_you'] || $user['you_blocked']) $user['visible'] = false;
+
+                    if($this->isBannedTarget($user['id'])) {
+                        $user['visible'] = false;
+                    }
                 }
 
                 // is the logged in user following this user?

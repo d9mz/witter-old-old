@@ -104,7 +104,11 @@
     </div>
     <hr>
     <div class="padding-no-overflow">
-        {% if User.blocked_you %}
+        {% if Ban.id is defined %}
+            <div class="center caption padding-top padding-bottom">
+                This user's account is suspended.
+            </div>
+        {% elseif User.blocked_you %}
             <div class="center caption padding-top padding-bottom">
                 This user has blocked your account. Their Weets are not visible to you.
             </div>
