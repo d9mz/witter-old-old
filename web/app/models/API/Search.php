@@ -35,23 +35,13 @@ class SearchFlags extends BitwiseFlag
     $this->setFlag(self::FLAG_USER, $value);
   }
 
-  public function getFlagsAsArray() : array {
-    $flags = [];
-
-    if ($this->isSearchingForWeets()) {
-      $flags[] = 'WEETS';
-    }
-
-    if ($this->isSearchingForHashtags()) {
-      $flags[] = 'HASHTAGS';
-    }
-
-    if ($this->isSearchingForUsers()) {
-      $flags[] = 'USERS';
-    }
-
-    return $flags;
-  }
+  public function getFlagsAsObject() : object {
+    return (object) [
+      'FLAG_WEETS' => $this->isSearchingForWeets(),
+      'FLAG_HASHTAG' => $this->isSearchingForHashtags(),
+      'FLAG_USER' => $this->isSearchingForUsers()
+    ];
+  }  
 }
 
 class Search extends Model {
@@ -60,7 +50,7 @@ class Search extends Model {
         $this->Connection = $connection->MakeConnection();
     }
     
-    public function getSearchQuery(string $query, array $flags) : array {
+    public function getSearchQuery(string $query, object $flags) : array {
         $searchFlags = new \Witter\Models\SearchFlags();
 
         echo $query;

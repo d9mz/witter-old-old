@@ -17,7 +17,7 @@ class Search extends View {
         $searchFlags->setSearchingForUsers(isset($_GET['users']));
         $searchFlags->setSearchingForWeets(isset($_GET['weets']));
         
-        $results = $searchModel->getSearchQuery($_GET['q'], $searchFlags->getFlagsAsArray());
+        $results = $searchModel->getSearchQuery($_GET['q'], $searchFlags->getFlagsAsObject());
         
         // UGLY.... Why do ?
         echo $this->Twig->render('search.twig', array(
