@@ -39,6 +39,8 @@ if(!isset($_SESSION['Handle'])) {
     $Router->Get('/user_banned', "\Witter\Views\Homepage@Banned");
     $Router->Get('/sign_out', "\Witter\Models\Utility@SignOut");
 
+    $Router->Get('/search', "\Witter\Views\Search@Search");
+
     // [WEB] [API] Settings
     $Router->Get('/settings', "\Witter\Views\Settings@View");
     $Router->Post('/settings/description', "\Witter\Models\Settings@Description");

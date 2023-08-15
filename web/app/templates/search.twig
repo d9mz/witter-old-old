@@ -1,0 +1,61 @@
+{% extends "misc/base.twig" %}
+{%- block Container -%}
+    <div class="padding no-padding-bottom no-padding-top">
+        <div class="left homepage-padding padding-bottom">
+            <div class="full-width homepage-info">
+                <h1 class="padding-bottom">The best of both worlds.</h1>
+                <p class="no-margin">
+                    Witter is a social media site that aims to:
+                    <ul>
+                        <li>bring back the customization of myspace</li>
+                        <li>combine the social features of twitter</li>
+                        <li>let users share their thoughts</li>
+                    </ul>
+                </p>
+            </div>
+        </div>
+        <div class="right no-border-left padding-top padding-bottom">
+            <img src="/images/homepage.png" class="homepage-photo">
+        </div>
+    </div>
+    <hr>
+    <div class="padding no-padding-bottom no-padding-top">
+        <div class="left padding-top padding-bottom">
+            <h3>login</h3>
+            <form class="form" method="post" action="/user/login/">
+                <div class="input-group">
+                    <label for="username">username</label>
+                    <div class="input-text-prefix">@</div>
+                    <input type="text" autocomplete="off" class="input-text-prefix-form" id="username" required placeholder="yourhandle" name="username" aria-label="Handle">
+                </div>
+                <div class="input-group">
+                    <label for="password">password</label>
+                    <input type="password" autocomplete="off" id="password" required placeholder="Password" name="password" aria-label="Password">
+                </div>
+                <span class="caption"><a href="#">forgot your password?</a></span>
+                <input type="submit" value="login" aria-label="Login">
+            </form>
+        </div>
+
+        <div class="right padding-top padding-bottom">
+            <h3>register</h3>
+            <form class="form" method="post" action="/user/register/">
+                <div class="input-group">
+                    <label for="username">username</label>
+                    <div class="input-text-prefix">@</div>
+                    <input type="text" autocomplete="off" class="input-text-prefix-form" id="username" required placeholder="yourhandle" name="username" aria-label="Handle">
+                </div>
+                <div class="input-group">
+                    <label for="email">email</label>
+                    <input type="text" autocomplete="off" id="email" required placeholder="Email" name="email" aria-label="E-Mail">
+                </div>
+                <div class="input-group">
+                    <label for="password">password</label>
+                    <input type="password" autocomplete="off" id="password" required placeholder="Password" name="password" aria-label="Password">
+                </div>
+                <span class="caption">you can change your display name later</span>
+                <input type="submit" value="register" aria-label="Register">
+            </form>
+        </div>
+    </div>
+{% endblock %}

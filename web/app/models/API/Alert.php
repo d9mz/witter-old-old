@@ -10,7 +10,11 @@ enum Level: int {
 }
 
 class Alert extends Model {
-    
+    public function __construct() {
+        $connection = new \Witter\Models\Connection();
+        $this->Connection = $connection->MakeConnection();
+    }
+
     public function InternalLog(Level $level, string $message = "Message") : void {
         $level = match ($level) {
             Level::Info => "info",
@@ -75,7 +79,19 @@ class Alert extends Model {
             );
         }
 
+        // check if webhook url isnt env.default one
         if($webhookurl != "your_url_here") {
+            $stmt = $this->Connection->prepare(
+                "INSERT INTO logs
+                    (log_message, log_type) 
+                VALUES 
+                    (?, ?)"
+            );
+            $stmt->execute([
+                $message,
+                $level,
+            ]);
+
             $json_data = json_encode([
                 "content" => $message,
                 "username" => "internal.witter",
