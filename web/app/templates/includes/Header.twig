@@ -21,10 +21,20 @@
         <div class="navlink"><div><a href="/admin/">admin</a></div></div>
         {% endif %}
         <div class="navlink"><div><a href="/sign_out">sign out</a></div></div>
-        <div class="navlink"><div></div></div>
-        <div class="navlink"><div></div></div>
-        <div class="navlink"><div></div></div>
-        <div class="navlink"><div></div></div>
+        {% if Session.Handle is defined %}
+            <div class="navlink">
+                <div>
+                    <form class="search-bar" action="/search">
+                        <input type="text" name="q" placeholder="search...">
+                    </form>
+                </div>
+            </div>
+        {% else %}
+            <div class="navlink"><div></div></div>
+            <div class="navlink"><div></div></div>
+            <div class="navlink"><div></div></div>
+            <div class="navlink"><div></div></div>
+        {% endif %}
         <!-- what the hell -->
         {% endif %}
         {% if Session.Handle is not defined %}
