@@ -18,7 +18,7 @@
                             {% if Notification.weet is defined %}
                                 <div class="reweet padding full-width-reweet-notif" data-target-url="/user/{{Notification.weet.user.username }}/{{ Notification.weet.feed_id }}">
                                     <b class="comment-author">{{ Notification.weet.user.nickname }}</b> <span class="fake-link">@{{ Notification.weet.user.username }}</span><br>
-                                    <span class="comment-text inline-block">{{ Notification.weet.feed_text|escape|linkify|mentionify|raw|nl2br }}</span>
+                                    <span class="comment-text inline-block">{{ Notification.weet.feed_text|escape|combined|raw|nl2br }}</span>
                                 </div>
                             {% endif %}
                         </div>

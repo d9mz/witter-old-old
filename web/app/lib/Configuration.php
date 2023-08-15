@@ -79,7 +79,39 @@ class Configurator {
                 $text
             );
         });
-                
+
+        $combinedFilter = new \Twig\TwigFilter('combined', function ($text) {
+            // Handle mentions
+            $text = preg_replace(
+                '/(?<=\s|^)@([a-zA-Z0-9_]{3,20})(?=\s|$)/', 
+                '<a href="/user/$1" target="_blank">@$1</a>',
+                $text
+            );
+        
+            // Handle hashtags
+            $text = preg_replace_callback(
+                '/(?<=\s|^)#([a-zA-Z0-9_]{1,20})(?=\s|$)/',
+                function($matches) {
+                    if (preg_match('/https?:\/\//', $matches[0])) {
+                        // If the hashtag is part of a URL, return it unchanged
+                        return $matches[0];
+                    }
+                    return '<a href="/search/?q=' . $matches[1] . '&hashtags=on" target="_blank">#' . $matches[1] . '</a>';
+                },
+                $text
+            );
+        
+            // Handle links
+            $text = preg_replace_callback(
+                '/(?<=\s|^)https?:\/\/([a-zA-Z0-9-]+\.[a-zA-Z0-9-\.]+)\S*(?=\s|$)/',
+                function($matches){
+                    return '<a href="' . $matches[0] . '" target="_blank">' . $matches[0] . '</a>';
+                },
+                $text
+            );
+        
+            return $text;
+        });        
 
         $files = glob("images/header/" . '/*.webp');
         $file = array_rand($files);
@@ -87,6 +119,8 @@ class Configurator {
         $Twig->addFilter($Filter);
         $Twig->addFilter($linkifyFilter);
         $Twig->addFilter($mentionFilter);
+        $Twig->addFilter($hashtagFilter);
+        $Twig->addFilter($combinedFilter);
 
         $Twig->addGlobal("HeaderPhoto", "/" . $files[$file]);
         $Twig->addGlobal('Session',         $_SESSION);

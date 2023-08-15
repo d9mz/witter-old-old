@@ -99,11 +99,11 @@
                                     </div>
                                 </div>
 
-                                <span class="comment-text inline-block">{{ Weet.feed_text|escape|linkify|mentionify|raw|nl2br }}</span>
+                                <span class="comment-text inline-block">{{ Weet.feed_text|escape|combined|raw|nl2br }}</span>
                                 {% if Weet.reweet is defined %}
                                     <div class="reweet padding" data-target-url="/user/{{Weet.reweet.user.username }}/{{ Weet.reweet.feed_id }}">
                                         <b class="comment-author">{{ Weet.reweet.user.nickname }}</b> <span class="fake-link">@{{ Weet.reweet.user.username }}</span><br>
-                                        <span class="comment-text inline-block">{{ Weet.reweet.feed_text|escape|linkify|mentionify|raw|nl2br }}</span>
+                                        <span class="comment-text inline-block">{{ Weet.reweet.feed_text|escape|combined|raw|nl2br }}</span>
                                     </div>
                                 {% endif %}
                                 <div class="comment-actions">
@@ -136,11 +136,11 @@
                                     <a href="/user/{{ Weet.user.username }}"><b class="comment-author">{{ Weet.user.nickname }}</b> @{{ Weet.user.username }}</a> {% if Weet.user.private == 't' %}<i class="far fa-lock"></i>{% endif %}
                                     <span class="caption">{{ Weet.feed_created|timeago }}</span>
                                 </span>
-                                <span class="comment-text inline-block">{{ Weet.feed_text|escape|linkify|mentionify|raw|nl2br }}</span>
+                                <span class="comment-text inline-block">{{ Weet.feed_text|escape|combined|raw|nl2br }}</span>
                                 {% if Weet.reweet is defined %}
                                     <div class="reweet padding" data-target-url="/user/{{Weet.reweet.user.username }}/{{ Weet.reweet.feed_id }}">
                                         <b class="comment-author">{{ Weet.reweet.user.nickname }}</b> <span class="fake-link">@{{ Weet.reweet.user.username }}</span><br>
-                                        <span class="comment-text inline-block">{{ Weet.reweet.feed_text|escape|linkify|mentionify|raw|nl2br }}</span>
+                                        <span class="comment-text inline-block">{{ Weet.reweet.feed_text|escape|combined|raw|nl2br }}</span>
                                     </div>
                                 {% endif %}
                                 <div class="comment-actions">
@@ -176,11 +176,11 @@
                         <a href="/user/{{ Weet.user.username }}"><b class="comment-author">{{ Weet.user.nickname }}</b> @{{ Weet.user.username }}</a> {% if Weet.user.private == 't' %}<i class="far fa-lock"></i>{% endif %}
                         <span class="caption">{{ Weet.feed_created|timeago }}</span>
                     </span>
-                    <span class="comment-text inline-block">{{ Weet.feed_text|escape|linkify|mentionify|raw|nl2br }}</span>
+                    <span class="comment-text inline-block">{{ Weet.feed_text|escape|combined|raw|nl2br }}</span>
                     {% if Weet.reweet is defined %}
                         <div class="reweet padding" data-target-url="/user/{{Weet.reweet.user.username }}/{{ Weet.reweet.feed_id }}">
                             <b class="comment-author">{{ Weet.reweet.user.nickname }}</b> <span class="fake-link">@{{ Weet.reweet.user.username }}</span><br>
-                            <span class="comment-text inline-block">{{ Weet.reweet.feed_text|escape|linkify|mentionify|raw|nl2br }}</span>
+                            <span class="comment-text inline-block">{{ Weet.reweet.feed_text|escape|combined|raw|nl2br }}</span>
                         </div>
                     {% endif %}
                     <div class="comment-actions">
@@ -238,11 +238,11 @@
                             <a href="/user/{{ Weet.user.username }}"><b class="comment-author">{{ Weet.user.nickname }}</b> @{{ Weet.user.username }}</a> {% if Weet.user.private == 't' %}<i class="far fa-lock"></i>{% endif %}
                             <span class="caption">{{ Weet.feed_created|timeago }}</span>
                         </span>
-                        <span class="comment-text inline-block">{{ Weet.feed_text|escape|linkify|mentionify|raw|nl2br }}</span>
+                        <span class="comment-text inline-block">{{ Weet.feed_text|escape|combined|raw|nl2br }}</span>
                         {% if Weet.reweet is defined %}
                             <div class="reweet padding" data-target-url="/user/{{Weet.reweet.user.username }}/{{ Weet.reweet.feed_id }}">
                                 <b class="comment-author">{{ Weet.reweet.user.nickname }}</b> <span class="fake-link">@{{ Weet.reweet.user.username }}</span><br>
-                                <span class="comment-text inline-block">{{ Weet.reweet.feed_text|escape|linkify|mentionify|raw|nl2br }}</span>
+                                <span class="comment-text inline-block">{{ Weet.reweet.feed_text|escape|combined|raw|nl2br }}</span>
                             </div>
                         {% endif %}
                         <div class="comment-actions">

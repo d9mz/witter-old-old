@@ -16,7 +16,7 @@
         {% for Weet in Ban.weets %}
             <div class="reweet padding" data-target-url="/user/{{Weet.user.username }}/{{ Weet.feed_id }}">
                 <b class="comment-author">{{ Weet.user.nickname }}</b> <span class="fake-link">@{{ Weet.user.username }}</span><br>
-                <span class="comment-text inline-block">{{ Weet.feed_text|escape|linkify|mentionify|raw|nl2br }}</span>
+                <span class="comment-text inline-block">{{ Weet.feed_text|escape|combined|raw|nl2br }}</span>
             </div>
         {% endfor %}
 
