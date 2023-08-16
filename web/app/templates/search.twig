@@ -1,61 +1,83 @@
 {% extends "misc/base.twig" %}
 {%- block Container -%}
     <div class="padding no-padding-bottom no-padding-top">
-        <div class="left homepage-padding padding-bottom">
-            <div class="full-width homepage-info">
-                <h1 class="padding-bottom">The best of both worlds.</h1>
-                <p class="no-margin">
-                    Witter is a social media site that aims to:
-                    <ul>
-                        <li>bring back the customization of myspace</li>
-                        <li>combine the social features of twitter</li>
-                        <li>let users share their thoughts</li>
-                    </ul>
-                </p>
+        <form method="get" action="/search" class="search-bar-page">
+            <input type="text" name="q" value="{{ Args.q }}" autocomplete="off">
+            <button><i class="far fa-search"></i></button><br>
+            <div class="search-filters padding-top">
+                <div class="search-filter">
+                    <input type="radio" name="filter" value="hashtags" {% if Args.filter == "hashtags" %}checked{% endif %}>
+                    <span class="inline-block top"> hashtags </span>
+                </div>
+                <div class="search-filter">
+                    <input type="radio" name="filter" value="users" {% if Args.filter == "users" %}checked{% endif %}>
+                    <span class="inline-block top"> users </span>
+                </div>
+                <div class="search-filter">
+                    <input type="radio" name="filter" value="weets" {% if Args.filter == "weets" %}checked{% endif %}>
+                    <span class="inline-block top"> weets </span>
+                </div>
             </div>
-        </div>
-        <div class="right no-border-left padding-top padding-bottom">
-            <img src="/images/homepage.png" class="homepage-photo">
-        </div>
-    </div>
-    <hr>
-    <div class="padding no-padding-bottom no-padding-top">
-        <div class="left padding-top padding-bottom">
-            <h3>login</h3>
-            <form class="form" method="post" action="/user/login/">
-                <div class="input-group">
-                    <label for="username">username</label>
-                    <div class="input-text-prefix">@</div>
-                    <input type="text" autocomplete="off" class="input-text-prefix-form" id="username" required placeholder="yourhandle" name="username" aria-label="Handle">
-                </div>
-                <div class="input-group">
-                    <label for="password">password</label>
-                    <input type="password" autocomplete="off" id="password" required placeholder="Password" name="password" aria-label="Password">
-                </div>
-                <span class="caption"><a href="#">forgot your password?</a></span>
-                <input type="submit" value="login" aria-label="Login">
-            </form>
-        </div>
+        </form>
+    </div><br>
+    <hr><br>
+    <div class="padding no-padding-bottom no-padding-top overflow-unset">
+        {% for Weet in Results %}
+            {% if Weet.id is defined and Weet.user.visible %}
+                <div class="weet" data-weet-id={{ Weet.feed_id}}>
+                    <div class="inline-block padding top">
+                        <img src="/cdn/{{ Weet.user.profile_picture }}" class="profile-picture">
+                    </div>
+                    <div class="comment-body inline-block padding overflow-unset">
+                        <span class="comment-info inline-block">
+                            <a href="/user/{{ Weet.user.username }}"><b class="comment-author">{{ Weet.user.nickname }}</b> @{{ Weet.user.username }}</a> {% if Weet.user.private == 't' %}<i class="far fa-lock"></i>{% endif %}
+                            <span class="caption">{{ Weet.feed_created|timeago }}</span>
+                        </span>
 
-        <div class="right padding-top padding-bottom">
-            <h3>register</h3>
-            <form class="form" method="post" action="/user/register/">
-                <div class="input-group">
-                    <label for="username">username</label>
-                    <div class="input-text-prefix">@</div>
-                    <input type="text" autocomplete="off" class="input-text-prefix-form" id="username" required placeholder="yourhandle" name="username" aria-label="Handle">
+                        <div class="dropdown inline-block float-right bottom">
+                            <div class="dropdown-show"></div>
+                            <div class="dropdown-content">
+                                {% if Weet.user.username != Session.Handle %}
+                                    <span class="block-user-action" data-target="{{ Weet.user.id }}">block <b>@{{ Weet.user.username }}</b></span>
+                                {% else %}
+                                    <span class="delete-weet-action" data-target="{{ Weet.feed_id }}">delete weet</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <span class="comment-text inline-block">{{ Weet.feed_text|escape|combined|raw|nl2br }}</span>
+                        {% if Weet.reweet is defined %}
+                            <div class="reweet padding" data-target-url="/user/{{Weet.reweet.user.username }}/{{ Weet.reweet.feed_id }}">
+                                <b class="comment-author">{{ Weet.reweet.user.nickname }}</b> <span class="fake-link">@{{ Weet.reweet.user.username }}</span><br>
+                                <span class="comment-text inline-block">{{ Weet.reweet.feed_text|escape|combined|raw|nl2br }}</span>
+                            </div>
+                        {% endif %}
+                        <div class="comment-actions">
+                            <a href="/user/{{ Weet.user.username }}/{{ Weet.feed_id }}">
+                                <span class="comment-action inline-block">
+                                    <span class="comment-action-text">{{ Weet.replies }}</span> 
+                                    <i class="far fa-comment"></i>
+                                </span>
+                            </a>
+                            <a href="/feed?intent=%0A%0Ahttps://genericlink.com/user/{{ Weet.user.username }}/{{ Weet.feed_id }}">
+                                <span class="comment-action inline-block">
+                                    <span class="comment-action-text">{{ Weet.feed_reweets }}</span> 
+                                    <i class="far fa-retweet"></i>
+                                </span>
+                            </a>
+                            <span class="comment-action comment_like inline-block {% if Weet.liked %}active{% endif %}" data-comment-id="{{ Weet.feed_id }}">
+                                <span class="comment-action-text">{{ Weet.likes }}</span> 
+                                <i class="far fa-thumbs-up"></i>
+                            </span>
+                        </div>
+                    </div>
                 </div>
-                <div class="input-group">
-                    <label for="email">email</label>
-                    <input type="text" autocomplete="off" id="email" required placeholder="Email" name="email" aria-label="E-Mail">
-                </div>
-                <div class="input-group">
-                    <label for="password">password</label>
-                    <input type="password" autocomplete="off" id="password" required placeholder="Password" name="password" aria-label="Password">
-                </div>
-                <span class="caption">you can change your display name later</span>
-                <input type="submit" value="register" aria-label="Register">
-            </form>
-        </div>
-    </div>
+            {% endif %}
+        {% endfor %}
+        {% if Results|length == 0 %}
+            <div class="center caption padding-top padding-bottom">
+                There were no results for your search query.
+            </div>
+        {% endif %}
+    </div><br>
 {% endblock %}

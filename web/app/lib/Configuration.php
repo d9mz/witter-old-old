@@ -96,7 +96,7 @@ class Configurator {
                         // If the hashtag is part of a URL, return it unchanged
                         return $matches[0];
                     }
-                    return '<a href="/search/?q=' . $matches[1] . '&hashtags=on" target="_blank">#' . $matches[1] . '</a>';
+                    return '<a href="/search/?q=' . $matches[1] . '&filter=hashtags" target="_blank">#' . $matches[1] . '</a>';
                 },
                 $text
             );

@@ -108,7 +108,7 @@ class Feed extends Model
     
         // Check if feed is empty
         if(empty($feed)) {
-            return [[]]; // No posts found, return empty array
+            return []; // No posts found, return empty array
         }
     
         foreach($feed as &$post) {

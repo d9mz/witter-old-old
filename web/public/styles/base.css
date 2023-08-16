@@ -14,10 +14,22 @@
     right: 0;
 }
 
+.search-filter {
+    display: inline-block;
+}
+
 body, html {
     padding: 0px;
     margin: 0px;
     overflow-x: hidden;
+}
+
+.search-bar-page input[type="text"] {
+    width: 712px;
+}
+
+.search-bar-page button {
+    font-size: 11px;
 }
 
 .container-side-borders {

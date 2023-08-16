@@ -62,8 +62,75 @@ class Search extends Model
         $searchFlags = new \Witter\Models\SearchFlags();
         $searchFlags->setFlags($flags);
 
-        print_r($searchFlags->getFlagsAsObject());
+        $userModel = new \Witter\Models\User();
+        $feedModel = new \Witter\Models\Feed();
+    
+        // Prepare the query
 
-        return [];
+        // ugly as shit
+        if($searchFlags->isSearchingForWeets()) {
+            $searchTerm = "%" . $query . "%"; // Make sure to sanitize $query
+
+            // construct query
+            $queryString = "
+                SELECT f.feed_id, u.username, f.feed_text, f.feed_created
+                FROM feed AS f
+                JOIN users AS u ON f.feed_owner = u.id
+                WHERE (f.feed_text LIKE :search2)
+                ORDER BY f.feed_created DESC LIMIT 30";
+
+            $query = $this->Connection->prepare($queryString);
+            $query->bindParam(':search2', $searchTerm, \PDO::PARAM_STR); // Bind the same search term for feed text
+            $query->execute();
+        } elseif($searchFlags->isSearchingForUsers()) {
+            $searchTerm = "%@" . $query . "%"; // Make sure to sanitize $query
+            $searchTerm2 = "%" . $query . "%";
+
+            // construct query
+            $queryString = "
+                SELECT f.feed_id, u.username, f.feed_text, f.feed_created
+                FROM feed AS f
+                JOIN users AS u ON f.feed_owner = u.id
+                WHERE (u.username LIKE :search1 OR f.feed_text LIKE :search2)
+                ORDER BY f.feed_created DESC LIMIT 30";
+
+            $query = $this->Connection->prepare($queryString);
+            $query->bindParam(':search1', $searchTerm2, \PDO::PARAM_STR); // Bind the search term for username
+            $query->bindParam(':search2', $searchTerm, \PDO::PARAM_STR); // Bind the same search term for feed text
+            $query->execute();
+        } elseif($searchFlags->isSearchingForHashtags()) {
+            $searchTerm = "%#" . $query . "%"; // Make sure to sanitize $query
+            $searchTerm2 = "%" . $query . "%";
+
+            // construct query
+            $queryString = "
+                SELECT f.feed_id, u.username, f.feed_text, f.feed_created
+                FROM feed AS f
+                JOIN users AS u ON f.feed_owner = u.id
+                WHERE (f.feed_text LIKE :search2)
+                ORDER BY f.feed_created DESC LIMIT 30";
+
+            $query = $this->Connection->prepare($queryString);
+            $query->bindParam(':search2', $searchTerm, \PDO::PARAM_STR); // Bind the same search term for feed text
+            $query->execute();
+        } else {
+            return [];
+        }
+        
+        // Fetch the results
+        $feed = $query->fetchAll(\PDO::FETCH_ASSOC);
+    
+        // Check if feed is empty
+        if($query->rowCount() == 0) {
+            return []; // No posts found, return empty array
+        }
+    
+        $realFeed = [];
+
+        foreach($feed as &$post) {
+            $realFeed[] = $feedModel->GetWeet($post['feed_id'], false);
+        }
+    
+        return $realFeed;
     }
 }

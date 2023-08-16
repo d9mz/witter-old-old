@@ -25,10 +25,10 @@
             <div class="navlink">
                 <div>
                     <form class="search-bar" method="get" action="/search">
-                        <input type="text" name="q" placeholder="search...">
-                        <input type="checkbox" name="hashtags" class="display-none" checked>
-                        <input type="checkbox" name="users" class="display-none" checked>
-                        <input type="checkbox" name="weets" class="display-none" checked>
+                        <input type="text" name="q" autocomplete="off" placeholder="search...">
+                        <input type="radio" name="filter" value="hashtags" class="display-none" checked>
+                        <input type="radio" name="filter" value="users" class="display-none" checked>
+                        <input type="radio" name="filter" value="weets" class="display-none" checked>
                     </form>
                 </div>
             </div>
