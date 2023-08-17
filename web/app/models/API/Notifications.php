@@ -60,7 +60,7 @@ class Notifications extends Model {
         $userModel = new \Witter\Models\User;
         $currentUser = $userModel->GetUser($_SESSION['Handle']);
 
-        $Notifs = $this->Connection->prepare("SELECT * FROM notifications WHERE recipient = :id");
+        $Notifs = $this->Connection->prepare("SELECT * FROM notifications WHERE recipient = :id ORDER BY id DESC");
         $Notifs->bindParam(":id", $currentUser['id']);
         $Notifs->execute();
 

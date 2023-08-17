@@ -11,6 +11,7 @@ class Settings extends View {
         echo $this->Twig->render('settings.twig', array(
             "PageSettings" => $this->PageSettings("Settings", "Settings page"),
             "User" => $user,
+            "ActiveTab" => "general",
         ));
     }
 }

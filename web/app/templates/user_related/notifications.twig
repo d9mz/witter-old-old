@@ -9,7 +9,9 @@
         {% for Notification in Notifications %}
             {% if Notification.id is defined %}
                 <div class="notification padding">
-                    <i class="fas fa-{{Notification.icon}}"></i>
+                    <div class="inline-block fixed-width-notification-icon">
+                        <i class="fas fa-{{Notification.icon}}"></i>
+                    </div>
                     <div class="notification-content padding-left inline-block top">
                         <img src="/cdn/{{ Notification.user.profile_picture }}" class="profile-picture">
                         <div class="notification-text">
