@@ -460,6 +460,7 @@ class Feed extends Model
     }
 
     public function GetFeedScrolling(int $page, int $weetsToLoad) : array {
+        $page = $page + 1;
         $weetsToSkip = $page * $weetsToLoad;
         $cooldown = new \Witter\Models\Cooldown();
 
