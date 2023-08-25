@@ -55,8 +55,8 @@
 
         <div class="tab-group">
             <a href="/user/{{ Weet.user.username }}"><div class="tab {% if ActiveTab == 'all' %}primary{% endif %}">weets</div></a>
-            <a href="/user/{{ Weet.user.username }}/media"><div class="tab {% if ActiveTab == 'media' %}primary{% endif %}">media</div></a>
-            <a href="/user/{{ Weet.user.username }}/likes"><div class="tab {% if ActiveTab == 'likes' %}primary{% endif %}">liked weets</div></a>
+            <a href="/media/{{ Weet.user.username }}"><div class="tab {% if ActiveTab == 'media' %}primary{% endif %}">media</div></a>
+            <a href="/likes/{{ Weet.user.username }}"><div class="tab {% if ActiveTab == 'likes' %}primary{% endif %}">liked weets</div></a>
         </div>
     </div>
     <div class="padding user-infobox">
