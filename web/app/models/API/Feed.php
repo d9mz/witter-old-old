@@ -28,7 +28,7 @@ class Feed extends Model
     }
 
     public function GetWitterLinksInWeet(string $weet) : array {
-        $pattern = '/https?:\/\/witter\.jacksden\.x7z\/user\/([a-zA-Z0-9-]+)\/(\d+)/';
+        $pattern = '/https?:\/\/witter\.jacksden\.xyz\/user\/([a-zA-Z0-9-]+)\/(\d+)/';
         preg_match($pattern, $weet, $matches);
 
         // This looks really weird
