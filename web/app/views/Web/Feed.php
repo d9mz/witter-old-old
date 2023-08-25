@@ -66,7 +66,12 @@ class Feed extends View {
             // does the owner of that weet actually exist?
             $weets = $feed->GetReplies((int)$weet_id_original, 20, true);
             $user = $userModel->GetUser($weet['feed_owner'], Type::ID);
-            $user['following'] = $userModel->FollowingUser($user['id'], $_SESSION['Handle']); // Why the hell do I have to do this?
+            if(!isset($_SESSION['Handle'])) {
+                $isLoggedIn = false;
+                $user['following'] = false;
+            } else {
+                $user['following'] = $userModel->FollowingUser($user['id'], $_SESSION['Handle']); // Why the hell do I have to do this?
+            }
     
             if($userModel->isBannedTarget($user['id'])) $ban = $userModel->GetBan($user['id']);
 
@@ -79,12 +84,18 @@ class Feed extends View {
                 "User" => @$user,
                 "Reply" => true,
                 "Ban" => @$ban,
+                "isLoggedIn" => @$isLoggedIn,
             ));
         } else {
             if(!$userModel->UserExists($weet['feed_owner'], Type::ID)) $alert->CreateAlert(Level::Error, "This weet does not exist.");
 
             $user = $userModel->GetUser($user);
-            $user['following'] = $userModel->FollowingUser($user['id'], $_SESSION['Handle']); // Why the hell do I have to do this?
+            if(!isset($_SESSION['Handle'])) {
+                $isLoggedIn = false;
+                $user['following'] = false;
+            } else {
+                $user['following'] = $userModel->FollowingUser($user['id'], $_SESSION['Handle']); // Why the hell do I have to do this?
+            }
 
             // no url tampering!
             // does the owner of that weet actually exist?
@@ -100,6 +111,7 @@ class Feed extends View {
                 "User" => @$user,
                 "Reply" => false,
                 "Ban" => @$ban,
+                "isLoggedIn" => @$isLoggedIn,
             )); 
         }
     }

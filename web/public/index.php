@@ -48,6 +48,9 @@ if(!isset($_SESSION['Handle'])) {
     $Router->Get('/', "\Witter\Views\Homepage@View");
     $Router->Post('/user/login', "\Witter\Models\User@SignIn");
     $Router->Post('/user/register', "\Witter\Models\User@Register");
+
+    // don't allow posting!
+    $Router->Get('/user/{user}/{id}', "\Witter\Views\Feed@ViewWeet");
 } else {
     $Router->Get('/', "\Witter\Views\Homepage@Redirect");
     $Router->Get('/user_banned', "\Witter\Views\Homepage@Banned");

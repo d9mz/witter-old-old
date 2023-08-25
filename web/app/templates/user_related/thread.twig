@@ -207,21 +207,27 @@
     </div>
     <div class="padding">
         <h3>reply to a weet</h3>
-        {% if Reply == false %}
-            <form class="form" method="post" action="/actions/post/{{ Weet.feed_id }}/reply">
-                <div class="input-group">
-                    <textarea type="text" id="js_comment" class="full" required placeholder="today i ..." name="comment" aria-label="Weet"></textarea>
-                </div>
-                <span class="caption"><span id="js_char_remaining">200</span> characters left</span>
-                <input type="submit" value="post" id="js_submit" aria-label="Post">
-            </form>
+        {% if isLoggedIn %}
+            {% if Reply == false %}
+                <form class="form" method="post" action="/actions/post/{{ Weet.feed_id }}/reply">
+                    <div class="input-group">
+                        <textarea type="text" id="js_comment" class="full" required placeholder="today i ..." name="comment" aria-label="Weet"></textarea>
+                    </div>
+                    <span class="caption"><span id="js_char_remaining">200</span> characters left</span>
+                    <input type="submit" value="post" id="js_submit" aria-label="Post">
+                </form>
+            {% else %}
+                <form class="form" method="post" action="/actions/reply/{{ Target }}/reply">
+                    <div class="input-group">
+                        <textarea type="text" id="js_comment" class="full" required placeholder="today i ..." name="comment" aria-label="Weet"></textarea>
+                    </div>
+                    <span class="caption"><span id="js_char_remaining">200</span> characters left</span>
+                    <input type="submit" value="post" id="js_submit" aria-label="Post">
+                </form>
+            {% endif %}
         {% else %}
             <form class="form" method="post" action="/actions/reply/{{ Target }}/reply">
-                <div class="input-group">
-                    <textarea type="text" id="js_comment" class="full" required placeholder="today i ..." name="comment" aria-label="Weet"></textarea>
-                </div>
-                <span class="caption"><span id="js_char_remaining">200</span> characters left</span>
-                <input type="submit" value="post" id="js_submit" aria-label="Post">
+                You must be logged in to reply.
             </form>
         {% endif %}
     </div>
