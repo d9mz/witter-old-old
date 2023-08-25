@@ -65,7 +65,8 @@ if(!isset($_SESSION['Handle'])) {
     $Router->Post('/settings/preferences/', "\Witter\Models\Settings@HideCSS");
     $Router->Post('/settings/private/', "\Witter\Models\Settings@Private");
 
-    // [WEB] Profiles
+    // [WEB] Profiles\
+    $Router->Get('/media/{user}', "\Witter\Views\Homepage@NotImplemented");
     $Router->Get('/likes/{user}', "\Witter\Views\User@Likes");
     $Router->Get('/user/followers/{user}', "\Witter\Views\User@Followers");
     $Router->Get('/user/following/{user}', "\Witter\Views\User@Following");
