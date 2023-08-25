@@ -313,21 +313,23 @@ class Feed extends Model
             if(!empty(trim($weet['feed_embed']))) {
                 // Get all that reweet metadata
                 $retweet = $this->GetWitterLinksInWeet($weet['feed_text']);
-                $user_exists = $userModel->UserExists($retweet[0]);
-                $weet_exists = $this->GetWeet($retweet[1], false);
+                if(isset($retweet[0])) {
+                    $user_exists = $userModel->UserExists($retweet[0]);
+                    $weet_exists = $this->GetWeet($retweet[1], false);
 
-                if($user_exists && $weet_exists) {
-                    $weet["reweet"] = $this->GetWeet($retweet[1], false, false, true);
-                    $weet["feed_text"] = $this->RemoveWitterLinkInWeet($weet["feed_text"], $retweet[2]);
-                } else if($user_exists) {
-                    // Most likely Weet got deleted
+                    if($user_exists && $weet_exists) {
+                        $weet["reweet"] = $this->GetWeet($retweet[1], false, false, true);
+                        $weet["feed_text"] = $this->RemoveWitterLinkInWeet($weet["feed_text"], $retweet[2]);
+                    } else if($user_exists) {
+                        // Most likely Weet got deleted
 
-                    $weet["reweet"]["user"]["username"] = "n/a";
-                    $weet["reweet"]["user"]["nickname"] = "N/A";
-                    $weet["reweet"]["feed_text"] = "This weet is currently unavailable.";
-                    $weet["reweet"]["feed_created"] = "2021-09-10 01:23:45";
-                    $weet["reweet"]["feed_target"] = -1;
-                    $weet["reweet"]["feed_id"] = 0;
+                        $weet["reweet"]["user"]["username"] = "n/a";
+                        $weet["reweet"]["user"]["nickname"] = "N/A";
+                        $weet["reweet"]["feed_text"] = "This weet is currently unavailable.";
+                        $weet["reweet"]["feed_created"] = "2021-09-10 01:23:45";
+                        $weet["reweet"]["feed_target"] = -1;
+                        $weet["reweet"]["feed_id"] = 0;
+                    }
                 }
             }
 
