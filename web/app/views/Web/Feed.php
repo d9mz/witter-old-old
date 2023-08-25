@@ -70,6 +70,7 @@ class Feed extends View {
                 $isLoggedIn = false;
                 $user['following'] = false;
             } else {
+                $isLoggedIn = true;
                 $user['following'] = $userModel->FollowingUser($user['id'], $_SESSION['Handle']); // Why the hell do I have to do this?
             }
     
@@ -94,6 +95,7 @@ class Feed extends View {
                 $isLoggedIn = false;
                 $user['following'] = false;
             } else {
+                $isLoggedIn = true;
                 $user['following'] = $userModel->FollowingUser($user['id'], $_SESSION['Handle']); // Why the hell do I have to do this?
             }
 
