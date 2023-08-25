@@ -27,6 +27,12 @@ class Homepage extends View {
         ));
     }
 
+    public function JacksDen() {
+        echo $this->Twig->render('misc/jacksden.twig', array(
+            "PageSettings" => $this->PageSettings(),
+        ));
+    }
+
     public function Redirect() {
         header("Location: /feed");
         die();

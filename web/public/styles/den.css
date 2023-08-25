@@ -1,0 +1,190 @@
+body, html {
+    margin: 0px;
+    padding: 0px;
+    font-size: 15px;
+    font-family: "MS PGothic", sans-serif;
+    background: rgb(255,222,222);
+    background: linear-gradient(0deg, rgba(255,222,222,1) 1%, rgba(255,238,235,1) 100%);
+    height: 100%;
+  }
+  
+  .pst_time {
+    margin: -10px;
+    margin-right: 0px; 
+  }
+  
+  .pst_time.caption {
+    color: rgb(255 161 161);
+  }
+  
+  body {
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+  }
+  
+  .about-me {
+    padding-top: 10px; 
+  }
+  
+  .container:not(:first-child) {
+    margin-top: 10px;
+  }
+  
+  button {
+    border: 1px solid #ffcfcf;
+    background-color: #ffeded;
+    padding: 5px;
+    color: rgb(255 161 161);
+    box-shadow: 0px 0px 2px 0px #ffcfcf;
+  }
+  
+  button i {
+    margin-right: 2px; 
+  }
+  
+  button:hover {
+    border: 1px solid #ffe1e1;
+    background-color: #fffafa;
+  }
+  
+  button:active {
+    box-shadow: inset 0px 0px 2px 0px #ffcfcf;
+  }
+  
+  .buttons-list {
+    padding-top: 25px;
+    padding-left: 20px; 
+  }
+  
+  .gradient-bottom {
+  background: rgb(255,207,207);
+  background: linear-gradient(0deg, rgba(255,207,207,0.37298669467787116) 0%, rgba(255,255,255,0) 100%);
+    background-size: 100% 50px;
+    background-repeat: no-repeat;
+    background-position: bottom;
+  }
+  
+  .inline-block {
+    display: inline-block; 
+  }
+  
+  .about-me img {
+    width: 200px;
+    margin-bottom: -12px;
+    
+    /* gay hacky fixes */
+  }
+  
+  .about-me-description {
+    width: 540px;
+    margin-top: 20px;
+    margin-left: 20px;
+    padding: 5px;
+    border: 1px solid rgb(183 145 145);
+  }
+  
+  .top-right-icon {
+      width: 50px;
+      width: 50px;
+      float: right;
+      margin: -10px;
+  }
+  
+  .container {
+    width: 800px;
+    margin: auto;
+    margin-top: 20px;
+    border: 1px solid rgb(255 207 207);
+    background-color: #ffffffe0;
+  }
+  
+  .padding {
+    padding: 10px;
+  }
+  
+  hr {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    border-top: 1px solid rgb(255 207 207);
+    border-bottom: 0px solid black;
+  }
+  
+  .heading {
+    font-weight: bold;
+  }
+  
+  .right {
+    float: right;
+  }
+  
+  .project img {
+    width: 145px;
+    height: 145px;
+  }
+  
+  .top {
+    vertical-align: top; 
+  }
+  
+  .project-info {
+    width: 300px;
+    display: inline-block;
+    vertical-align: top;
+  }
+  
+  .caption {
+    font-size: 13px;
+    color: grey;
+  }
+  
+  a {
+    color: rgb(255 161 161);
+  }
+  
+  .caption a {
+    text-decoration: none; 
+    color: rgb(255 182 182);
+  }
+  
+  .project-why {
+    width: 615px;
+    margin-top: 13px;
+    padding: 5px;
+    border: 1px solid rgb(183 145 145);
+  }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  .domo-kun-area {
+    width: 100vw;
+    height: 126px; /* 42 * 3 */
+    position: fixed;
+    bottom: 0;
+  }
+  
+  .domo-kun {
+    display: none;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 84px;
+    height: 84px;
+    background-image: url("/domo_sprites/idle1.png");
+    background-size: cover;
+    image-rendering: pixelated;
+  }

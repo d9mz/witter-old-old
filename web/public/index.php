@@ -22,8 +22,30 @@ $Router         = new \Bramus\Router\Router();
  * [OBSOLETE]: Obsolete. Remove soon.
  */
 
+// anti-is-this-site-really-witter method
+// this can be easily spoofed - just a easy deterrer if they don't change heading
+$current_domain = $_SERVER['HTTP_HOST'];
+$allowed_domains = ["localhost:818", "jacksden.xyz", "witter.jacksden.xyz"];
+if(!in_array($current_domain, $allowed_domains)) {
+    header_remove("X-Powered-By");
+    header("Server: nginx/1.21.5");
+    die("<h1>Heading 1</h1>");
+}
+
 // jacksden.com
-//Replace "../" with "https://kit-pro.fontawesome.com/releases/v6.4.2/"
+// This really sucks
+
+if($current_domain == "jacksden.xyz") {
+    $Router->Get('/', "\Witter\Views\Homepage@JacksDen");
+    $Router->Set404(function() {
+        header("HTTP/1.0 404 Not Found");
+    
+        $page = new \Witter\Views\Error;
+        $page->JacksDen();
+    });
+
+    die();
+}
 
 // witter.jacksden.com
 
