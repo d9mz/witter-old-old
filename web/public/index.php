@@ -34,9 +34,6 @@ if(!in_array($current_domain, $allowed_domains)) {
 
 // jacksden.com
 // This really sucks
-
-echo $current_domain;
-
 if($current_domain == "jacksden.xyz") {
     // router stuff doesn't work in this for some reason??
     die(file_get_contents("../app/templates/misc/jacksden.twig"));
