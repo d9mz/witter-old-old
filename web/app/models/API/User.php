@@ -621,8 +621,8 @@ class User extends Model
             $alert->CreateAlert(Level::Error, "You did not enter a handle.");
         }
 
-        if (strlen($_POST['username']) < 4 || strlen($_POST['username']) > 20) {
-            $alert->CreateAlert(Level::Error, "Your handle must be longer than 3 characters and not longer than 20.");
+        if (strlen($_POST['username']) < 3 || strlen($_POST['username']) > 20) {
+            $alert->CreateAlert(Level::Error, "Your handle must be longer than 2 characters and not longer than 20.");
         }
 
         // more username validation
