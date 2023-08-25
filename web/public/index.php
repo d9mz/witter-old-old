@@ -38,15 +38,8 @@ if(!in_array($current_domain, $allowed_domains)) {
 echo $current_domain;
 
 if($current_domain == "jacksden.xyz") {
-    $Router->Get('/', "\Witter\Views\Homepage@JacksDen");
-    $Router->Set404(function() {
-        header("HTTP/1.0 404 Not Found");
-    
-        $page = new \Witter\Views\Error;
-        $page->JacksDen();
-    });
-
-    die("shitballs");
+    // router stuff doesn't work in this for some reason??
+    die(file_get_contents("../app/templates/misc/jacksden.twig"));
 }
 
 // witter.jacksden.com
