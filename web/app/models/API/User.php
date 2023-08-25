@@ -714,7 +714,7 @@ class User extends Model
         }
 
         // more username validation
-        if(ctype_alnum($_POST['username'])) {
+        if(!ctype_alnum($_POST['username'])) {
             $alert->CreateAlert(Level::Error, "Your handle cannot contain special characters.");
         }
 
