@@ -35,6 +35,8 @@ if(!in_array($current_domain, $allowed_domains)) {
 // jacksden.com
 // This really sucks
 
+echo $current_domain;
+
 if($current_domain == "jacksden.xyz") {
     $Router->Get('/', "\Witter\Views\Homepage@JacksDen");
     $Router->Set404(function() {
