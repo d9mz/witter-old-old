@@ -46,7 +46,7 @@ if($current_domain == "jacksden.xyz") {
         $page->JacksDen();
     });
 
-    die();
+    die("shitballs");
 }
 
 // witter.jacksden.com
