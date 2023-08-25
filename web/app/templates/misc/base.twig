@@ -26,6 +26,12 @@
             {% include 'includes/Header.twig' %}
         {% endblock %}
 
+        <div class="container alert-success" id="js_alert">
+            <span class="padding inline-block">
+                Witter is currently a public beta! Want to report bugs or have any suggestions? Join our <a href="https://discord.gg/3M9BrQtPHd">Discord</a>!
+            </span>
+        </div>
+
         {% if hasDisprovenCSS %}
             <div class="container alert-error height-unset" id="js_alert">
                 <span class="padding inline-block">
