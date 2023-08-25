@@ -33,6 +33,12 @@ class Homepage extends View {
         ));
     }
 
+    public function TermsOfService() {
+        echo $this->Twig->render('misc/tos.twig', array(
+            "PageSettings" => $this->PageSettings(),
+        ));
+    }
+
     public function JacksDen() {
         echo $this->Twig->render('misc/jacksden.twig', array(
             "PageSettings" => $this->PageSettings(),

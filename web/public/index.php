@@ -53,6 +53,8 @@ if(!isset($_SESSION['Handle'])) {
     $Router->Get('/user_banned', "\Witter\Views\Homepage@Banned");
     $Router->Get('/sign_out', "\Witter\Models\Utility@SignOut");
 
+    $Router->Get('/info/tos', "\Witter\Views\Homepage@TermsOfService");
+
     $Router->Get('/search', "\Witter\Views\Search@Search");
 
     // [WEB] [API] Settings
@@ -65,7 +67,10 @@ if(!isset($_SESSION['Handle'])) {
     $Router->Post('/settings/preferences/', "\Witter\Models\Settings@HideCSS");
     $Router->Post('/settings/private/', "\Witter\Models\Settings@Private");
 
-    // [WEB] Profiles\
+    // [WEB] Themes
+    $Router->Get('/themes/', "\Witter\Views\Homepage@NotImplemented");
+
+    // [WEB] Profiles
     $Router->Get('/media/{user}', "\Witter\Views\Homepage@NotImplemented");
     $Router->Get('/likes/{user}', "\Witter\Views\User@Likes");
     $Router->Get('/user/followers/{user}', "\Witter\Views\User@Followers");
