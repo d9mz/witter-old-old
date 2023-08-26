@@ -461,11 +461,11 @@ class Feed extends Model
         return $Feed->rowCount();
     }
 
-    public function GetFeedScrolling(int $page, int $weetsToLoad, bool $rss = false) : array {
+    public function GetFeedScrolling(int $page, int $weetsToLoad, bool $rss = false, bool $descending = false) : array {
         if(!$rss) {
             $page = $page + 1;
         }
-        
+
         $weetsToSkip = $page * $weetsToLoad;
         $cooldown = new \Witter\Models\Cooldown();
 
@@ -477,8 +477,13 @@ class Feed extends Model
             }
         }
 
-        $Feed = $this->Connection->prepare("SELECT feed_id FROM feed WHERE feed_target = -1 ORDER BY id DESC LIMIT " . $weetsToLoad . " OFFSET " . $weetsToSkip);
-        $Feed->execute();
+        if(!$descending) {
+            $Feed = $this->Connection->prepare("SELECT feed_id FROM feed WHERE feed_target = -1 ORDER BY id DESC LIMIT " . $weetsToLoad . " OFFSET " . $weetsToSkip);
+            $Feed->execute();
+        } else {
+            $Feed = $this->Connection->prepare("SELECT feed_id FROM feed WHERE feed_target = -1 LIMIT " . $weetsToLoad . " OFFSET " . $weetsToSkip);
+            $Feed->execute();
+        }
 
         if(!$rss) {
             if($Feed->rowCount() == 0) {
