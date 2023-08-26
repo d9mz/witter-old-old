@@ -44,6 +44,8 @@ if($current_domain == "jacksden.xyz") {
 $Router->Get('/cdn/css/{md5}', "\Witter\Models\CDN@GetCSS");
 $Router->Get('/cdn/{md5}', "\Witter\Models\CDN@GetFile");
 
+$Router->Get('/rss/', "\Witter\Views\RSS@View");
+
 if(!isset($_SESSION['Handle'])) {
     $Router->Get('/', "\Witter\Views\Homepage@View");
     $Router->Post('/user/login', "\Witter\Models\User@SignIn");
@@ -53,7 +55,6 @@ if(!isset($_SESSION['Handle'])) {
     $Router->Get('/user/{user}/{id}', "\Witter\Views\Feed@ViewWeet");
 } else {
     $Router->Get('/', "\Witter\Views\Homepage@Redirect");
-    $Router->Get('/rss/', "\Witter\Views\RSS@View");
     $Router->Get('/user_banned', "\Witter\Views\Homepage@Banned");
     $Router->Get('/sign_out', "\Witter\Models\Utility@SignOut");
 
