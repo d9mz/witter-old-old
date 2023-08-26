@@ -35,8 +35,8 @@ body, html {
     background-repeat: no-repeat;
     background-color: #d5d5d5;
     background-size: cover;
-    background-position: center;
     width: 800px;
+    height: 102px !important;
     margin-top: 0px;
 }
 

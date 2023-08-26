@@ -463,7 +463,7 @@ class Feed extends Model
 
     public function GetFeedScrolling(int $page, int $weetsToLoad, bool $rss = false, bool $descending = false) : array {
         if(!$rss) {
-            $page = $page + 1;
+            // $page = $page + 1;
         }
 
         $weetsToSkip = $page * $weetsToLoad;
