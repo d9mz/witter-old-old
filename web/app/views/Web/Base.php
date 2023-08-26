@@ -26,6 +26,7 @@ class View extends \Witter\Configurator {
             $this->Twig->addGlobal('waitingApprovalCSS', $waitingCSS);
             $this->Twig->addGlobal('unreadNotifs', $unreadNotifs);
             $this->Twig->addGlobal('discordURL', getenv("DISCORD_URL"));
+            $this->Twig->addGlobal('lastfmAPI', getenv("LASTFM_API_KEY"));
             $this->Twig->addGlobal('currentPath', $_SERVER["REQUEST_URI"]);
 
             if($userModel->isBanned()) {

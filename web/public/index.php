@@ -25,7 +25,7 @@ $Router         = new \Bramus\Router\Router();
 // anti-is-this-site-really-witter method
 // this can be easily spoofed - just a easy deterrer if they don't change heading
 $current_domain = $_SERVER['HTTP_HOST'];
-$allowed_domains = ["localhost:8181", "192.168.1.18", "jacksden.xyz", "witter.jacksden.xyz"];
+$allowed_domains = ["localhost", "192.168.1.18", "jacksden.xyz", "witter.jacksden.xyz"];
 if(!in_array($current_domain, $allowed_domains)) {
     header_remove("X-Powered-By");
     header("Server: nginx/1.21.5");

@@ -38,6 +38,22 @@ class Settings extends Model
         $alert->CreateAlert(Level::Success, "Successfully set your description.");
     }
 
+    public function UpdateLastFMToken(string $token) : void {
+        $alertsModel = new \Witter\Models\Alert();
+        $user   = new \Witter\Models\User();
+        $user   = $user->GetUser($_SESSION['Handle']);
+
+        $stmt = $this->Connection->prepare("UPDATE users SET lastfm_token = ? WHERE id = ?");
+        $stmt->execute([
+            $token,
+            $user['id'],
+        ]);
+        $stmt = null;
+        
+        $alertsModel->CreateAlert(Level::Success, "Successfully linked your Last.FM account to your profile!", false, true);
+        header("Location: /settings/");
+    }
+
     public function CSS() {
         $alert  = new \Witter\Models\Alert();
         $user   = new \Witter\Models\User();
