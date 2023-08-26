@@ -54,6 +54,19 @@ class Settings extends Model
         header("Location: /settings/");
     }
 
+    public function Unlink() {
+        if(isset($_SESSION['Handle'])) {
+            $user   = new \Witter\Models\User();
+            $user   = $user->GetUser($_SESSION['Handle']);
+            
+            $stmt = $this->Connection->prepare("UPDATE users SET lastfm_token = '' WHERE id = ?");
+            $stmt->execute([
+                $user['id'],
+            ]);
+            $stmt = null;
+        }   
+    }
+
     public function CSS() {
         $alert  = new \Witter\Models\Alert();
         $user   = new \Witter\Models\User();

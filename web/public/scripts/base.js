@@ -2,6 +2,23 @@ $(function() {
     // base.js
     // this is not good js
 
+    $('.unlink-account').on('click', function() {
+        $.ajax({
+            url: '/settings/unlink/',
+            type: 'POST',
+            data: JSON.stringify({}),
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function(result){
+                createAlert(4, `Successfully unlinked your last.fm account!`);
+                // Do something with the result
+            },
+            error: function(request, status, error){
+                // Handle errors
+            }
+        });        
+    });
+
     $('.follow_button').on('click', function() {
         event.stopPropagation();
         event.preventDefault();

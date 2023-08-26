@@ -66,6 +66,7 @@ if(!isset($_SESSION['Handle'])) {
     $Router->Get('/settings', "\Witter\Views\Settings@View");
     $Router->Post('/settings/description', "\Witter\Models\Settings@Description");
     $Router->Post('/settings/css', "\Witter\Models\Settings@CSS");
+    $Router->Post('/settings/unlink', "\Witter\Models\Settings@Unlink");
     $Router->Post('/settings/nickname', "\Witter\Models\Settings@nickname");
     $Router->Post('/settings/picture/profile', "\Witter\Models\Settings@ProfilePicture");
     $Router->Post('/settings/picture/banner', "\Witter\Models\Settings@Banner");

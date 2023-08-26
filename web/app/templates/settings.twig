@@ -51,7 +51,11 @@
 
             <div class="bold">last.fm</div>
             <form class="form" method="post" action="/settings/lastfm/">
-                <a href="http://www.last.fm/api/auth/?api_key={{ lastfmAPI }}&cb=http://localhost/settings/">link your account</a>
+                {% if User.lastfm_token is empty %}
+                    <a href="http://www.last.fm/api/auth/?api_key={{ lastfmAPI }}&cb=http://localhost/settings/">link your account</a>
+                {% else %}
+                    <a href="#" class="unlink-account">unlink your account</a>
+                {% endif %}
                 <span class="caption">linking your last.fm will show what you are scrobbling to everybody</span>
                 <input type="submit" value="set" aria-label="Set">
             </form>
