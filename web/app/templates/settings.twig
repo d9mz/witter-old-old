@@ -47,6 +47,14 @@
                     </span>
                 </div>
             {% endif %}
+            <br>
+
+            <div class="bold">last.fm</div>
+            <form class="form" method="post" action="/settings/lastfm/">
+                <a href="">link your account</a>
+                <span class="caption">linking your last.fm will show what you are scrobbling to everybody</span>
+                <input type="submit" value="set" aria-label="Set">
+            </form>
         </div>
 
         <div class="right padding-top">
@@ -78,17 +86,6 @@
                     <input type="checkbox" id="hidecss" {% if User.hide_css == "t" %}checked{% endif %} name="hide_css" aria-label="Hide CSS">
                 </div>
                 <span class="caption">enabled by default; all CSS is moderated to account for epilepsy, etc.</span>
-                <input type="submit" value="set" aria-label="Set">
-            </form>
-        </div>
-        <div class="right padding-bottom">
-            <div class="bold">last.fm</div>
-            <form class="form" method="post" action="/settings/lastfm/">
-                <div class="input-group">
-                    <label for="lastfm">username</label>
-                    <input type="text" id="lastfm" required name="lastfm" aria-label="Last.FM username">
-                </div>
-                <span class="caption">linking your last.fm will show what you are scrobbling to everybody</span>
                 <input type="submit" value="set" aria-label="Set">
             </form>
         </div>
