@@ -7,6 +7,8 @@ use Witter\Models\Type;
 class RSS extends View {
     public function View() {
         if(!isset($_GET['page'])) { $page = 1; } else { $page = $_GET['page']; }
+        header("Content-type: text/xml");
+        
         $feedModel = new \Witter\Models\Feed();
         $feed = $feedModel->GetFeedScrolling($page, 20, true);
         
