@@ -54,6 +54,20 @@ class Configurator {
             }
         });
 
+        $rssTimeFilter = new \Twig\TwigFilter('formatGMT', function ($datetime) {
+            // Ensure the provided datetime is a DateTime object
+            if (!($datetime instanceof \DateTime)) {
+                $datetime = new \DateTime($datetime);
+            }
+        
+            // Set the timezone to GMT
+            $datetime->setTimezone(new \DateTimeZone('GMT'));
+        
+            // Return the formatted date
+            return $datetime->format('D, d M Y H:i:s \G\M\T');
+        });
+        
+
         $mentionFilter = new \Twig\TwigFilter('mentionify', function ($text) {
             return preg_replace(
                 '/@([a-zA-Z0-9_]{3,20})/', 
@@ -117,6 +131,7 @@ class Configurator {
         $file = array_rand($files);
 
         $Twig->addFilter($Filter);
+        $Twig->addFilter($rssTimeFilter);
         $Twig->addFilter($linkifyFilter);
         $Twig->addFilter($mentionFilter);
         $Twig->addFilter($hashtagFilter);

@@ -53,6 +53,7 @@ if(!isset($_SESSION['Handle'])) {
     $Router->Get('/user/{user}/{id}', "\Witter\Views\Feed@ViewWeet");
 } else {
     $Router->Get('/', "\Witter\Views\Homepage@Redirect");
+    $Router->Get('/rss/', "\Witter\Views\RSS@View");
     $Router->Get('/user_banned', "\Witter\Views\Homepage@Banned");
     $Router->Get('/sign_out', "\Witter\Models\Utility@SignOut");
 

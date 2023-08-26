@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+    <channel>
+        <title>Witter Feed | Page {{ Page }}</title>
+        <link>http://witter.jacksden.xyz/</link>
+        <description>Feed</description>
+        <language>en-us</language>
+        <pubDate>Fri, 25 Aug 2023 12:00:00 GMT</pubDate>
+        <lastBuildDate>Fri, 25 Aug 2023 12:00:00 GMT</lastBuildDate>
+
+        {% if not Weet.user.visible %}    
+            {% for Weet in Feed %}
+                {% if Weet.id is defined and Weet.user.visible %}
+                    <item>
+                        <title>@{{ Weet.user.username }}: {{ Weet.feed_text }}</title>
+                        <link>http://witter.jacksden.xyz/user/{{ Weet.user.username }}/{{ Weet.feed_id }}</link>
+                        <description>{{ Weet.feed_text }}</description>
+                        <pubDate>{{ Weet.feed_created|formatGMT }}</pubDate>
+                        <guid>http://witter.jacksden.xyz/user/{{ Weet.user.username }}/{{ Weet.feed_id }}</guid>
+                    </item>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </channel>
+</rss>
+
+{% if not Weet.user.visible %}    
+    {% for Weet in Feed %}
+        {% if Weet.id is defined and Weet.user.visible %}
+            
+        {% endif %}
+    {% endfor %}
+{% endif %}

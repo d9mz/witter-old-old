@@ -461,22 +461,29 @@ class Feed extends Model
         return $Feed->rowCount();
     }
 
-    public function GetFeedScrolling(int $page, int $weetsToLoad) : array {
-        $page = $page + 1;
+    public function GetFeedScrolling(int $page, int $weetsToLoad, bool $rss = false) : array {
+        if(!$rss) {
+            $page = $page + 1;
+        }
+        
         $weetsToSkip = $page * $weetsToLoad;
         $cooldown = new \Witter\Models\Cooldown();
 
-        if(!$cooldown->GetCooldown("scroll_cooldown", $_SESSION['Handle'], 1)) {
-            die(json_encode((object)["response" => "cooldown"]));
-        } else {
-            $cooldown->SetCooldown("scroll_cooldown", $_SESSION['Handle']);
+        if(!$rss) {
+            if(!$cooldown->GetCooldown("scroll_cooldown", $_SESSION['Handle'], 1)) {
+                die(json_encode((object)["response" => "cooldown"]));
+            } else {
+                $cooldown->SetCooldown("scroll_cooldown", $_SESSION['Handle']);
+            }
         }
 
         $Feed = $this->Connection->prepare("SELECT feed_id FROM feed WHERE feed_target = -1 ORDER BY id DESC LIMIT " . $weetsToLoad . " OFFSET " . $weetsToSkip);
         $Feed->execute();
 
-        if($Feed->rowCount() == 0) {
-            die(json_encode((object)["response" => "No more pages to load!"]));
+        if(!$rss) {
+            if($Feed->rowCount() == 0) {
+                die(json_encode((object)["response" => "No more pages to load!"]));
+            }
         }
 
         // Relation: get user info while fetching forum
