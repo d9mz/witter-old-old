@@ -105,6 +105,27 @@ class Admin extends Model
         }
     }
 
+    public function DeletePost() {
+        $alert  = new \Witter\Models\Alert();
+        $feedModel = new \Witter\Models\Feed();
+        $userModel = new \Witter\Models\User();
+        $feed   = $feedModel->GetWeet($_POST['id'], false);
+
+        if(!isset($feed['id'])) {
+            $alert->CreateAlert(Level::Error, "This post does not exist!");
+        }
+
+        if(isset($_SESSION['Handle']) || $userModel->isAdmin($_SESSION['Handle'])) {
+            $stmt = $this->Connection->prepare("DELETE FROM feed WHERE feed_id = ?");
+            $stmt->execute([
+                $_POST['id'],
+            ]);
+            $stmt = null;
+
+            $alert->CreateAlert(Level::Success, "Successfully deleted weet id #" . $_POST['id']);
+        }
+    }
+
     public function ResetUser() {
         $alert  = new \Witter\Models\Alert();
         $userModel = new \Witter\Models\User();

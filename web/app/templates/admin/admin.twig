@@ -90,5 +90,16 @@
                 <input type="submit" value="unban" aria-label="Set">
             </form>
         </div>
+        
+        <div class="right padding-top padding-bottom">
+            <div class="bold">delete post</div>
+            <form class="form" method="post" action="/moderate/user/delete_post">
+                <div class="input-group">
+                    <label for="id">id</label>
+                    <input type="text" id="id" required name="id" aria-label="id">
+                </div>
+                <input type="submit" value="unban" aria-label="Set">
+            </form>
+        </div>
     </div>
 {% endblock %}

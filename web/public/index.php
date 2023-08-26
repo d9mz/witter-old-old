@@ -117,6 +117,7 @@ if(!isset($_SESSION['Handle'])) {
     $Router->Post('/moderate/css/disapprove', "\Witter\Models\Admin@DisapproveCSS");
 
     $Router->Post('/moderate/user/reset', "\Witter\Models\Admin@ResetUser");
+    $Router->Post('/moderate/user/delete_post', "\Witter\Models\Admin@DeletePost");
     $Router->Post('/moderate/user/ban', "\Witter\Models\Admin@BanUser");
     $Router->Post('/moderate/user/unban', "\Witter\Models\Admin@UnbanUser");
 
