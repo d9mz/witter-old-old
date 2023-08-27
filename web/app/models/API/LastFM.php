@@ -13,6 +13,18 @@ class LastFM extends Model {
         }
         return null;
     }
+
+    public function getRelevantTrack($tracks) {
+        foreach ($tracks->recenttracks->track as $track) {
+            if (isset($track->artist->{"#text"}) && !empty($track->artist->{"#text"}) &&
+                isset($track->album->{"#text"}) && !empty($track->album->{"#text"}) &&
+                isset($track->name) && !empty($track->name)) {
+                return $track;
+            }
+        }
+        return null;
+    }
+    
     
     public function __construct() {
         $connection = new \Witter\Models\Connection();
@@ -92,38 +104,45 @@ class LastFM extends Model {
                 $url = urldecode($url);
                 $tracks = json_decode(file_get_contents($url));
 
-                // get the actually necessary info
-                $firstTrack = $tracks->recenttracks->track[0];
-
-                $albumCoverMedium = "";
-                foreach ($firstTrack->image as $image) {
-                    if ($image->size == "medium") {
-                        $albumCoverMedium = $image->{"#text"};
-                        break; // No need to continue looping once we've found the medium size
+                $relevantTrack = $this->getRelevantTrack($tracks);
+    
+                if ($relevantTrack !== null) {
+                    $albumCoverMedium = "";
+                    foreach ($relevantTrack->image as $image) {
+                        if ($image->size == "medium") {
+                            $albumCoverMedium = $image->{"#text"};
+                            break;
+                        }
                     }
-                }
                 
-                $isPlaying = isset($firstTrack->{"@attr"}) && isset($firstTrack->{"@attr"}->nowplaying) && $firstTrack->{"@attr"}->nowplaying == "true";
+                    $isPlaying = isset($relevantTrack->{"@attr"}) && isset($relevantTrack->{"@attr"}->nowplaying) && $relevantTrack->{"@attr"}->nowplaying == "true";
                 
-                $lastScrobbled = $this->getLastScrobbledDate($tracks);
+                    $lastScrobbled = $this->getLastScrobbledDate($tracks);
                 
-                $track = (object) [
-                    "track_author" => $firstTrack->artist->{"#text"},
-                    "track_album" => $firstTrack->album->{"#text"},
-                    "track_title" => $firstTrack->name,
-                    "is_playing" => $isPlaying,
-                    "last_scrobbled" => $lastScrobbled,
-                    "album_cover" => $albumCoverMedium,
-                    "track_url" => $firstTrack->url 
-                ];                 
+                    $track = (object) [
+                        "track_author" => $relevantTrack->artist->{"#text"},
+                        "track_album" => $relevantTrack->album->{"#text"},
+                        "track_title" => $relevantTrack->name,
+                        "is_playing" => $isPlaying,
+                        "last_scrobbled" => $lastScrobbled,
+                        "album_cover" => $albumCoverMedium,
+                        "track_url" => $relevantTrack->url
+                    ];
+                    
+                    $track = json_encode($track);
 
-                $track = json_encode($track);
+                    $stmt = $this->Connection->prepare("UPDATE users SET lastfm_track_scrobbling = ? WHERE username = ?");
+                    $stmt->execute([
+                        $track,
+                        $user,
+                    ]);
+                } else {
 
-                $stmt = $this->Connection->prepare("UPDATE users SET lastfm_track_scrobbling = ? WHERE username = ?");
-                $stmt->execute([
-                    $track,
-                    $user,
-                ]);
+                    $stmt = $this->Connection->prepare("UPDATE users SET lastfm_track_scrobbling = '' WHERE username = ?");
+                    $stmt->execute([
+                        $user,
+                    ]);
+                }          
 
                 $cooldownModel->SetCooldown("scrobble_cooldown", $user);
             }
