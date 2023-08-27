@@ -7,6 +7,7 @@ use Witter\Models\Type;
 class Feed extends View {
     public function View() {
         $feedModel = new \Witter\Models\Feed();
+    
         $feed = $feedModel->GetFeed("everyone", 10);
         
         // UGLY.... Why do ?
@@ -15,6 +16,10 @@ class Feed extends View {
             "Feed" => @$feed,
             "ActiveTab" => "all",
         ));
+
+        // do after loading all content
+        $fmModel   = new \Witter\Models\LastFM();
+        $fmModel->updateCurrentListeningSong();
     }
 
     public function Trending() {
