@@ -38,7 +38,6 @@ class LastFM extends Model {
         $url = "http://ws.audioscrobbler.com/2.0/?%s";
 
         $url = sprintf($url, $queryString);
-        echo $url;
         return $url;
     }
     public function createApiSig(array $params, string $secret) : string {
@@ -84,7 +83,7 @@ class LastFM extends Model {
 
         // avg length of song according to google - 3 min 30 sec
         // 3 min 30 sec => 210 sec
-        if($cooldownModel->GetCooldown("scrobble_cooldown", $user, 1)) {
+        if($cooldownModel->GetCooldown("scrobble_cooldown", $user, 30)) {
             $token = $userModel->getLastFmSession($user);
             $username = $userModel->getLastFmUser($user);
 
