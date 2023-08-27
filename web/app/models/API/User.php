@@ -417,6 +417,22 @@ class User extends Model
         }
     }
 
+    public function getLastFmToken(string $user) : string {
+        $query = "SELECT lastfm_token FROM users WHERE username = :find";
+
+        $stmt = $this->Connection->prepare($query);
+        $stmt->bindParam(":find", $user);
+        $stmt->execute();
+
+        $user = $stmt->rowCount() === 0 ? 0 : $stmt->fetch(\PDO::FETCH_ASSOC);
+
+        if(isset($user['lastfm_token'])) {
+            return $user['lastfm_token'];
+        } else {
+            return -1;
+        }
+    }
+
     // worst function ever?
     // try to make a database class down the line -- this REALLY sucks
     // try implementing string : array so if array, implode(", ") etc etc for SELECT from

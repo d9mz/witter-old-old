@@ -31,6 +31,18 @@ class Base extends Configurator {
         }
 
         if(isset($_SESSION['Handle'])) {
+            $userModel = new \Witter\Models\User();
+            $cooldownModel = new \Witter\Models\Cooldown();
+            $fmModel = new \Witter\Models\LastFM();
+
+            if($cooldownModel->GetCooldown("scrobble_cooldown", $_SESSION['Handle'], 1)) {
+                $user = $userModel->getLastFmToken($_SESSION['Handle']);
+
+                if(!empty($user)) {
+                    // get latest track
+                }
+            }
+
             $stmt = $Connection->prepare("UPDATE users SET last_login = NOW() WHERE username = ?");
             $stmt->execute([
                 $_SESSION['Handle'],

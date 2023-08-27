@@ -41,6 +41,7 @@ class Settings extends Model
     public function UpdateLastFMToken(string $token) : void {
         $alertsModel = new \Witter\Models\Alert();
         $user   = new \Witter\Models\User();
+        $fmModel = new \Witter\Models\LastFM();
         $user   = $user->GetUser($_SESSION['Handle']);
 
         $stmt = $this->Connection->prepare("UPDATE users SET lastfm_token = ? WHERE id = ?");
@@ -49,7 +50,64 @@ class Settings extends Model
             $user['id'],
         ]);
         $stmt = null;
+
+        $sig = $fmModel->createApiSig([
+            'api_key' => getenv("LASTFM_API_KEY"),
+            'method' => 'auth.getSession',
+            'token' => $token,
+        ], getenv("LASTFM_API_SECRET"));
+
+        $url = $fmModel->constructURL([
+            'method' => 'auth.getSession',
+            'token' => $token,
+            'api_key' => getenv("LASTFM_API_KEY"), 
+            'api_sig' => $sig,
+            'format' => 'json',
+        ]);
+
+        // im gonna kill myself
+
+        $max_attempts = 5;
+        $attempt = 0;
+        $success = false;
+        $response = null;
         
+        while ($attempt < $max_attempts && !$success) {
+            $ch = curl_init(urldecode($url));
+            echo urldecode($url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_USERAGENT, 'Witter/1.0');
+            
+            $response = curl_exec($ch);
+            
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            
+            // echo $httpCode;
+
+            if ($httpCode == 200) { // HTTP OK
+                $success = true;
+            } else {
+                $attempt++;
+                sleep(1); 
+            }
+            
+            curl_close($ch);
+        }        
+        
+        if ($success) {
+            $session = json_decode($response);
+        } else {
+            $alertsModel->CreateAlert(Level::Error, "We could not link your Last.FM to your profile.", false, true);
+            header("Location: /settings/");
+        }        
+
+        $stmt = $this->Connection->prepare("UPDATE users SET lastfm_session = ? WHERE id = ?");
+        $stmt->execute([
+            $session->session->key,
+            $user['id'],
+        ]);
+        $stmt = null;
+
         $alertsModel->CreateAlert(Level::Success, "Successfully linked your Last.FM account to your profile!", false, true);
         header("Location: /settings/");
     }
@@ -59,7 +117,7 @@ class Settings extends Model
             $user   = new \Witter\Models\User();
             $user   = $user->GetUser($_SESSION['Handle']);
             
-            $stmt = $this->Connection->prepare("UPDATE users SET lastfm_token = '' WHERE id = ?");
+            $stmt = $this->Connection->prepare("UPDATE users SET lastfm_token = '', lastfm_session = '' WHERE id = ?");
             $stmt->execute([
                 $user['id'],
             ]);
