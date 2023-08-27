@@ -36,10 +36,27 @@ class Base extends Configurator {
             $fmModel = new \Witter\Models\LastFM();
 
             if($cooldownModel->GetCooldown("scrobble_cooldown", $_SESSION['Handle'], 1)) {
-                $user = $userModel->getLastFmToken($_SESSION['Handle']);
+                $token = $userModel->getLastFmToken($_SESSION['Handle']);
+                $username = $userModel->getLastFmUser($_SESSION['Handle']);
 
-                if(!empty($user)) {
-                    // get latest track
+                if(!empty($token) && !empty($username)) {
+                    $sig = $fmModel->createApiSig([
+                        'api_key' => getenv("LASTFM_API_KEY"),
+                        'method' => 'user.getRecentTracks',
+                        'token' => $token,
+                    ], getenv("LASTFM_API_SECRET"));
+            
+                    $url = $fmModel->constructURL([
+                        'method' => 'user.getRecentTracks',
+                        'limit' => 1,
+                        'user' => $username,
+                        'api_key' => getenv("LASTFM_API_KEY"), 
+                        'format' => 'json',
+                    ]);
+                    
+                    $url = urldecode($url);
+                    $tracks = json_decode(file_get_contents($url));
+                    die(print_r($tracks));
                 }
             }
 

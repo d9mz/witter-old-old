@@ -74,7 +74,6 @@ class Settings extends Model
         
         while ($attempt < $max_attempts && !$success) {
             $ch = curl_init(urldecode($url));
-            echo urldecode($url);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_USERAGENT, 'Witter/1.0');
             
@@ -101,9 +100,10 @@ class Settings extends Model
             header("Location: /settings/");
         }        
 
-        $stmt = $this->Connection->prepare("UPDATE users SET lastfm_session = ? WHERE id = ?");
+        $stmt = $this->Connection->prepare("UPDATE users SET lastfm_session = ?, lastfm_username = ? WHERE id = ?");
         $stmt->execute([
             $session->session->key,
+            $session->session->name,
             $user['id'],
         ]);
         $stmt = null;
@@ -117,7 +117,7 @@ class Settings extends Model
             $user   = new \Witter\Models\User();
             $user   = $user->GetUser($_SESSION['Handle']);
             
-            $stmt = $this->Connection->prepare("UPDATE users SET lastfm_token = '', lastfm_session = '' WHERE id = ?");
+            $stmt = $this->Connection->prepare("UPDATE users SET lastfm_username = '', lastfm_token = '', lastfm_session = '' WHERE id = ?");
             $stmt->execute([
                 $user['id'],
             ]);
