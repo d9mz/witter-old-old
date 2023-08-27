@@ -433,6 +433,22 @@ class User extends Model
         }
     }
 
+    public function getLastFmSession(string $user) : string {
+        $query = "SELECT lastfm_session FROM users WHERE username = :find";
+
+        $stmt = $this->Connection->prepare($query);
+        $stmt->bindParam(":find", $user);
+        $stmt->execute();
+
+        $user = $stmt->rowCount() === 0 ? 0 : $stmt->fetch(\PDO::FETCH_ASSOC);
+
+        if(isset($user['lastfm_session'])) {
+            return $user['lastfm_session'];
+        } else {
+            return -1;
+        }
+    }
+
     public function getLastFmUser(string $user) : string {
         $query = "SELECT lastfm_username FROM users WHERE username = :find";
 

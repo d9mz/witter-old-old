@@ -84,8 +84,8 @@ class LastFM extends Model {
 
         // avg length of song according to google - 3 min 30 sec
         // 3 min 30 sec => 210 sec
-        if($cooldownModel->GetCooldown("scrobble_cooldown", $user, 30)) {
-            $token = $userModel->getLastFmToken($user);
+        if($cooldownModel->GetCooldown("scrobble_cooldown", $user, 1)) {
+            $token = $userModel->getLastFmSession($user);
             $username = $userModel->getLastFmUser($user);
 
             if(!empty($token) && !empty($username)) {
@@ -100,13 +100,11 @@ class LastFM extends Model {
                     'limit' => 3,
                     'sk' => $token,
                     'user' => $username,
-                    'api_sig' => $sig,
                     'api_key' => getenv("LASTFM_API_KEY"), 
                     'format' => 'json',
                 ]);
                 
-                $url = urldecode($url);
-                $tracks = json_decode(file_get_contents($url));
+                $tracks = json_decode(file_get_contents(urldecode($url)));
 
                 $relevantTrack = $this->getRelevantTrack($tracks);
     
