@@ -52,7 +52,7 @@
             <div class="bold">last.fm</div>
             <form class="form" method="post" action="/settings/lastfm/">
                 {% if User.lastfm_token is empty %}
-                    <a href="http://www.last.fm/api/auth/?api_key={{ lastfmAPI }}&cb=http://localhost/settings/">link your account</a>
+                    <a href="http://www.last.fm/api/auth/?api_key={{ lastfmAPI }}&cb=https://witter.jacksden.xyz/settings/">link your account</a>
                 {% else %}
                     <a href="#" class="unlink-account">unlink your account</a>
                 {% endif %}

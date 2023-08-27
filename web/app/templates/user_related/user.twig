@@ -93,6 +93,31 @@
         <div class="user-description">
             <span class="caption">{{ User.description }}</span>
         </div>
+        {% if User.lastfm is not empty %}
+    </div>
+    <hr>
+    <div class="padding user-infobox">
+        <div class="padding user-album-container">
+            <div class="user-album">
+                <div class="album-cover">
+                    <img src="{{ User.lastfm.album_cover }}">
+                </div>
+                <div class="album-metadata top inline-block">
+                    <div class="song-title bold">{{ User.lastfm.track_title }} <span class="caption">(scrobbled {{ User.lastfm.last_scrobbled|timeago }})</span></div>
+                    <div class="album-title">{{ User.lastfm.track_album }}</div>
+                    <div class="artist-title">{{ User.lastfm.track_author }}</div>
+                </div>
+                <div class="right no-border-left">
+                    <a href="{{ User.lastfm.track_url }}">
+                    <button>more info</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div class="padding user-infobox">
+        {% endif %}
         <div class="user-follow-metric">
             <span class="caption"><b><a class="keep-color" href="/user/followers/{{ User.username }}">{{ User.metrics.follower_count|number_format }}</b> follower(s), </a></span>
             <span class="caption"><b><a class="keep-color" href="/user/following/{{ User.username }}">{{ User.metrics.following_count|number_format }}</b> following</a></span>

@@ -71,6 +71,9 @@ class User extends View {
                 $user['following'] = false;
             }
 
+            $fmModel   = new \Witter\Models\LastFM();
+            $fmModel->updateCurrentListeningSong($user['username']);
+
             echo $this->Twig->render('user_related/user.twig', array(
                 "PageSettings" => $this->PageSettings($user['nickname'] . " (@" . $user['username'] . ")", $user['description']),
                 "User" => $user,

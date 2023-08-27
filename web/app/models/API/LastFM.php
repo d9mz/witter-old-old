@@ -5,6 +5,15 @@ use Witter\Models\Level;
 use Witter\Models\Type;
 
 class LastFM extends Model {
+    public function getLastScrobbledDate($tracks) {
+        foreach ($tracks->recenttracks->track as $track) {
+            if (isset($track->date) && isset($track->date->uts)) {
+                return date('d M Y, H:i', $track->date->uts);
+            }
+        }
+        return null;
+    }
+    
     public function __construct() {
         $connection = new \Witter\Models\Connection();
         $this->Connection = $connection->MakeConnection();
@@ -54,16 +63,16 @@ class LastFM extends Model {
     // Performance on running this under Base is horrible
     // So we're going to be running this unnder a few pages
     // Performance hit with this is negligable -- maybe like 30ms?
-    public function updateCurrentListeningSong() : void {
+    public function updateCurrentListeningSong(string $user) : void {
         $userModel = new \Witter\Models\User();
         $cooldownModel = new \Witter\Models\Cooldown();
         $fmModel = new \Witter\Models\LastFM();
 
         // avg length of song according to google - 3 min 30 sec
         // 3 min 30 sec => 210 sec
-        if($cooldownModel->GetCooldown("scrobble_cooldown", $_SESSION['Handle'], 210)) {
-            $token = $userModel->getLastFmToken($_SESSION['Handle']);
-            $username = $userModel->getLastFmUser($_SESSION['Handle']);
+        if($cooldownModel->GetCooldown("scrobble_cooldown", $user, 30)) {
+            $token = $userModel->getLastFmToken($user);
+            $username = $userModel->getLastFmUser($user);
 
             if(!empty($token) && !empty($username)) {
                 $sig = $fmModel->createApiSig([
@@ -96,7 +105,7 @@ class LastFM extends Model {
                 
                 $isPlaying = isset($firstTrack->{"@attr"}) && isset($firstTrack->{"@attr"}->nowplaying) && $firstTrack->{"@attr"}->nowplaying == "true";
                 
-                $lastScrobbled = isset($firstTrack->date) ? $firstTrack->date->{"#text"} : null;
+                $lastScrobbled = $this->getLastScrobbledDate($tracks);
                 
                 $track = (object) [
                     "track_author" => $firstTrack->artist->{"#text"},
@@ -113,8 +122,10 @@ class LastFM extends Model {
                 $stmt = $this->Connection->prepare("UPDATE users SET lastfm_track_scrobbling = ? WHERE username = ?");
                 $stmt->execute([
                     $track,
-                    $_SESSION['Handle'],
+                    $user,
                 ]);
+
+                $cooldownModel->SetCooldown("scrobble_cooldown", $user);
             }
         }
     }

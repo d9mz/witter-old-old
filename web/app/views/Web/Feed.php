@@ -10,16 +10,15 @@ class Feed extends View {
     
         $feed = $feedModel->GetFeed("everyone", 10);
         
+        $fmModel   = new \Witter\Models\LastFM();
+        $fmModel->updateCurrentListeningSong($_SESSION['Handle']);
+
         // UGLY.... Why do ?
         echo $this->Twig->render('feed.twig', array(
             "PageSettings" => $this->PageSettings("Feed", "This is your feed."),
             "Feed" => @$feed,
             "ActiveTab" => "all",
         ));
-
-        // do after loading all content
-        $fmModel   = new \Witter\Models\LastFM();
-        $fmModel->updateCurrentListeningSong();
     }
 
     public function Trending() {

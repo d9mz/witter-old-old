@@ -578,6 +578,12 @@ class User extends Model
             $user['visible'] = true;
 
             if(!$optimized) {
+                // scrobbling related stuff
+                if(!empty($user['lastfm_username']) && !empty($user['lastfm_track_scrobbling'])) {
+                    $user['lastfm'] = (json_decode($user['lastfm_track_scrobbling']));
+                }
+
+                // oomfs, blocked, visibility related stuff
                 $user['oomf'] = false;
                 $user['blocked_you'] = false;
                 $user['you_blocked'] = false;
