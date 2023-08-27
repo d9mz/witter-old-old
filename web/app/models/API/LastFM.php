@@ -96,6 +96,7 @@ class LastFM extends Model {
                 $url = $fmModel->constructURL([
                     'method' => 'user.getRecentTracks',
                     'limit' => 3,
+                    'sk' => $token,
                     'user' => $username,
                     'api_key' => getenv("LASTFM_API_KEY"), 
                     'format' => 'json',
