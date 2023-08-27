@@ -20,7 +20,7 @@ class Cooldown extends Model {
         if(filter_var($user, FILTER_VALIDATE_INT)) {
             if($userModel->UserExists($user, Type::ID)) {
                 // the $column parameter should ALWAYS be hardcoded!!!
-                $stmt = $this->Connection->prepare("SELECT * FROM users WHERE id = :id AND " . $column . " >= NOW() - INTERVAL " . $cooldown . " SECOND");
+                $stmt = $this->Connection->prepare("SELECT id FROM users WHERE id = :id AND " . $column . " >= NOW() - INTERVAL " . $cooldown . " SECOND");
                 $stmt->bindParam(":id", $user);
                 $stmt->execute();
                 if($stmt->rowCount() === 1) {

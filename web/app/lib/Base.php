@@ -35,7 +35,9 @@ class Base extends Configurator {
             $cooldownModel = new \Witter\Models\Cooldown();
             $fmModel = new \Witter\Models\LastFM();
 
-            if($cooldownModel->GetCooldown("scrobble_cooldown", $_SESSION['Handle'], 1)) {
+            // avg length of song according to google - 3 min 30 sec
+            // 3 min 30 sec => 210 sec
+            if($cooldownModel->GetCooldown("scrobble_cooldown", $_SESSION['Handle'], 210)) {
                 $token = $userModel->getLastFmToken($_SESSION['Handle']);
                 $username = $userModel->getLastFmUser($_SESSION['Handle']);
 
@@ -56,7 +58,39 @@ class Base extends Configurator {
                     
                     $url = urldecode($url);
                     $tracks = json_decode(file_get_contents($url));
-                    die(print_r($tracks));
+
+                    // get the actually necessary info
+                    $firstTrack = $tracks->recenttracks->track[0];
+
+                    $albumCoverMedium = "";
+                    foreach ($firstTrack->image as $image) {
+                        if ($image->size == "medium") {
+                            $albumCoverMedium = $image->{"#text"};
+                            break; // No need to continue looping once we've found the medium size
+                        }
+                    }
+                    
+                    $isPlaying = isset($firstTrack->{"@attr"}) && isset($firstTrack->{"@attr"}->nowplaying) && $firstTrack->{"@attr"}->nowplaying == "true";
+                    
+                    $lastScrobbled = isset($firstTrack->date) ? $firstTrack->date->{"#text"} : null;
+                    
+                    $track = (object) [
+                        "track_author" => $firstTrack->artist->{"#text"},
+                        "track_album" => $firstTrack->album->{"#text"},
+                        "track_title" => $firstTrack->name,
+                        "is_playing" => $isPlaying,
+                        "last_scrobbled" => $lastScrobbled,
+                        "album_cover" => $albumCoverMedium,
+                        "track_url" => $firstTrack->url 
+                    ];                 
+
+                    $track = json_encode($track);
+
+                    $stmt = $Connection->prepare("UPDATE users SET lastfm_track_scrobbling = ? WHERE username = ?");
+                    $stmt->execute([
+                        $track,
+                        $_SESSION['Handle'],
+                    ]);
                 }
             }
 
