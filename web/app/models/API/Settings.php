@@ -149,8 +149,8 @@ class Settings extends Model
         $user   = new \Witter\Models\User();
         $user   = $user->GetUser($_SESSION['Handle']);
 
-        if (strlen(@$_POST['css']) > 8000) {
-            $alert->CreateAlert(Level::Error, "Your CSS cannot be longer than 8000 characters.");
+        if (strlen(@$_POST['css']) > 7000) {
+            $alert->CreateAlert(Level::Error, "Your CSS cannot be longer than 7000 characters.");
         }
 
         $stmt = $this->Connection->prepare("UPDATE users SET css = ?, moderated_css = 'f' WHERE id = ?");
