@@ -37,7 +37,9 @@ class LastFM extends Model {
         $queryString = http_build_query($params);
         $url = "http://ws.audioscrobbler.com/2.0/?%s";
 
-        return sprintf($url, $queryString);
+        $url = sprintf($url, $queryString);
+        echo $url;
+        return $url;
     }
     public function createApiSig(array $params, string $secret) : string {
         // Step 1: Sort parameters alphabetically
