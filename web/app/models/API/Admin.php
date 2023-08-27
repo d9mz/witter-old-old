@@ -238,6 +238,8 @@ class Admin extends Model
     // Create a general all-purpose function for the enum
     // We're gonna have to make some pagination for this so better to do this now than later
     public function getUnmoderatedItems(ModeratableTypes $moderationType, int $page = 0) : array {
+        $users = [];
+        
         if($moderationType == ModeratableTypes::CSS) {
             $userModel = new \Witter\Models\User();
 
