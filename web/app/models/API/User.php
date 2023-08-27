@@ -578,9 +578,18 @@ class User extends Model
             $user['visible'] = true;
 
             if(!$optimized) {
+                $fmModel = new \Witter\Models\LastFM();
+
                 // scrobbling related stuff
                 if(!empty($user['lastfm_username']) && !empty($user['lastfm_track_scrobbling'])) {
                     $user['lastfm'] = (json_decode($user['lastfm_track_scrobbling']));
+                    $user['lastfm_link'] = $fmModel->constructURL([
+                        'method' => 'user.getRecentTracks',
+                        'limit' => 1,
+                        'user' => $user['lastfm_username'],
+                        'api_key' => getenv("LASTFM_API_KEY"), 
+                        'format' => 'json',
+                    ]);
                 }
 
                 // oomfs, blocked, visibility related stuff

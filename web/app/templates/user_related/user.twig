@@ -86,7 +86,7 @@
     </div>
     {% if isAdmin %}
     <div class="padding">
-        <a href="/cdn/css/{{ User.username_md5 }}">view css</a> &bull; <a href="#" class="admin-moderate-item">moderate user</a> 
+        <a href="/cdn/css/{{ User.username_md5 }}">view css</a> &bull; <a href="#" class="admin-moderate-item">moderate user</a> &bull; <a href="{{ User.lastfm_link }}">lastfm scrobble api test</a>
     </div>
     {% endif %}
     <div class="padding user-infobox">
