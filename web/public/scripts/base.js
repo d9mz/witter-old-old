@@ -121,7 +121,11 @@ $(document).on('click', '.block-user-action', function() {
         dataType: 'json',
         success: function(result){
             // Do something with the result
-            createAlert(4, `Successfully blocked this user!`);
+            if(result.action == "block") {
+                createAlert(4, `Successfully blocked this user!`);
+            } else if(result.action == "unblocked") {
+                createAlert(4, `Successfully unblocked this user!`);
+            }
             console.log("[block action] ", result);
         },
         error: function(request, status, error){

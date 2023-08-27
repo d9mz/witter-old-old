@@ -350,7 +350,7 @@ class User extends Model
                 ]
             );
 
-            $response = array('status' => 'success', 'action' => 'blocked');
+            $response = array('status' => 'success', 'action' => 'unblocked');
         } else {
             // target unnfollows you
 
@@ -383,7 +383,7 @@ class User extends Model
                 $user['id'],
             ]);
 
-            $response = array('status' => 'requested', 'action' => 'unblocked');
+            $response = array('status' => 'requested', 'action' => 'block');
         }
 
         echo json_encode($response);

@@ -38,7 +38,7 @@
                             <div class="dropdown-show"></div>
                             <div class="dropdown-content">
                                 {% if Weet.user.username != Session.Handle %}
-                                    <span class="block-user-action" data-target="{{ Weet.user.id }}">block <b>@{{ Weet.user.username }}</b></span>
+                                    <span class="block-user-action" data-target="{{ Weet.user.id }}">{% if Weet.user.you_blocked %}un{% endif %}block <b>@{{ Weet.user.username }}</b></span>
                                 {% else %}
                                     <span class="delete-weet-action" data-target="{{ Weet.feed_id }}">delete weet</span>
                                 {% endif %}
