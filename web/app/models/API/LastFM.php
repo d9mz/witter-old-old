@@ -98,6 +98,7 @@ class LastFM extends Model {
                     'limit' => 3,
                     'sk' => $token,
                     'user' => $username,
+                    'api_sig' => $sig,
                     'api_key' => getenv("LASTFM_API_KEY"), 
                     'format' => 'json',
                 ]);
