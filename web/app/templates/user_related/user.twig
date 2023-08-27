@@ -93,7 +93,7 @@
         <div class="user-description">
             <span class="caption">{{ User.description }}</span>
         </div>
-        {% if User.lastfm is not empty %}
+        {% if User.lastfm is not empty and User.lasfm.track_title is not defined and User.lastfm.track_title is not null %}
     </div>
     <hr>
     <div class="padding user-infobox">

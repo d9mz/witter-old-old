@@ -10,13 +10,14 @@ $(function() {
             contentType: 'application/json; charset=utf-8',
             dataType: 'json',
             success: function(result){
-                createAlert(4, `Successfully unlinked your last.fm account!`);
                 // Do something with the result
             },
             error: function(request, status, error){
                 // Handle errors
             }
         });        
+
+        createAlert(4, `Successfully unlinked your last.fm account!`);
     });
 
     $('.follow_button').on('click', function() {
