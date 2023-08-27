@@ -595,7 +595,7 @@ class Feed extends Model
         }
 
         if (strlen($_POST['comment']) < 4 || strlen($_POST['comment']) > 200) {
-            $alert->CreateAlert(Level::Error, "Your reply must be longer than 3 characters and not longer than 20.");
+            $alert->CreateAlert(Level::Error, "Your reply must be longer than 3 characters and not longer than 200.");
         }
 
         if(!$cooldown->GetCooldown("weet_cooldown", $_SESSION['Handle'], 10)) {
@@ -639,7 +639,7 @@ class Feed extends Model
         }
 
         if (strlen($_POST['comment']) < 4 || strlen($_POST['comment']) > 200) {
-            $alert->CreateAlert(Level::Error, "Your reply must be longer than 3 characters and not longer than 20.");
+            $alert->CreateAlert(Level::Error, "Your reply must be longer than 3 characters and not longer than 200.");
         }
 
         if(!$cooldown->GetCooldown("weet_cooldown", $_SESSION['Handle'], 10)) {
@@ -680,7 +680,7 @@ class Feed extends Model
         }
 
         if (strlen($_POST['comment']) < 4 || strlen($_POST['comment']) > 200) {
-            $alert->CreateAlert(Level::Error, "Your post must be longer than 3 characters and not longer than 20.");
+            $alert->CreateAlert(Level::Error, "Your post must be longer than 3 characters and not longer than 200.");
         }
 
         if(!$cooldown->GetCooldown("weet_cooldown", $_SESSION['Handle'], 10)) {
