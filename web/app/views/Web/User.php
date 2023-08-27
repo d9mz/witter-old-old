@@ -61,6 +61,10 @@ class User extends View {
 
             $feed = new \Witter\Models\Feed();
             $feed = $feed->GetFeed($handle, 20);
+
+            $fmModel   = new \Witter\Models\LastFM();
+            $fmModel->updateCurrentListeningSong($user['username']);
+            
             $user = $userclass->GetUser($handle);
 
             // is the logged in user following the current user?
@@ -70,9 +74,6 @@ class User extends View {
             } else {
                 $user['following'] = false;
             }
-
-            $fmModel   = new \Witter\Models\LastFM();
-            $fmModel->updateCurrentListeningSong($user['username']);
 
             echo $this->Twig->render('user_related/user.twig', array(
                 "PageSettings" => $this->PageSettings($user['nickname'] . " (@" . $user['username'] . ")", $user['description']),

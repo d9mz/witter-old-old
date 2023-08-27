@@ -38,6 +38,25 @@ class Settings extends Model
         $alert->CreateAlert(Level::Success, "Successfully set your description.");
     }
 
+    public function Location() { 
+        $alert  = new \Witter\Models\Alert();
+        $user   = new \Witter\Models\User();
+        $util   = new \Witter\Models\Utility();
+        $user   = $user->GetUser($_SESSION['Handle']);
+
+        if (!$util->isValidCountry($_POST['country'])) {
+            $alert->CreateAlert(Level::Error, "Invalid country");
+        }
+
+        $stmt = $this->Connection->prepare("UPDATE users SET country = ? WHERE id = ?");
+        $stmt->execute([
+            $_POST['country'],
+            $user['id'],
+        ]);
+        $stmt = null;
+
+        $alert->CreateAlert(Level::Success, "Successfully set your location.");
+    }
     public function UpdateLastFMToken(string $token) : void {
         $alertsModel = new \Witter\Models\Alert();
         $user   = new \Witter\Models\User();

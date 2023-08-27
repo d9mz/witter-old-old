@@ -8,6 +8,9 @@ class Settings extends View {
         $userModel = new \Witter\Models\User();
         $settingsModel = new \Witter\Models\Settings();
         $fmModel = new \Witter\Models\LastFM();
+        $util = new \Witter\Models\Utility();
+
+        $countries = $util->getAllCountries();
 
         if(isset($_GET['token'])) {
             $settingsModel->UpdateLastFMToken($_GET['token']);
@@ -19,6 +22,7 @@ class Settings extends View {
             "PageSettings" => $this->PageSettings("Settings", "Settings page"),
             "User" => $user,
             "ActiveTab" => "general",
+            "Countries" => $countries,
         ));
     }
 }

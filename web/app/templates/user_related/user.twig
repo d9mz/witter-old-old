@@ -119,6 +119,9 @@
     <div class="padding user-infobox">
         {% endif %}
         <div class="user-follow-metric">
+            {% if User.country is not empty %}
+            <span class="caption">Country: <b><a class="keep-color" href="#">{{ User.country }}</a></b></span><br>
+            {% endif %}
             <span class="caption"><b><a class="keep-color" href="/user/followers/{{ User.username }}">{{ User.metrics.follower_count|number_format }}</b> follower(s), </a></span>
             <span class="caption"><b><a class="keep-color" href="/user/following/{{ User.username }}">{{ User.metrics.following_count|number_format }}</b> following</a></span>
 

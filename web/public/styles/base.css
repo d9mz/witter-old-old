@@ -552,6 +552,10 @@ button,
     font-weight: initial;
 }
 
+select {
+    width: 179px;
+}
+
 .user-album-container .album-title,
 .user-album-container .artist-title,
 .user-album-container .scrobbled-ago,

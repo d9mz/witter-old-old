@@ -103,5 +103,20 @@
                 <input type="submit" value="set" aria-label="Set">
             </form>
         </div>
+        <div class="right padding-bottom">
+            <div class="bold">location</div>
+            <form class="form" method="post" action="/settings/location/">
+                <div class="input-group">
+                    <label for="country">country</label>
+                    <select name="country" id="country">
+                        {% for Country in Countries %}
+                            <option value="{{ Country }}">{{ Country }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <span class="caption">shown publically default; you can set visibility in privacy settings</span>
+                <input type="submit" value="set" aria-label="Set">
+            </form>
+        </div>
     </div>
 {% endblock %}

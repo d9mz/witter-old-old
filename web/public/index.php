@@ -72,6 +72,7 @@ if(!isset($_SESSION['Handle'])) {
     $Router->Post('/settings/picture/banner', "\Witter\Models\Settings@Banner");
     $Router->Post('/settings/preferences/', "\Witter\Models\Settings@HideCSS");
     $Router->Post('/settings/private/', "\Witter\Models\Settings@Private");
+    $Router->Post('/settings/location/', "\Witter\Models\Settings@Location");
 
     // [WEB] Themes
     $Router->Get('/themes/', "\Witter\Views\Homepage@NotImplemented");

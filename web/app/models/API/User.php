@@ -585,7 +585,7 @@ class User extends Model
                     $user['lastfm'] = (json_decode($user['lastfm_track_scrobbling']));
                     $user['lastfm_link'] = $fmModel->constructURL([
                         'method' => 'user.getRecentTracks',
-                        'limit' => 1,
+                        'limit' => 2,
                         'user' => $user['lastfm_username'],
                         'api_key' => getenv("LASTFM_API_KEY"), 
                         'format' => 'json',
