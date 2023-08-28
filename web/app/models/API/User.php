@@ -179,6 +179,25 @@ class User extends Model
 
         return $followers;
     }
+
+    public function getBlockedUsers(int | string $user) : array {
+        if(is_int($user)) $userData = $this->GetUser($user, Type::ID);
+        if(!is_int($user)) $userData = $this->GetUser($user, Type::Username);
+        if(!isset($userData['id'])) return []; // THIS should not happen.
+        
+        $query = "SELECT * FROM blocks WHERE user = :id";
+        $blockStmt = $this->Connection->prepare($query);
+        $blockStmt->bindParam(":id", $userData['id']);
+        $blockStmt->execute();
+
+        $users = [];
+        while ($block = $blockStmt->fetch(\PDO::FETCH_ASSOC)) {
+            $user = $this->GetUser($block['target'], Type::ID);
+            $users[] = $user;
+        } 
+
+        return $users;
+    }
     
     public function FollowingUser(string|int $target, string|int $user) : bool {
         $userModel = new \Witter\Models\User();

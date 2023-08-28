@@ -47,4 +47,25 @@ class Settings extends View {
             "Privacy" => $privacy,
         ));
     }
+
+    public function Blocked() {
+        $userModel = new \Witter\Models\User();
+        $settingsModel = new \Witter\Models\Settings();
+        $fmModel = new \Witter\Models\LastFM();
+        $util = new \Witter\Models\Utility();
+
+        if(isset($_GET['token'])) {
+            $settingsModel->UpdateLastFMToken($_GET['token']);
+        }
+
+        $user = $userModel->GetUser($_SESSION['Handle']);
+        $blocked = $userModel->getBlockedUsers($_SESSION['Handle']);
+        
+        echo $this->Twig->render('settings/blocked.twig', array(
+            "PageSettings" => $this->PageSettings("Settings", "Settings page"),
+            "User" => $user,
+            "Blocked" => $blocked,
+            "ActiveTab" => "blocked",
+        ));
+    }
 }

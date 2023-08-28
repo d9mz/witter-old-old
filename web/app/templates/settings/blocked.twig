@@ -1,0 +1,40 @@
+{% extends "misc/base.twig" %}
+{%- block Container -%}
+    <div class="padding settings-page-fix">
+        <h3 class="inline-block padding-right"><i class="far fa-wrench"></i> user settings</h3>
+
+        <div class="tab-group inline-block">
+            <a href="/settings/"><div class="tab {% if ActiveTab == 'general' %}primary{% endif %}">general</div></a>
+            <a href="/settings/privacy"><div class="tab {% if ActiveTab == 'privacy' %}primary{% endif %}">privacy</div></a>
+            <a href="/settings/blocked"><div class="tab {% if ActiveTab == 'blocked' %}primary{% endif %}">blocked users</div></a>
+        </div>
+    </div>
+    <hr>
+    <div class="padding no-padding-top no-padding-bottom">
+        <br>
+        {% for User in Blocked %}
+            {% if User.id is defined %}
+                <div class="user-card wide" data-target-url="/user/{{ User.username }}/">
+                    <img class="profile-picture" src="/cdn/{{ User.profile_picture }}">
+                    <div class="user-metadata inline-block top">
+                        <b>{% if User.private == 't' %}<i class="far fa-lock"></i>{% endif %} {{ User.nickname }}</b>
+                        <span class="caption inline-block">@{{ User.username }}</span><br>
+                        <span class="caption">joined {{ User.created|timeago }}</span><br>
+                        <span class="caption">last online {{ User.last_login|timeago }}</span>
+                        <button 
+                            class="button left follow_button" 
+                            {% if Session.Handle == User.username %}
+                            disabled
+                            title="You cannot follow yourself!"
+                            {% endif %}
+                            data-following="{% if User.following and Session.Handle != User.username %}true{% else %}false{% endif %}" 
+                            data-follow-target="{{ User.id }}" 
+                            aria-label="Follow">
+                            {% if User.following and Session.Handle != User.username %}unfollow{% else %}follow{% endif %}
+                        </button>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div><br>
+{% endblock %}

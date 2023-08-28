@@ -213,7 +213,7 @@ $(document).on('click', '.comment_like_reply', function() {
     });        
 });
 
-$(document).on('click', '.reweet, .followers-following-list .user-card.wide', function() {
+$(document).on('click', '.reweet, .followers-following-list, .user-card.wide', function() {
     window.location.replace(
         $(this).data('target-url')
     );
