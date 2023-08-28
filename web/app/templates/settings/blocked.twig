@@ -12,6 +12,11 @@
     <hr>
     <div class="padding no-padding-top no-padding-bottom">
         <br>
+        {% if Blocked|length == 0 %}
+            <div class="center caption padding-top padding-bottom">
+                You have blocked no users.
+            </div>
+        {% endif %}
         {% for User in Blocked %}
             {% if User.id is defined %}
                 <div class="user-card wide" data-target-url="/user/{{ User.username }}/">
