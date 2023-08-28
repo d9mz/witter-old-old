@@ -592,6 +592,7 @@ class User extends Model
 
             // "viewable"? private user thing
             $user['visible'] = true;
+            $user['privacy'] = json_decode($user['privacy']);
 
             if(!$optimized) {
                 $fmModel = new \Witter\Models\LastFM();

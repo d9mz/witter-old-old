@@ -18,11 +18,33 @@ class Settings extends View {
 
         $user = $userModel->GetUser($_SESSION['Handle']);
         
-        echo $this->Twig->render('settings.twig', array(
+        echo $this->Twig->render('settings/settings.twig', array(
             "PageSettings" => $this->PageSettings("Settings", "Settings page"),
             "User" => $user,
             "ActiveTab" => "general",
             "Countries" => $countries,
+        ));
+    }
+
+    public function Privacy() {
+        $userModel = new \Witter\Models\User();
+        $settingsModel = new \Witter\Models\Settings();
+        $fmModel = new \Witter\Models\LastFM();
+        $util = new \Witter\Models\Utility();
+
+        $privacy = $util->getAllPrivacyOptions();
+
+        if(isset($_GET['token'])) {
+            $settingsModel->UpdateLastFMToken($_GET['token']);
+        }
+
+        $user = $userModel->GetUser($_SESSION['Handle']);
+        
+        echo $this->Twig->render('settings/privacy.twig', array(
+            "PageSettings" => $this->PageSettings("Settings", "Settings page"),
+            "User" => $user,
+            "ActiveTab" => "privacy",
+            "Privacy" => $privacy,
         ));
     }
 }

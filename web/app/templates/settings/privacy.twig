@@ -1,0 +1,43 @@
+{% extends "misc/base.twig" %}
+{%- block Container -%}
+    <div class="padding settings-page-fix">
+        <h3 class="inline-block padding-right"><i class="far fa-wrench"></i> user settings</h3>
+
+        <div class="tab-group inline-block">
+            <a href="/settings/"><div class="tab {% if ActiveTab == 'general' %}primary{% endif %}">general</div></a>
+            <a href="/settings/privacy"><div class="tab {% if ActiveTab == 'privacy' %}primary{% endif %}">privacy</div></a>
+            <a href="/settings/blocked"><div class="tab {% if ActiveTab == 'blocked' %}primary{% endif %}">blocked users</div></a>
+        </div>
+    </div>
+    <hr>
+    <div class="padding no-padding-top no-padding-bottom">
+        <div class="left padding-top padding-bottom">
+            <div class="bold">location</div>
+            <form class="form" method="post" action="/settings/privacy/">
+                <div class="input-group">
+                    <label for="country">show to</label>
+
+                    <select name="country" id="country">
+                        {% for Option in Privacy %}
+                            <option {% if User.privacy.country == Option %}selected{% endif %} value="{{ Option }}">{{ Option }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <span class="caption">shown publically default; you can set visibility in privacy settings</span>
+                <input type="submit" value="set" aria-label="Set">
+            </form>
+        </div>
+
+        <div class="right padding-top padding-bottom">
+            <div class="bold">private account</div>
+            <form class="form" method="post" action="/settings/private/">
+                <div class="input-group">
+                    <label for="private">private</label>
+                    <input type="checkbox" {% if User.private == "t" %}checked{% endif %} id="private" name="private" aria-label="Private">
+                </div>
+                <span class="caption">disabled by default; people must request to see your weets</span>
+                <input type="submit" value="set" aria-label="Set">
+            </form>
+        </div>
+    </div>
+{% endblock %}

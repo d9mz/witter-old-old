@@ -355,4 +355,40 @@ class Settings extends Model
 
         $alert->CreateAlert(Level::Success, "Successfully updated your privacy settings.");
     }
+
+    public function Privacy() {
+        $util = new \Witter\Models\Utility();
+        $userModel = new \Witter\Models\User();
+        $user   = $userModel->GetUser($_SESSION['Handle']);
+        $alert  = new \Witter\Models\Alert();
+
+        if(empty($user['privacy'])) {
+            // empty object [] evaluates to {}
+            $stmt = $this->Connection->prepare("UPDATE users SET privacy = '{}' WHERE username = ?");
+            $stmt->execute([
+                $_SESSION['Handle'],
+            ]);
+            $stmt = null;
+
+            $user['privacy'] = (object) [];
+        }
+
+        if(isset($_POST['country']) && $util->isValidPrivacyOption($_POST['country'])) {
+            // this if statement already doesnt matter because it already sets regardless
+            // if(!isset($user['privacy']->country)) {
+                $user['privacy']->country = $_POST['country'];
+            // }
+                
+            $user['privacy'] = json_encode($user['privacy']);
+
+            $stmt = $this->Connection->prepare("UPDATE users SET privacy = ? WHERE username = ?");
+            $stmt->execute([
+                $user['privacy'],
+                $_SESSION['Handle'],
+            ]);
+            $stmt = null;
+        } 
+
+        $alert->CreateAlert(Level::Success, "Successfully updated your privacy settings.");
+    }
 }

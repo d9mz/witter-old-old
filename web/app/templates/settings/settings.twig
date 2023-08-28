@@ -93,24 +93,13 @@
             </form>
         </div>
         <div class="right padding-bottom">
-            <div class="bold">private account</div>
-            <form class="form" method="post" action="/settings/private/">
-                <div class="input-group">
-                    <label for="private">private</label>
-                    <input type="checkbox" {% if User.private == "t" %}checked{% endif %} id="private" name="private" aria-label="Private">
-                </div>
-                <span class="caption">disabled by default; people must request to see your weets</span>
-                <input type="submit" value="set" aria-label="Set">
-            </form>
-        </div>
-        <div class="right padding-bottom">
             <div class="bold">location</div>
             <form class="form" method="post" action="/settings/location/">
                 <div class="input-group">
                     <label for="country">country</label>
                     <select name="country" id="country">
                         {% for Country in Countries %}
-                            <option value="{{ Country }}">{{ Country }}</option>
+                            <option {% if User.country == Country %}selected{% endif %} value="{{ Country }}">{{ Country }}</option>
                         {% endfor %}
                     </select>
                 </div>

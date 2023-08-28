@@ -64,7 +64,9 @@ if(!isset($_SESSION['Handle'])) {
 
     // [WEB] [API] Settings
     $Router->Get('/settings', "\Witter\Views\Settings@View");
+    $Router->Get('/settings/privacy', "\Witter\Views\Settings@Privacy");
     $Router->Post('/settings/description', "\Witter\Models\Settings@Description");
+    $Router->Post('/settings/privacy', "\Witter\Models\Settings@Privacy");
     $Router->Post('/settings/css', "\Witter\Models\Settings@CSS");
     $Router->Post('/settings/unlink', "\Witter\Models\Settings@Unlink");
     $Router->Post('/settings/nickname', "\Witter\Models\Settings@nickname");
