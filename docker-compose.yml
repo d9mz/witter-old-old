@@ -4,6 +4,8 @@ networks:
 
     backend:
 
+        driver: bridge
+
 services:
 
     nginx:
